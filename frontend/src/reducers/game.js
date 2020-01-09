@@ -162,6 +162,13 @@ const NewGame = (state, action) => {
 // if green, add point
 // if assassin, end game
 
+const GuessCard = (state, action) => {
+  const stateClone = Object.assign({}, state);
+  stateClone.guesses[stateClone.teamTurn][action.cardIndex] =
+    stateClone.keys[stateClone.teamTurn][action.cardIndex];
+  return stateClone;
+};
+
 const EndTurn = (state, action) => {
   const stateClone = Object.assign({}, state);
   // map over guess array...
@@ -185,6 +192,8 @@ export default function(state, action) {
   switch (action.type) {
     case 'NEW_GAME':
       return NewGame(state, action);
+    case 'GUESS_CARD':
+      return GuessCard(state, action);
     case 'END_TURN':
       return EndTurn(state, action);
     default:

@@ -31,8 +31,7 @@ export const hexToRgba = (hex, opacity) => {
       a +
       ')'
     );
-  }
-  throw new Error('Bad Hex');
+  } else console.error('Bad Hex');
 };
 
 export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));

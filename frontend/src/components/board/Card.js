@@ -10,7 +10,7 @@ import { colors } from '../../style/theme';
 import { scale } from '../../style/scale';
 import { marginAuto } from '../../style/misc';
 import { center } from '../../style/text';
-import { capitalizeFirst } from '../../helpers/util';
+import { capitalizeFirst, hexToRgba } from '../../helpers/util';
 
 const cardContainer = guess =>
   scale({
@@ -37,17 +37,21 @@ const buttonStyle = selected =>
   scale({
     cursor: 'pointer',
     outline: 'none',
+    transition: '300ms background-color',
     backgroundColor: selected && colors.neutralCard,
     opacity: 0.8,
     border: selected && '1px solid green',
+    '&:hover': {
+      backgroundColor: !selected && 'rgba(0,0,0,0.03)',
+    },
   });
 
 const Card = props => {
-  const { name, index, guess, gameKey, select, selected } = props;
+  const { name, index, guess, gameKey, guessCard, selected } = props;
 
-  if (guess || gameKey) {
+  if (!R.isNil(guess) || !R.isNil(gameKey)) {
     return (
-      <div css={cardContainer(guess || gameKey)} key={index}>
+      <div css={cardContainer(R.defaultTo(gameKey, guess))} key={index}>
         <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
       </div>
     );
@@ -56,7 +60,7 @@ const Card = props => {
     <button
       css={[cardContainer(), buttonStyle(selected)]}
       key={index}
-      onClick={() => select()}
+      onClick={() => guessCard()}
     >
       <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
     </button>

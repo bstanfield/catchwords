@@ -16,9 +16,10 @@ import throttle from 'lodash/throttle';
 import rootReducers from './reducers';
 
 import App from './App';
-import Home from './routes/Home';
+import PlayerBoard from './routes/PlayerBoard';
 import About from './routes/About';
 import NotFound from './routes/NotFound';
+import GameMasterBoard from './routes/GameMasterBoard';
 import Modal from './components/wrappers/Modal';
 
 import * as serviceWorker from './serviceWorker';
@@ -95,7 +96,16 @@ ReactDOM.render(
             path="/"
             render={() => (
               <App hasDottedBg>
-                <Home />
+                <PlayerBoard />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/game-master"
+            render={() => (
+              <App hasDottedBg>
+                <GameMasterBoard />
               </App>
             )}
           />

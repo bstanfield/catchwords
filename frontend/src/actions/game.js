@@ -4,7 +4,11 @@ export const NewGame = (board, keys) => ({
   keys,
 });
 
-export const EndTurn = guessArray => ({
+export const GuessCard = cardIndex => ({
+  type: 'GUESS_CARD',
+  cardIndex,
+});
+
+export const EndTurn = () => ({
   type: 'END_TURN',
-  guessArray,
 });
