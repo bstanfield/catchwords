@@ -15,6 +15,9 @@ const colors = {
   errorRed: '#e93710',
   lightBorder: '#BCBCBC',
   veryLightGray: 'rgba(0,0,0,0.1)',
+  neutralCard: 'rgba(255, 187, 0, 0.1)',
+  correctCard: 'rgba(87, 158, 0, 0.2)',
+  assassinCard: 'rgba(181, 0, 78, 0.4)',
 };
 
 const fontSizes = {

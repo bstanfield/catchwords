@@ -36,9 +36,7 @@ const store = createStore(rootReducers, persistedState);
 
 store.subscribe(
   throttle(() => {
-    saveState({
-      filters: store.getState().filters,
-    });
+    saveState({ game: store.getState().game });
   }, 1000)
 );
 

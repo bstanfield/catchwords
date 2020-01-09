@@ -1,4 +1,4 @@
-export const NewGame = view => ({
+export const NewGame = (board, keys) => ({
   type: 'NEW_GAME',
   board,
   keys,
