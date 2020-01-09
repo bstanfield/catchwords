@@ -5,6 +5,8 @@ const initialState = {
   type: 'success',
   show: false,
   isOnRight: false,
+  buttonAction: undefined,
+  buttonText: undefined,
 };
 
 const SetToast = (state, action) => {
@@ -14,14 +16,17 @@ const SetToast = (state, action) => {
   return mergedState;
 };
 
-export default function (state, action) {
+export default function(state, action) {
   if (typeof state === 'undefined') {
     return initialState;
   }
   switch (action.type) {
-    case 'SET_TOAST': return SetToast(state, action);
-    case 'DISMISS_TOAST': return R.assoc('show', false, state);
-    case 'CLEAR_TOAST': return Object.assign({}, initialState);
+    case 'SET_TOAST':
+      return SetToast(state, action);
+    case 'DISMISS_TOAST':
+      return R.assoc('show', false, state);
+    case 'CLEAR_TOAST':
+      return Object.assign({}, initialState);
     default:
       return state;
   }

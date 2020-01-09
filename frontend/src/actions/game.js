@@ -1,10 +1,18 @@
-export const NewGame = view => ({
+export const ResetGame = () => ({
+  type: 'RESET_GAME',
+});
+
+export const NewGame = (board, keys) => ({
   type: 'NEW_GAME',
   board,
   keys,
 });
 
-export const EndTurn = guessArray => ({
+export const GuessCard = cardIndex => ({
+  type: 'GUESS_CARD',
+  cardIndex,
+});
+
+export const EndTurn = () => ({
   type: 'END_TURN',
-  guessArray,
 });

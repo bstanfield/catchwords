@@ -2,6 +2,7 @@ import * as R from 'ramda';
 
 const initialState = {
   started: false,
+  gameOver: false,
   teamTurn: 'team1',
   startTime: '',
   board: [
@@ -10,7 +11,6 @@ const initialState = {
     'dog',
     'russia',
     'juice',
-    'vodka',
     'rum',
     'coke',
     'soda',
@@ -90,58 +90,58 @@ const initialState = {
   },
   guesses: {
     team1: [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
     ],
     team2: [
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
-      0,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
+      null,
     ],
   },
 };
@@ -151,9 +151,10 @@ const initialState = {
 // 2 is assassin
 
 const NewGame = (state, action) => {
-  const stateClone = Object.assign({}, state);
+  const stateClone = Object.assign({}, initialState);
   // somehow start game. idk
   R.assoc('started', true, state);
+  // add start time
   return stateClone;
 };
 
@@ -162,13 +163,26 @@ const NewGame = (state, action) => {
 // if green, add point
 // if assassin, end game
 
-const EndTurn = (state, action) => {
+const GuessCard = (state, action) => {
   const stateClone = Object.assign({}, state);
-  stateClone.guesses = R.assoc(stateClone.teamTurn, action.guessArray);
-  stateClone.teamTurn = stateClone.teamTurn === 'team1' ? 'team2' : 'team1';
+  stateClone.guesses[stateClone.teamTurn][action.cardIndex] =
+    stateClone.keys[stateClone.teamTurn][action.cardIndex];
+  if (stateClone.guesses[stateClone.teamTurn][action.cardIndex] === 2) {
+    return R.assoc(stateClone.gameOver, true, stateClone);
+  }
   return stateClone;
 };
 
+const EndTurn = (state, action) => {
+  const stateClone = Object.assign({}, state);
+  // map over guess array...
+  stateClone.teamTurn = stateClone.teamTurn === 'team1' ? 'team2' : 'team1';
+
+  // if game ends, end time
+  return stateClone;
+};
+
+// TODO: Need a way to restart game from an oops page??
 export default function(state, action) {
   if (typeof state === 'undefined') {
     return initialState;
@@ -176,8 +190,12 @@ export default function(state, action) {
   switch (action.type) {
     case 'NEW_GAME':
       return NewGame(state, action);
+    case 'GUESS_CARD':
+      return GuessCard(state, action);
     case 'END_TURN':
       return EndTurn(state, action);
+    case 'RESET_GAME':
+      return Object.assign({}, initialState);
     default:
       return state;
   }

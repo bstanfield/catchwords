@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
-// import thunk from 'redux-thunk';
+import thunk from 'redux-thunk';
 import * as R from 'ramda';
 import {
   withRouter,
@@ -16,16 +16,17 @@ import throttle from 'lodash/throttle';
 import rootReducers from './reducers';
 
 import App from './App';
-import Home from './routes/Home';
+import PlayerBoard from './routes/PlayerBoard';
 import About from './routes/About';
 import NotFound from './routes/NotFound';
+import GameMasterBoard from './routes/GameMasterBoard';
 import Modal from './components/wrappers/Modal';
 
 import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
 
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-// composeEnhancers(applyMiddleware(thunk))
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+composeEnhancers(applyMiddleware(thunk));
 
 // ADD GOOGLE ANALYTICS
 // ADD CACHING CHECK FROM CONTENTFUL
@@ -36,9 +37,7 @@ const store = createStore(rootReducers, persistedState);
 
 store.subscribe(
   throttle(() => {
-    saveState({
-      filters: store.getState().filters,
-    });
+    saveState({ game: store.getState().game });
   }, 1000)
 );
 
@@ -97,7 +96,16 @@ ReactDOM.render(
             path="/"
             render={() => (
               <App hasDottedBg>
-                <Home />
+                <PlayerBoard />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/game-master"
+            render={() => (
+              <App hasDottedBg>
+                <GameMasterBoard />
               </App>
             )}
           />

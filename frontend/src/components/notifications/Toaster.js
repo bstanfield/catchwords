@@ -12,7 +12,7 @@ import Toast from './Toast';
 
 const Toaster = props => {
   const { toast } = props;
-  const { show, text, type, isOnRight } = toast;
+  const { show, text, type, isOnRight, buttonAction, buttonText } = toast;
 
   useEffect(() => {
     let timeout;
@@ -34,9 +34,17 @@ const Toaster = props => {
         type={type}
         isOnRight={isOnRight}
         closeAction={() => {
+          console.log("hello i'm dismissing");
           props.DismissToast();
         }}
-        isDismissable
+        buttonAction={() => {
+          console.log("hello i'm dismissing");
+          // Sometimes this button doesn't work?
+          buttonAction();
+          props.DismissToast();
+        }}
+        buttonText={buttonText}
+        isDismissable={!buttonAction}
       />
     </TransitionGroup>
   );
@@ -79,7 +87,4 @@ Toaster.propTypes = {
   }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Toaster);
+export default connect(mapStateToProps, mapDispatchToProps)(Toaster);
