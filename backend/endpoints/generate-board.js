@@ -46,8 +46,12 @@ const generatePlayerOneKeyCard = words => R.reduce(addTile, [], words);
 
 const generatePlayerTwoKeyCard = (p1, words) => {
   // maybe use indexOf to find location of occurences of correct?
-  const allIndexes = getAllIndexes(p1, 1);
+  let allIndexes = getAllIndexes(p1, 1);
   console.log('indexes: ', allIndexes);
+  const random1 = allIndexes[getRandomNum(allIndexes.length, 0)];
+  // trim off that number and so on...
+  const random2 = allIndexes[getRandomNum(allIndexes.length, 0)];
+  const random3 = allIndexes[getRandomNum(allIndexes.length, 0)];
 };
 
 exports.generateBoard = async (req, res) => {
@@ -65,7 +69,7 @@ exports.generateBoard = async (req, res) => {
   const wordsObjs = await getRandomWords(25);
   const wordsArr = R.pluck('name', wordsObjs.rows);
   const playerOne = generatePlayerOneKeyCard(wordsArr);
-  // const PlayerTwo = generatePlayerTwoKeyCard(playerOne, wordsArr);
+  const PlayerTwo = generatePlayerTwoKeyCard(playerOne, wordsArr);
 
   res.status(200).send({ 
     words: wordsArr,
