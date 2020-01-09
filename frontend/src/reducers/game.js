@@ -2,6 +2,7 @@ import * as R from 'ramda';
 
 const initialState = {
   started: false,
+  gameOver: false,
   teamTurn: 'team1',
   startTime: '',
   board: [
@@ -166,6 +167,9 @@ const GuessCard = (state, action) => {
   const stateClone = Object.assign({}, state);
   stateClone.guesses[stateClone.teamTurn][action.cardIndex] =
     stateClone.keys[stateClone.teamTurn][action.cardIndex];
+  if (stateClone.guesses[stateClone.teamTurn][action.cardIndex] === 2) {
+    return R.assoc(stateClone.gameOver, true, stateClone);
+  }
   return stateClone;
 };
 

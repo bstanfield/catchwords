@@ -34,10 +34,13 @@ const Toaster = props => {
         type={type}
         isOnRight={isOnRight}
         closeAction={() => {
+          console.log("hello i'm dismissing");
           props.DismissToast();
         }}
-        buttonAction={async () => {
-          await buttonAction();
+        buttonAction={() => {
+          console.log("hello i'm dismissing");
+          // Sometimes this button doesn't work?
+          buttonAction();
           props.DismissToast();
         }}
         buttonText={buttonText}

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
 import { createStore, applyMiddleware, compose } from 'redux';
-// import thunk from 'redux-thunk';
+import thunk from 'redux-thunk';
 import * as R from 'ramda';
 import {
   withRouter,
@@ -25,8 +25,8 @@ import Modal from './components/wrappers/Modal';
 import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
 
-// const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-// composeEnhancers(applyMiddleware(thunk))
+const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+composeEnhancers(applyMiddleware(thunk));
 
 // ADD GOOGLE ANALYTICS
 // ADD CACHING CHECK FROM CONTENTFUL
