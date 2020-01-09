@@ -1,3 +1,7 @@
+export const ResetGame = () => ({
+  type: 'RESET_GAME',
+});
+
 export const NewGame = (board, keys) => ({
   type: 'NEW_GAME',
   board,

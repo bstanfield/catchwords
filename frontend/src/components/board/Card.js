@@ -6,9 +6,11 @@ import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
+import { NewGame } from '../../actions/game';
+import { SetToast } from '../../actions/toaster';
+
 import { colors } from '../../style/theme';
 import { scale } from '../../style/scale';
-import { marginAuto } from '../../style/misc';
 import { center } from '../../style/text';
 import { capitalizeFirst, hexToRgba } from '../../helpers/util';
 
@@ -47,7 +49,16 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, guess, gameKey, guessCard, selected } = props;
+  const { name, index, guess, gameKey, guessCard, selected, toaster } = props;
+
+  if (guess === 2 && !toaster.show) {
+    props.SetToast({
+      text: 'YOU DIED!!!!',
+      type: 'alert',
+      buttonAction: () => props.NewGame(),
+      buttonText: 'New Game',
+    });
+  }
 
   if (!R.isNil(guess) || !R.isNil(gameKey)) {
     return (
@@ -68,10 +79,10 @@ const Card = props => {
 };
 
 function mapStateToProps(state) {
-  return {};
+  return { toaster: state.toaster };
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({}, dispatch);
+  return bindActionCreators({ NewGame, SetToast }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card);

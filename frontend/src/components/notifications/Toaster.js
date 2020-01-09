@@ -12,7 +12,7 @@ import Toast from './Toast';
 
 const Toaster = props => {
   const { toast } = props;
-  const { show, text, type, isOnRight } = toast;
+  const { show, text, type, isOnRight, buttonAction, buttonText } = toast;
 
   useEffect(() => {
     let timeout;
@@ -36,7 +36,12 @@ const Toaster = props => {
         closeAction={() => {
           props.DismissToast();
         }}
-        isDismissable
+        buttonAction={async () => {
+          await buttonAction();
+          props.DismissToast();
+        }}
+        buttonText={buttonText}
+        isDismissable={!buttonAction}
       />
     </TransitionGroup>
   );
@@ -79,7 +84,4 @@ Toaster.propTypes = {
   }),
 };
 
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Toaster);
+export default connect(mapStateToProps, mapDispatchToProps)(Toaster);

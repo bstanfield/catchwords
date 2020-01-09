@@ -29,15 +29,12 @@ const PlayerBoard = props => {
   const { board, keys, guesses, teamTurn, started } = props.game;
   const [selectedCards, setSelectedCards] = useState([]);
 
-  useEffect(() => {
-    props.NewGame();
-  }, []);
-
   const RenderPlayerCard = (cardName, index) => {
     const selected = R.includes(index, selectedCards);
     const isCard = card => index === card;
     return (
       <Card
+        key={index}
         name={cardName}
         index={index}
         guess={guesses[teamTurn][index]}

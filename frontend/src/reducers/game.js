@@ -172,12 +172,6 @@ const GuessCard = (state, action) => {
 const EndTurn = (state, action) => {
   const stateClone = Object.assign({}, state);
   // map over guess array...
-  const submitGuesses = (guess, index) =>
-    R.includes(index, action.guessArray) ? true : null;
-  stateClone.guesses[stateClone.teamTurn] = R.addIndex(R.map)(
-    submitGuesses,
-    stateClone.guesses[stateClone.teamTurn]
-  );
   stateClone.teamTurn = stateClone.teamTurn === 'team1' ? 'team2' : 'team1';
 
   // if game ends, end time
@@ -196,6 +190,8 @@ export default function(state, action) {
       return GuessCard(state, action);
     case 'END_TURN':
       return EndTurn(state, action);
+    case 'RESET_GAME':
+      return Object.assign({}, initialState);
     default:
       return state;
   }
