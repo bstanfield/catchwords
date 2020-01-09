@@ -28,8 +28,20 @@ const postWordScript = R.curry(async (name, difficulty) => knex
   .insert({ name, difficulty })
   .into('words'));
 
+const matchPassword = async (pw) => knex
+  .select('password')
+  .from('passwords')
+  .where({ password: pw });
+
+const getRandomWords = async (num) => knex
+  .raw(
+    `SELECT name FROM words ORDER BY random() LIMIT ${num || 25}`
+  );
+
 module.exports = {
   getWords,
   postWord,
   postWordScript,
+  matchPassword,
+  getRandomWords,
 }

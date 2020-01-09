@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const R = require('ramda');
 const port = 3333;
 
 var pgp = require('pg-promise');
@@ -13,6 +14,16 @@ app.use(
     extended: true,
   })
 )
+
+const genericEndpoint = R.curry(
+  (appToUse, requestType, filenameAndURL, exportName) => {
+    appToUse[requestType](
+      `/api/${filenameAndURL}`,
+      require(`./endpoints/${filenameAndURL}`)[exportName]
+    );
+  }
+);
+const addEndpoint = genericEndpoint(app);
 
 // Confirms server is running in console
 app.listen(port, () => console.log(`Listening on port ${port}`));
@@ -44,3 +55,5 @@ app.get('/', (req, res) => {
 app.get('/words', db.getWords);
 
 app.post('/post-word', db.postWord);
+
+addEndpoint('post', 'generate-board', 'generateBoard');
