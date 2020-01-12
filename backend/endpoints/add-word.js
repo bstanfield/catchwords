@@ -1,5 +1,5 @@
 const R = require('ramda');
-const { matchPassword, postWord } = require('../queries');
+const { matchPassword, addWordToDb } = require('../queries');
 
 exports.addWord = async (req, res) => {
   const { name, difficulty, password } = req.body;

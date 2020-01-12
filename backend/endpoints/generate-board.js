@@ -19,7 +19,7 @@ const addTile = R.curry((arr, overlap) => {
 
   if (overlap) {
     if (R.any(
-      (overlap) => overlap === arr.length
+      overlap => overlap === arr.length
     )(overlap)) {
       return R.append(1, arr);
     }
@@ -42,15 +42,30 @@ const addTile = R.curry((arr, overlap) => {
   }
 });
 
-const getAllIndexes = (arr, val) => {
-  let indexes = [], i = -1;
-  while ((i = arr.indexOf(val, i+1)) != -1){
-    indexes.push(i);
-  }
-  return indexes;
-}
+// const getAllIndexes = (arr, val) => {
+//   let indexes = [], i = -1;
+//   while ((i = arr.indexOf(val, i+1)) != -1){
+//     indexes.push(i);
+//   }
+//   return indexes;
+// }
 
-const generatePlayerKeyCard = (words, overlap) => R.reduce(addTile(R.__, overlap), [], words);
+const checkIndex = R.curry((originArr, originVal, i, arrPosition) =>
+  originVal === originArr[arrPosition]
+    ? R.append(arrPosition, i)
+    : i,
+);
+
+const createArrOfNums = (originalNum, num, arr) => arr.length === originalNum
+   ? R.append(num, arr)
+   : createArrOfNums(originalNum, num-1, R.append(num, arr))
+
+const getAllIndexes = (arr, val) => 
+  R.reduce(
+    checkIndex(arr, val),
+    [],
+    createArrOfNums(arr.length, arr.length, []), // [17, 16, 15, 14, ... 0]
+  );
 
 const pickNum = R.curry((indexes, i, index) => {
   const prunedIndexes = R.without(i, indexes);
@@ -66,10 +81,11 @@ const maxOverlap = R.curry((max, acc) => {
   }
 });
 
+const generatePlayerKeyCard = (words, overlap) => R.reduce(addTile(R.__, overlap), [], words);
+
 const generatePlayerTwoKeyCard = (p1, words) => {
   const allGreenIndexes = getAllIndexes(p1, 1);
   const overlappingIndexes = R.reduceWhile(maxOverlap(3), pickNum(allGreenIndexes), [], allGreenIndexes);
-
   return generatePlayerKeyCard(words, overlappingIndexes);
 };
 
