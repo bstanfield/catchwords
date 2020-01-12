@@ -5,7 +5,13 @@ const { matchPassword, getRandomWords } = require('../queries');
 // 1 = correct (9)
 // 2 = assassin (3)
 
-const getRandomNum = (max, min) => Math.floor(Math.random() * (max - min + 1) + min);
+const getRandomNum = (max, min) => {
+  console.log('max: ', max);
+  console.log('min: ', min);
+  const rand = Math.floor(Math.random() * (max - min + 1) + min);
+  console.log('RAND: ', rand);
+  return rand;
+};
 
 const countOccurences = (max, number, arr) => R.equals(
   max,
@@ -35,9 +41,9 @@ const addTile = (arr) => {
 }
 
 const getAllIndexes = (arr, val) => {
-  var indexes = [], i = -1;
+  let indexes = [], i = -1;
   while ((i = arr.indexOf(val, i+1)) != -1){
-      indexes.push(i);
+    indexes.push(i);
   }
   return indexes;
 }
@@ -47,11 +53,13 @@ const generatePlayerOneKeyCard = words => R.reduce(addTile, [], words);
 const generatePlayerTwoKeyCard = (p1, words) => {
   // maybe use indexOf to find location of occurences of correct?
   let allIndexes = getAllIndexes(p1, 1);
-  console.log('indexes: ', allIndexes);
-  const random1 = allIndexes[getRandomNum(allIndexes.length, 0)];
-  // trim off that number and so on...
-  const random2 = allIndexes[getRandomNum(allIndexes.length, 0)];
-  const random3 = allIndexes[getRandomNum(allIndexes.length, 0)];
+  const r1 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
+  allIndexes = R.without([random1], allIndexes);
+  const r2 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
+  allIndexes = R.without([random2], allIndexes);
+  const r3 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
+  const overlappingIndexes = [r1, r2, r3];
+  // map over and create board. Make sure those indexes are correct (only fill 6 trues)
 };
 
 exports.generateBoard = async (req, res) => {
