@@ -54,6 +54,6 @@ app.get('/', (req, res) => {
 // Get words
 app.get('/words', db.getWords);
 
-app.post('/post-word', db.postWord);
+addEndpoint('post', 'add-word', 'addWord');
 
 addEndpoint('post', 'generate-board', 'generateBoard');

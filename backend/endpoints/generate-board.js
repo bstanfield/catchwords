@@ -55,7 +55,7 @@ const generatePlayerTwoKeyCard = (p1, words) => {
 };
 
 exports.generateBoard = async (req, res) => {
-  const { password } = req.body;
+  const { password, numberOfWords } = req.body;
   if (!password) {
     res.status(422).send({ error: 'permission denied (needs pw)' });
     return;
@@ -66,7 +66,7 @@ exports.generateBoard = async (req, res) => {
     return;
   }
 
-  const wordsObjs = await getRandomWords(25);
+  const wordsObjs = await getRandomWords(numberOfWords || 25);
   const wordsArr = R.pluck('name', wordsObjs.rows);
   const playerOne = generatePlayerOneKeyCard(wordsArr);
   const PlayerTwo = generatePlayerTwoKeyCard(playerOne, wordsArr);

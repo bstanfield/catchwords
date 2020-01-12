@@ -16,12 +16,21 @@ const getWords = async (req, res) => {
   res.status(200).json(results);
 };
 
-const postWord = async (req, res) => {
-  const { name, difficulty } = req.body;
-  const result = await knex
-    .insert({ name, difficulty })
-    .into('words');
-  res.status(200).json(result);
+const addWordToDb = async (name, difficulty) => { 
+  const lowerCasedName = R.toLower(name);
+  const retrieved = await knex
+    .select('*')
+    .from('words')
+    .where({ name: lowerCasedName });
+  
+  if (R.isEmpty(retrieved)) {
+    const result = await knex
+      .insert({ name: lowerCasedName, difficulty })
+      .into('words');
+    return result;
+  } else {
+    return false;
+  }
 }
 
 const postWordScript = R.curry(async (name, difficulty) => knex
@@ -40,7 +49,7 @@ const getRandomWords = async (num) => knex
 
 module.exports = {
   getWords,
-  postWord,
+  addWordToDb,
   postWordScript,
   matchPassword,
   getRandomWords,
