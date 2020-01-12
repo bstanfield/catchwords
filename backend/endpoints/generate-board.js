@@ -52,18 +52,25 @@ const getAllIndexes = (arr, val) => {
 
 const generatePlayerKeyCard = (words, overlap) => R.reduce(addTile(R.__, overlap), [], words);
 
-const generatePlayerTwoKeyCard = (p1, words) => {
-  // maybe use indexOf to find location of occurences of correct?
-  let allIndexes = getAllIndexes(p1, 1);
-  const r1 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
-  allIndexes = R.without([r1], allIndexes);
-  const r2 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
-  allIndexes = R.without([r2], allIndexes);
-  const r3 = allIndexes[getRandomNum(allIndexes.length - 1, 0)];
-  const overlappingIndexes = [r1, r2, r3];
+const pickNum = R.curry((indexes, i, index) => {
+  const prunedIndexes = R.without(i, indexes);
+  const rand = prunedIndexes[getRandomNum(prunedIndexes.length - 1, 0)];
+  return R.append(rand, i);
+});
 
-  const playerTwoBoard = generatePlayerKeyCard(words, overlappingIndexes);
-  return playerTwoBoard;
+const maxOverlap = R.curry((max, acc) => {
+  if (acc.length < (max || 3)) {
+    return true;
+  } else {
+    return false;
+  }
+});
+
+const generatePlayerTwoKeyCard = (p1, words) => {
+  const allGreenIndexes = getAllIndexes(p1, 1);
+  const overlappingIndexes = R.reduceWhile(maxOverlap(3), pickNum(allGreenIndexes), [], allGreenIndexes);
+
+  return generatePlayerKeyCard(words, overlappingIndexes);
 };
 
 exports.generateBoard = async (req, res) => {
@@ -80,6 +87,7 @@ exports.generateBoard = async (req, res) => {
 
   const wordsObjs = await getRandomWords(numberOfWords || 25);
   const wordsArr = R.pluck('name', wordsObjs.rows);
+
   const playerOne = generatePlayerKeyCard(wordsArr);
   const playerTwo = generatePlayerTwoKeyCard(playerOne, wordsArr);
 
