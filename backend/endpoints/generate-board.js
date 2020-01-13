@@ -14,98 +14,64 @@ const countOccurences = (max, number, arr) => R.equals(
 
 const addTile = R.curry((arr, overlap, p1) => {
   // ARR = ACCUMULATOR
-  // Something wrong with entering p1?
-  let newArr = arr;
-  if (typeof arr === 'number') {
-    newArr = [arr];
-  }
-
-  if (p1) {
-    // console.log('overlap: ', overlap);
-    // console.log('arr: ', arr);
-  }
+  const safeArr = typeof arr === 'number' ? [arr] : arr;
   
-  const neutral = countOccurences(13, 0, newArr);
-  let correct;
-  if (overlap) {
-    correct = countOccurences(6, 1, newArr);
-  } else {
-    correct = countOccurences(9, 1, newArr);
-  }
-  const assassin = countOccurences(3, 2, newArr);
+  const neutral = countOccurences(13, 0, safeArr);
+  const assassin = countOccurences(3, 2, safeArr);
+  const correct = overlap 
+    ? countOccurences(6, 1, safeArr) 
+    : countOccurences(9, 1, safeArr);
 
   if (overlap) {
     if (R.any(
-      overlap => overlap === newArr.length
+      overlap => overlap === safeArr.length
     )(overlap)) {
-      console.log('overlapping: ', newArr.length);
-      return R.append(1, newArr);
+      return R.append(1, safeArr);
     }
   }
 
   if (p1) {
-    // if (p1[R.length(newArr) - 1] === 1) {
-    //   console.log(`ALERT: position #${R.length(newArr)} is a ${p1[R.length(newArr) - 1]}!`);
-    // } else {
-    //   console.log(`position #${R.length(newArr)} is a ${p1[R.length(newArr) - 1]}!`);
-    // }
     if (assassin && correct) {
-      return R.append(0, newArr);
-    } else if (assassin && neutral && !(p1[R.length(newArr)] === 1)) {
-      console.log('going to be 1: ', 1, R.length(newArr));
-      return R.append(1, newArr);
+      return R.append(0, safeArr);
+    } else if (assassin && neutral && !(p1[R.length(safeArr)] === 1)) {
+      return R.append(1, safeArr);
     } else if (neutral && correct) {
-      return R.append(2, newArr);
-    } else if (assassin && !(p1[R.length(newArr)] === 1)) {
+      return R.append(2, safeArr);
+    } else if (assassin && !(p1[R.length(safeArr)] === 1)) {
       const rand = getRandomNum(1, 0);
-      console.log('ok to be 1 (assassin & !1): ', rand, R.length(newArr) - 1);
-      return R.append(rand, newArr);
-    } else if (neutral && !(p1[R.length(newArr)] === 1)) {
+      return R.append(rand, safeArr);
+    } else if (neutral && !(p1[R.length(safeArr)] === 1)) {
       // RARE
       const rand = getRandomNum(2, 1);
-      console.log('ok to be 1 (neutral & !1): ', rand, R.length(newArr));
-      return R.append(rand, newArr);
+      return R.append(rand, safeArr);
     } else if (correct) {
-      // PASS
       const rand = Math.random() < 0.5 ? 0 : 2;
-      console.log('should not be 1 (else if correct): ', rand, R.length(newArr));
-      return R.append(rand, newArr);
-    } else if (!(p1[R.length(newArr)] === 1)) {
-      // PASS
+      return R.append(rand, safeArr);
+    } else if (!(p1[R.length(safeArr)] === 1)) {
       const rand = getRandomNum(2, 0);
-      console.log('ok to be 1 (else if !1): ', rand, R.length(newArr));
-      return R.append(rand, newArr);
+      return R.append(rand, safeArr);
     } else {
-      // TODO: Examine these edge cases
-      if ((p1[R.length(newArr)] === 1)) {
-        // PASS
+      if ((p1[R.length(safeArr)] === 1)) {
         const rand = Math.random() < 0.5 ? 0 : 2;
-        console.log('should not be 1: ', rand, R.length(newArr));
-        return R.append(rand, newArr);
+        return R.append(rand, safeArr);
       }
-      console.log('idk...');
-      console.log('asassins: ', assassin);
-      console.log('correct: ',  correct);
-      console.log('neutral: ', neutral);
-      console.log('p1 position: ', R.length(newArr));
-      console.log('p1: ', p1[R.length(newArr)]);
     }
   }
 
   if (assassin && correct) {
-    return R.append(0, newArr);
+    return R.append(0, safeArr);
   } else if (assassin && neutral) {
-    return R.append(1, newArr);
+    return R.append(1, safeArr);
   } else if (neutral && correct) {
-    return R.append(2, newArr);
+    return R.append(2, safeArr);
   } else if (assassin) {
-    return R.append(getRandomNum(1, 0), newArr);
+    return R.append(getRandomNum(1, 0), safeArr);
   } else if (neutral) {
-    return R.append(getRandomNum(2, 1), newArr);
+    return R.append(getRandomNum(2, 1), safeArr);
   } else if (correct) {
     return Math.random() < 0.5 ? 0 : 2;
   } else {
-    return R.append(getRandomNum(2, 0), newArr);
+    return R.append(getRandomNum(2, 0), safeArr);
   }
 });
 
