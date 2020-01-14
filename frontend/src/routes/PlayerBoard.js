@@ -5,6 +5,7 @@ import { jsx } from '@emotion/core';
 import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { SetToast } from '../actions/toaster';
 import { EndTurn, NewGame, GuessCard } from '../actions/game';
 import { scale, projectCardScale } from '../style/scale';
 import { contentContainer } from '../style/layout';
@@ -22,6 +23,7 @@ const headerDivider = scale({
 });
 
 const PlayerBoard = props => {
+  const { toaster } = props;
   const { board, keys, guesses, teamTurn, started } = props.game;
   const [selectedCards, setSelectedCards] = useState([]);
 
@@ -61,6 +63,24 @@ const PlayerBoard = props => {
     R.subtract(9)
   )(guesses[teamTurn]);
 
+  if (guessesRemaining === 0 && !toaster.show) {
+    props.SetToast({
+      text: 'You ran out of guesses',
+      type: 'alert',
+      buttonAction: () => props.NewGame(),
+      buttonText: 'New Game',
+    });
+  }
+
+  if (totalPoints === 15 && !toaster.show) {
+    props.SetToast({
+      text: 'You guessed all of the cards! Play again?',
+      type: 'success',
+      buttonAction: () => props.NewGame(),
+      buttonText: 'New Game',
+    });
+  }
+
   return (
     <div>
       <div css={headerDivider}></div>
@@ -90,10 +110,14 @@ const PlayerBoard = props => {
 function mapStateToProps(state) {
   return {
     game: state.game,
+    toaster: state.toaster,
   };
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ EndTurn, NewGame, GuessCard }, dispatch);
+  return bindActionCreators(
+    { EndTurn, NewGame, GuessCard, SetToast },
+    dispatch
+  );
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PlayerBoard);
