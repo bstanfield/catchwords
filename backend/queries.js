@@ -47,10 +47,15 @@ const getRandomWords = async (num) => knex
     `SELECT name FROM words ORDER BY random() LIMIT ${num || 25}`
   );
 
+const addBoardToDb = async () => knex
+    .insert(board)
+    .into('boards');
+
 module.exports = {
   getWords,
   addWordToDb,
   postWordScript,
   matchPassword,
   getRandomWords,
+  addBoardToDb,
 }
