@@ -16,6 +16,7 @@ import { capitalizeFirst, hexToRgba } from '../../helpers/util';
 
 const cardContainer = guess =>
   scale({
+    position: 'relative',
     width: 'calc(20% - 15px)',
     border: '1px solid #333333',
     borderRadius: '3px',
@@ -28,6 +29,26 @@ const cardContainer = guess =>
         ? colors.assassinCard
         : 'white',
     margin: '5px',
+  });
+
+const guessSquare = guess =>
+  scale({
+    zIndex: 100,
+    width: '30px',
+    height: '30px',
+    border: '1px solid #333333',
+    borderRadius: '3px',
+    backgroundColor:
+      guess === 0
+        ? colors.neutralCard
+        : guess === 1
+        ? colors.correctCard
+        : guess === 2
+        ? colors.assassinCard
+        : 'white',
+    position: 'absolute',
+    right: 10,
+    bottom: 10,
   });
 
 const cardText = scale({
@@ -48,21 +69,22 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, guess, gameKey, guessCard, selected, toaster } = props;
-
-  if (guess === 2 && !toaster.show) {
-    props.SetToast({
-      text: 'YOU DIED!!!!',
-      type: 'alert',
-      buttonAction: () => props.NewGame(),
-      buttonText: 'New Game',
-    });
-  }
+  const {
+    name,
+    index,
+    guess,
+    gameKey,
+    guessCard,
+    selected,
+    toaster,
+    otherTeamGuess,
+  } = props;
 
   if (!R.isNil(guess) || !R.isNil(gameKey)) {
     return (
       <div css={cardContainer(R.defaultTo(gameKey, guess))} key={index}>
         <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
+        <div css={guessSquare(otherTeamGuess)} />
       </div>
     );
   }
@@ -73,6 +95,7 @@ const Card = props => {
       onClick={() => guessCard()}
     >
       <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
+      <div css={guessSquare(otherTeamGuess)} />
     </button>
   );
 };

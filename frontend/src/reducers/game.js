@@ -150,12 +150,14 @@ const initialState = {
 // 1 is correct
 // 2 is assassin
 
+// TODO: Basically this is returning an object that's too similar to the one in play, so states are recognized as the same
 const NewGame = (state, action) => {
   const stateClone = Object.assign({}, initialState);
   // somehow start game. idk
-  R.assoc('started', true, state);
+  // R.assoc('started', true, state);
   // add start time
-  return stateClone;
+  console.log('starting new game in reducer');
+  return { ...initialState };
 };
 
 // Log guess
@@ -195,7 +197,7 @@ export default function(state, action) {
     case 'END_TURN':
       return EndTurn(state, action);
     case 'RESET_GAME':
-      return Object.assign({}, initialState);
+      return { ...initialState };
     default:
       return state;
   }

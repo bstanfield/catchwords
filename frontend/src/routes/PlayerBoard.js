@@ -12,7 +12,11 @@ import { contentContainer } from '../style/layout';
 import { maxWidth, fullWidth, marginAuto } from '../style/misc';
 import { genericFlex, noWrapFlex, justifyContentStart } from '../style/flex';
 
+import checkmark from '../static/checkmark.svg';
+import alert from '../static/alert.svg';
+import Dialog from '../components/UI/Dialog';
 import Card from '../components/board/Card';
+import CardContent from '../components/UI/CardContent';
 import Button from '../components/UI/Button';
 
 import { sortContentByDate } from '../helpers/util';
@@ -22,14 +26,20 @@ const headerDivider = scale({
   marginBottom: ['20px', '20px', '40px'],
 });
 
+const messageIcon = scale({
+  width: '50px',
+  textAlign: 'center',
+  margin: 'auto',
+  position: 'relative',
+  display: 'block',
+  marginBottom: '15px',
+});
+
 const PlayerBoard = props => {
   const { toaster } = props;
   const { board, keys, guesses, teamTurn, started } = props.game;
-  const [selectedCards, setSelectedCards] = useState([]);
-
   // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
-    const selected = R.includes(index, selectedCards);
     const isCard = card => index === card;
     return (
       <Card
@@ -37,12 +47,9 @@ const PlayerBoard = props => {
         name={cardName}
         index={index}
         guess={guesses[teamTurn][index]}
-        selected={selected}
-        select={() => {
-          selected
-            ? setSelectedCards(R.reject(isCard, selectedCards))
-            : setSelectedCards(R.append(index, selectedCards));
-        }}
+        otherTeamGuess={
+          guesses[teamTurn === 'team1' ? 'team2' : 'team1'][index]
+        }
         guessCard={() => {
           props.GuessCard(index);
         }}
@@ -63,28 +70,55 @@ const PlayerBoard = props => {
     R.subtract(9)
   )(guesses[teamTurn]);
 
-  if (guessesRemaining === 0 && !toaster.show) {
-    props.SetToast({
-      text: 'You ran out of guesses',
-      type: 'alert',
-      buttonAction: () => props.NewGame(),
-      buttonText: 'New Game',
-    });
-  }
+  const assassinated = R.includes(2, guesses[teamTurn]);
 
-  if (totalPoints === 15 && !toaster.show) {
-    props.SetToast({
-      text: 'You guessed all of the cards! Play again?',
-      type: 'success',
-      buttonAction: () => props.NewGame(),
-      buttonText: 'New Game',
-    });
-  }
+  // TODO: Disable board when alert shows for win/loss
+  // TODO: Move win/loss logic to reducer (?)
+  // TODO: Create dialog box to show winning success and losing
+  // Sometimes props.NewGame() doesn't work
 
   return (
     <div>
       <div css={headerDivider}></div>
       <h2>{teamTurn} Player board</h2>
+      {/* If other team has guesses remaining, show option to spectate */}
+      {/* If not, show loss */}
+      <Dialog showDialog={assassinated}>
+        <CardContent>
+          <img src={alert} css={messageIcon} />
+          <h2>Shoot, you died. Want to play again?</h2>
+          <br />
+          <Button
+            size="medium"
+            text="New Game"
+            onClickFn={() => props.NewGame()}
+          />
+        </CardContent>
+      </Dialog>
+      <Dialog showDialog={guessesRemaining === 0}>
+        <CardContent>
+          <img src={alert} css={messageIcon} />
+          <h2>You ran out of guesses! Play again?</h2>
+          <br />
+          <Button
+            size="medium"
+            text="New Game"
+            onClickFn={() => props.NewGame()}
+          />
+        </CardContent>
+      </Dialog>
+      <Dialog showDialog={totalPoints === 15}>
+        <CardContent>
+          <img src={checkmark} css={messageIcon} />
+          <h2>You guessed all of the cards! Play again?</h2>
+          <br />
+          <Button
+            size="medium"
+            text="New Game"
+            onClickFn={() => props.NewGame()}
+          />
+        </CardContent>
+      </Dialog>
       <div css={noWrapFlex}>
         <div css={genericFlex}>
           {R.addIndex(R.map)(RenderPlayerCard, board)}
@@ -93,7 +127,7 @@ const PlayerBoard = props => {
           <Button
             size="large"
             text="End Turn"
-            onClickFn={() => props.EndTurn(selectedCards)}
+            onClickFn={() => props.EndTurn()}
           />
           <br />
           <br />

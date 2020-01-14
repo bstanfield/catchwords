@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { css, jsx } from '@emotion/core';
 import PropTypes from 'prop-types';
 import { TransitionGroup } from 'react-transition-group';
-import { scale } from '../../util/scale';
+import { scale } from '../../style/scale';
 import Darkener from '../UI/Darkener';
 import CardContainer from '../UI/CardContainer';
 import FadeInOut from '../wrappers/FadeInOut';
@@ -14,8 +14,8 @@ const dialogStyle = scale({
   position: 'fixed',
   minHeight: 'fit-content',
   maxWidth: ['90%', '90%', 'none'],
-  '-moz-appearance-min-height': 'fit-content',
-  '-webkit-appearance-min-height': 'fit-content',
+  MozAppearanceMinHeight: 'fit-content',
+  WebkitAppearanceMinHeight: 'fit-content',
   width: 'fit-content',
   top: '50%',
   left: '50%',
@@ -31,6 +31,8 @@ const dialogStyle = scale({
 const dialogInnerContainer = hasBeigeBg =>
   scale({
     position: 'relative',
+    MozAppearanceMinHeight: 'fit-content',
+    WebkitAppearanceMinHeight: 'fit-content',
     maxHeight: '80vh',
     width: '100%',
     overflowY: 'auto',
@@ -56,7 +58,7 @@ const backLink = scale({
   fontSize: '16px',
   boxShadow: '0 1px 4px 0 rgba(0,0,0,0.2)',
   cursor: 'pointer',
-  '-webkit-transition': 'box-shadow 150ms ease',
+  WebkitTransition: 'box-shadow 150ms ease',
   transition: 'box-shadow 150ms ease',
   '&:hover': {
     boxShadow: '0 2px 5px 0 rgba(0,0,0,0.3)',

@@ -26,14 +26,14 @@ import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
-composeEnhancers(applyMiddleware(thunk));
-
-// ADD GOOGLE ANALYTICS
-// ADD CACHING CHECK FROM CONTENTFUL
 
 const persistedState = loadState();
 
-const store = createStore(rootReducers, persistedState);
+const store = createStore(
+  rootReducers,
+  persistedState,
+  composeEnhancers(applyMiddleware(thunk))
+);
 
 store.subscribe(
   throttle(() => {

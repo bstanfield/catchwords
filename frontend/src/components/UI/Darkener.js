@@ -38,9 +38,19 @@ const Darkener = ({ show, setShow }) => {
           role="button"
           tabIndex={0}
           onKeyDown={e => {
-            if (e.key === 'Escape') setShow(false);
+            if (e.key === 'Escape' && setShow) {
+              setShow(false);
+            } else {
+              return;
+            }
           }}
-          onClick={() => setShow(false)}
+          onClick={() => {
+            if (setShow) {
+              setShow(false);
+            } else {
+              return;
+            }
+          }}
         />
       )}
     </Transition>
