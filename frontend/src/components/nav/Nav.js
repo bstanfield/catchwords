@@ -81,8 +81,11 @@ const Nav = props => {
             <Link to="/about" css={[noStyleLink, linkStyle]}>
               About
             </Link>
-            <Link to="/game-master" css={[noStyleLink, linkStyle]}>
-              Game Master
+            <Link to="/game-master-1" css={[noStyleLink, linkStyle]}>
+              Game Master 1
+            </Link>
+            <Link to="/game-master-2" css={[noStyleLink, linkStyle]}>
+              Game Master 2
             </Link>
           </div>
         </div>

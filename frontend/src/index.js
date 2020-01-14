@@ -102,10 +102,19 @@ ReactDOM.render(
           />
           <Route
             exact
-            path="/game-master"
+            path="/game-master-1"
             render={() => (
               <App hasDottedBg>
-                <GameMasterBoard />
+                <GameMasterBoard teamTurn="team1" />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/game-master-2"
+            render={() => (
+              <App hasDottedBg>
+                <GameMasterBoard teamTurn="team2" />
               </App>
             )}
           />

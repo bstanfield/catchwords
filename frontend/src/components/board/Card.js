@@ -16,8 +16,7 @@ import { capitalizeFirst, hexToRgba } from '../../helpers/util';
 
 const cardContainer = guess =>
   scale({
-    width: '180px',
-    height: '120px',
+    width: 'calc(20% - 15px)',
     border: '1px solid #333333',
     borderRadius: '3px',
     backgroundColor:

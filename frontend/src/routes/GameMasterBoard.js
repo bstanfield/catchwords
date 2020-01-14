@@ -26,7 +26,8 @@ const headerDivider = scale({
 });
 
 const GameMasterBoard = props => {
-  const { board, keys, guesses, teamTurn, started } = props.game;
+  const { teamTurn } = props;
+  const { board, keys, guesses, started } = props.game;
   const [selectedCards, setSelectedCards] = useState([]);
   // Show which cards are selected here too!
 
