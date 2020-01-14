@@ -1,9 +1,32 @@
 const R = require('ramda');
-const { matchPassword, getRandomWords } = require('../queries');
 
-// 0 = neutral (13)
-// 1 = correct (9)
-// 2 = assassin (3)
+const arrOfWords = [
+  "elbow",
+ "sequins",
+ "salmon",
+ "hello",
+ "ceiling",
+ "drain",
+ "rag",
+ "nature",
+ "shampoo",
+ "picnic",
+ "mine",
+ "big",
+ "cabin",
+ "ping",
+ "mower",
+ "computer",
+ "stockholder",
+ "nest",
+ "alligator",
+ "spoon",
+ "truck",
+ "cord",
+ "house",
+ "avocado",
+ "astronaut"
+];
 
 const simpleArr = () => {
   let i = 25;
@@ -99,49 +122,4 @@ const playerTwo = R.pipe(
   placeNumbersInArr(2, numAssassin, R.__, false),
 )(arrWithOverlap);
 
-exports.generateBoard = async (req, res) => {
-  const { password, numberOfWords } = req.body;
-  if (!password) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
-  const validate = await matchPassword(password);
-  if (R.isEmpty(validate)) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
-
-  const wordsObjs = await getRandomWords(numberOfWords || 25);
-  const wordsArr = R.pluck('name', wordsObjs.rows);
-
-  const findNumOfOverlap = (p1, p2) => {
-    let i = 0;
-    let overlap = 0;
-    let conjoinedArr = [];
-    while(i < 25) {
-      if (p1[i] === 1 && p2[i] === 1) {
-        overlap++;
-      }
-      conjoinedArr.push([p1[i], p2[i]]);
-      i++;
-    }
-    return { overlap, conjoinedArr };
-  };
-
-  res.status(200).send({ 
-    words: wordsArr,
-    playerOne,
-    statsOne: {
-      1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerOne),
-      2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerOne),
-      0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerOne),
-    },
-    playerTwo,
-    statsTwo: {
-      1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerTwo),
-      2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerTwo),
-      0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerTwo),
-      overlap: findNumOfOverlap(playerOne, playerTwo),
-    },
-  });
-};
+console.log('p2: ', playerTwo);
