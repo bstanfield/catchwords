@@ -57,12 +57,13 @@ const PlayerBoard = props => {
     );
   };
 
-  const incorrectGuesses = x => R.isNil(x) || R.equals(x, 0);
-  const teamPoints = teamTurn =>
-    R.pipe(R.reject(incorrectGuesses), R.length)(guesses[teamTurn]);
+  const correctGuesses = x => R.equals(x, 1);
+  const calculateTeamPoints = teamTurn =>
+    R.pipe(R.filter(correctGuesses), R.length)(guesses[teamTurn]);
 
-  const team1Points = teamPoints('team1');
-  const totalPoints = teamPoints('team1') + teamPoints('team2');
+  const currentTeamPoints = calculateTeamPoints(teamTurn);
+  const totalPoints =
+    calculateTeamPoints('team1') + calculateTeamPoints('team2');
 
   const guessesRemaining = R.pipe(
     R.reject(R.isNil),
@@ -132,7 +133,7 @@ const PlayerBoard = props => {
           <br />
           <br />
           <h4>Team 1 + 2 Points: {totalPoints}</h4>
-          <h4>Team Points: {team1Points}</h4>
+          <h4>Team Points: {currentTeamPoints}</h4>
           <h4>Remaining Guesses: {guessesRemaining}</h4>
         </div>
       </div>
