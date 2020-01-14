@@ -3,11 +3,11 @@ const knex = require('knex')({
   client: 'pg',
   asyncStackTraces: true,
   connection: {
-    host: '127.0.0.1',
+    host: '35.236.47.240',
     user: 'postgres',
     password: 'basicallycodenames',
     database: 'postgres',
-    port: 8888,
+    port: 5432,
   }
 });
 
