@@ -62,11 +62,11 @@ app.get('/free-board', async (req, res) => {
   const { id } = req.query;
   if (id) {
     const existingBoard = await getExistingBoard(id);
-    if (!existingBoard) {
+    if (R.isEmpty(existingBoard)) {
       res.status(404).send({ error: `Board not found with id ${id}!` });
       return;
     } 
-    res.status(200).send({ board: existingBoard[0].words_arr, board_id: id });
+    res.status(200).send({ board: existingBoard[0].words_array, board_id: id });
     return;
   }
   const words = await getRandomWords();
