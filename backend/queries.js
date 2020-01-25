@@ -35,6 +35,8 @@ const addWordToDb = async (name, difficulty) => {
 
 const saveBoardId = async (words) => knex.insert({ words_array: words }).into('free_boards').returning('board_id');
 
+const getExistingBoard = async (id) => knex.select().from('free_boards').where({ board_id: id });
+
 const postWordScript = R.curry(async (name, difficulty) => knex
   .insert({ name, difficulty })
   .into('words'));
@@ -61,4 +63,5 @@ module.exports = {
   getRandomWords,
   addBoardToDb,
   saveBoardId,
+  getExistingBoard,
 }
