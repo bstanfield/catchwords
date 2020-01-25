@@ -6,6 +6,7 @@ const port = 80;
 var pgp = require('pg-promise');
 const db = require('./queries');
 const bodyParser = require('body-parser');
+const { getRandomWords } = require('./queries');
 
 // bodyParser middleware to help parse JSON
 app.use(bodyParser.json())
@@ -53,6 +54,12 @@ app.get('/', (req, res) => {
 
 // Get words
 app.get('/words', db.getWords);
+
+app.get('/free-board', async () => {
+  const words = await getRandomWords();
+  const wordsArr = R.pluck('name', words.rows);
+  res.status(200).send({ board: wordsArr });
+});
 
 addEndpoint('post', 'add-word', 'addWord');
 
