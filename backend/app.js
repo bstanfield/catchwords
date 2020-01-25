@@ -1,7 +1,10 @@
 const express = require('express');
+var cors = require('cors')
 const app = express();
 const R = require('ramda');
 const port = 80;
+
+app.use(cors());
 
 var pgp = require('pg-promise');
 const db = require('./queries');
@@ -56,9 +59,13 @@ app.get('/', (req, res) => {
 app.get('/words', db.getWords);
 
 app.get('/free-board', async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.query;
   if (id) {
-    const existingBoard = await getExistingBoard(id); 
+    const existingBoard = await getExistingBoard(id);
+    if (!existingBoard) {
+      res.status(404).send({ error: `Board not found with id ${id}!` });
+      return;
+    } 
     res.status(200).send({ board: existingBoard[0].words_arr, board_id: id });
     return;
   }
