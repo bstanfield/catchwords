@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const R = require('ramda');
 const port = 3333;
+const { getRandomWords } = require('./queries');
 
 var pgp = require('pg-promise');
 const db = require('./queries');
@@ -53,6 +54,12 @@ app.get('/', (req, res) => {
 
 // Get words
 app.get('/words', db.getWords);
+
+app.get('/free-board', async () => {
+  const words = await getRandomWords();
+  const wordsArr = R.pluck('name', words.rows);
+  res.status(200).send({ board: wordsArr });
+});
 
 addEndpoint('post', 'add-word', 'addWord');
 
