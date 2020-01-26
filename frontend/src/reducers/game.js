@@ -3,6 +3,7 @@ import * as R from 'ramda';
 const initialState = {
   started: false,
   gameOver: false,
+  gameUrl: '',
   teamTurn: 'team1',
   startTime: '',
 };
@@ -38,6 +39,8 @@ export default function(state, action) {
   switch (action.type) {
     case 'NEW_GAME':
       return NewGame(state, action);
+    case 'SET_GAME_URL':
+      return R.assoc('gameUrl', action.gameUrl, state);
     case 'END_TURN':
       return EndTurn(state, action);
     case 'RESET_GAME':

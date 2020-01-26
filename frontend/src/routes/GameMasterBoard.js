@@ -49,7 +49,9 @@ const GameMasterBoard = props => {
       <div css={headerDivider}></div>
       <h2>{teamTurn} Game master board</h2>
       <div css={genericFlex}>
-        {R.addIndex(R.map)(RenderGameMasterCard, words)}
+        {words &&
+          board[teamTurn] &&
+          R.addIndex(R.map)(RenderGameMasterCard, words)}
       </div>
       <Button text="Reset Game" onClickFn={() => props.ResetGame()} />
     </div>

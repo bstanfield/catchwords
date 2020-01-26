@@ -74,7 +74,7 @@ const Nav = props => {
     <div css={biggestContainer}>
       <div css={outerContainer}>
         <div css={[innerContainer, genericFlex, alignItemsBaseline]}>
-          <Link to="/" css={noStyleLink}>
+          {/* <Link to="/" css={noStyleLink}>
             <h4 css={homeLink}>catchwords</h4>
           </Link>
           <div css={genericFlex}>
@@ -87,9 +87,9 @@ const Nav = props => {
             <Link to="/game-master-2" css={[noStyleLink, linkStyle]}>
               Game Master 2
             </Link>
-          </div>
+          </div> */}
         </div>
-        <HorizontalSeparator />
+        {/* <HorizontalSeparator /> */}
       </div>
     </div>
   );

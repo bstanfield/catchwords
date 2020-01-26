@@ -17,10 +17,11 @@ import rootReducers from './reducers';
 
 import App from './App';
 import PlayerBoard from './routes/PlayerBoard';
-import About from './routes/About';
+import StartGame from './routes/StartGame';
 import NotFound from './routes/NotFound';
 import GameMasterBoard from './routes/GameMasterBoard';
 import ResetGame from './routes/ResetGame';
+import GetBoard from './components/wrappers/GetBoard';
 
 import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
@@ -100,7 +101,7 @@ ReactDOM.render(
             path="/"
             render={() => (
               <App hasDottedBg>
-                <PlayerBoard />
+                <StartGame />
               </App>
             )}
           />
@@ -114,20 +115,32 @@ ReactDOM.render(
             )}
           />
           <Route
-            exact
-            path="/game-master-1"
+            path="/player-board/:boardId"
             render={() => (
               <App hasDottedBg>
-                <GameMasterBoard teamTurn="team1" />
+                <GetBoard>
+                  <PlayerBoard />
+                </GetBoard>
               </App>
             )}
           />
           <Route
-            exact
-            path="/game-master-2"
+            path="/game-master-1/:boardId"
             render={() => (
               <App hasDottedBg>
-                <GameMasterBoard teamTurn="team2" />
+                <GetBoard>
+                  <GameMasterBoard teamTurn="team1" />
+                </GetBoard>
+              </App>
+            )}
+          />
+          <Route
+            path="/game-master-2/:boardId"
+            render={() => (
+              <App hasDottedBg>
+                <GetBoard>
+                  <GameMasterBoard teamTurn="team2" />
+                </GetBoard>
               </App>
             )}
           />

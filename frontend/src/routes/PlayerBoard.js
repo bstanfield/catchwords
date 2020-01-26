@@ -118,7 +118,7 @@ const PlayerBoard = props => {
       </Dialog>
       <div css={noWrapFlex}>
         <div css={genericFlex}>
-          {R.addIndex(R.map)(RenderPlayerCard, words)}
+          {words && R.addIndex(R.map)(RenderPlayerCard, words)}
         </div>
         <div css={[maxWidth(150), fullWidth]}>
           <Button
