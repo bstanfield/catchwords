@@ -118,15 +118,6 @@ ReactDOM.render(
               </App>
             )}
           />
-          <Route
-            exact
-            path="/about"
-            render={() => (
-              <App>
-                <About />
-              </App>
-            )}
-          />
           {/* Not Found */}
           <Route
             exact

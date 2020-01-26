@@ -6,7 +6,9 @@ import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SetToast } from '../actions/toaster';
-import { EndTurn, NewGame, GuessCard } from '../actions/game';
+import { EndTurn } from '../actions/game';
+import { GuessCard } from '../actions/guesses';
+import { NewGame } from '../actions/board';
 import { scale, projectCardScale } from '../style/scale';
 import { contentContainer } from '../style/layout';
 import { maxWidth, fullWidth, marginAuto } from '../style/misc';
@@ -19,7 +21,7 @@ import Card from '../components/board/Card';
 import CardContent from '../components/UI/CardContent';
 import Button from '../components/UI/Button';
 
-import { sortContentByDate } from '../helpers/util';
+import { hitAPI } from '../helpers/util';
 
 const headerDivider = scale({
   marginTop: ['10px', '10px', '20px'],
@@ -38,6 +40,11 @@ const messageIcon = scale({
 const PlayerBoard = props => {
   const { toaster } = props;
   const { board, keys, guesses, teamTurn, started } = props.game;
+
+  useEffect(() => {
+    props.NewGame();
+  }, []);
+
   // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
     const isCard = card => index === card;

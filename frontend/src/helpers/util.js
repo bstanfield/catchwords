@@ -4,6 +4,23 @@ import * as R from 'ramda';
 import { useEffect, useState } from 'react';
 import { jsx } from '@emotion/core';
 
+export const hitAPI = (endpoint, body) => {
+  // const hostnameForAPI = R.pipe(
+  //   R.replace('localhost', `${vessel}.projectwren.com`),
+  //   R.replace('flagship.', ''),
+  //   R.replace('192.168.1.87', `${vessel}.projectwren.com`)
+  // )(window.location.hostname);
+  const response = fetch(`http://34.94.51.71/api/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  return response;
+};
+
 export const tapLog = R.curry((message, x) => {
   console.log(message, x);
   return x;

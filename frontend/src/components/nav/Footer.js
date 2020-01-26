@@ -41,36 +41,7 @@ const mediaLink = scale({
 const Footer = props => {
   const {} = props;
 
-  return (
-    <div css={outerContainer}>
-      <div
-        css={[
-          innerContainer,
-          genericFlex,
-          alignItemsBaseline,
-          justifyContentCenter,
-        ]}
-      >
-        <a
-          href="mailto:mimitranzambetti@gmail.com"
-          target="_blank"
-          css={noStyleLink}
-        >
-          <img src={email} css={mediaLink} />
-        </a>
-        <a href="https://twitter.com/mims_tz" target="_blank" css={noStyleLink}>
-          <img src={twitter} css={mediaLink} />
-        </a>
-        <a
-          href="https://www.linkedin.com/in/mimi-tran-zambetti-505b4310a/"
-          target="_blank"
-          css={noStyleLink}
-        >
-          <img src={linkedin} css={mediaLink} />
-        </a>
-      </div>
-    </div>
-  );
+  return <div css={outerContainer}></div>;
 };
 
 function mapStateToProps(state) {
