@@ -21,7 +21,6 @@ export const NewBoard = () => async dispatch => {
   });
   if (response.status === 200) {
     const json = await response.json();
-    console.log('newBoard', json)
     dispatch(NewWords(json.words));
     dispatch(NewTeam1Key(json.playerOne));
     dispatch(NewTeam2Key(json.playerTwo));

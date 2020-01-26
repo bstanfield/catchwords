@@ -58,7 +58,6 @@ const initialState = {
 };
 
 const GuessCard = (state, action) => {
-  console.log('firing guess card', action);
   const stateClone = Object.assign({}, state);
   const teamGuessesClone = [...stateClone[action.teamTurn]];
   const teamKeyClone = [...action.board[action.teamTurn]];

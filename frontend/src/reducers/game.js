@@ -41,7 +41,7 @@ export default function(state, action) {
     case 'END_TURN':
       return EndTurn(state, action);
     case 'RESET_GAME':
-      return { ...initialState };
+      return Object.assign({}, initialState);
     default:
       return state;
   }

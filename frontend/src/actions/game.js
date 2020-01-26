@@ -1,19 +1,19 @@
 import { NewBoard } from './board';
 import { ResetGuesses } from './guesses';
 
-export const NewGame = () => dispatch => {
-  dispatch(NewBoard());
-  dispatch(ResetGuesses());
-  return {
-    type: 'NEW_GAME',
-  };
-};
+export const ClearGameStats = () => ({
+  type: 'RESET_GAME',
+});
 
 export const ResetGame = () => dispatch => {
   dispatch(ResetGuesses());
-  return {
-    type: 'RESET_GAME',
-  };
+  dispatch(ClearGameStats());
+};
+
+export const NewGame = () => dispatch => {
+  dispatch(NewBoard());
+  dispatch(ResetGuesses());
+  dispatch(ClearGameStats());
 };
 
 export const EndTurn = () => ({

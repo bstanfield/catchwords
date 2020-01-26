@@ -14,6 +14,7 @@ function Reset(props) {
   useEffect(() => {
     const handleResetGame = async () => {
       await props.ResetGame();
+      props.history.push('/');
     };
     handleResetGame();
   }, []);
