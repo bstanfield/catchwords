@@ -37,13 +37,13 @@ const messageIcon = scale({
 });
 
 const PlayerBoard = props => {
-  const { board, guesses } = props;
-  const { teamTurn } = props.game;
+  const { board, guesses, game } = props;
+  const { teamTurn } = game;
   const { words } = board;
 
   // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
-    const isCard = card => index === card;
+    console.log('guesses[teamTurn][index]', guesses[teamTurn][index]);
     return (
       <Card
         key={index}

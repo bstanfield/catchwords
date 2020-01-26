@@ -9,9 +9,12 @@ export const NewGame = () => dispatch => {
   };
 };
 
-export const ResetGame = () => ({
-  type: 'RESET_GAME',
-});
+export const ResetGame = () => dispatch => {
+  dispatch(NewGame());
+  return {
+    type: 'RESET_GAME',
+  };
+};
 
 export const EndTurn = () => ({
   type: 'END_TURN',
