@@ -1,4 +1,4 @@
-git add .
-git stash
-git pull
+sudo git add .
+sudo git stash
+sudo git pull
 sudo `which node` app.js
