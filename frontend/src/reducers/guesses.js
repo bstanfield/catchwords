@@ -67,6 +67,40 @@ const GuessCard = (state, action) => {
   return stateClone;
 };
 
+const ResetGuesses = (state, action) => {
+  const emptyArrayOf25 = [
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+    null,
+  ];
+  const stateClone = Object.assign({}, state);
+  const stateClone1 = R.assoc('team1', emptyArrayOf25, stateClone);
+  const stateClone2 = R.assoc('team2', emptyArrayOf25, stateClone1);
+  return stateClone2;
+};
+
 export default (state, action) => {
   if (typeof state === 'undefined') {
     return initialState;
@@ -75,7 +109,7 @@ export default (state, action) => {
     case 'GUESS_CARD':
       return GuessCard(state, action);
     case 'RESET_GUESSES':
-      return initialState;
+      return ResetGuesses(state, action);
     default:
       return state;
   }
