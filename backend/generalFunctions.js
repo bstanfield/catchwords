@@ -1,5 +1,13 @@
 const R = require('ramda');
 
+const createCamel = (acc, split) => {
+  let newAcc;
+  acc === ''
+    ? newAcc = acc + split
+    : newAcc = acc + split.charAt(0).toUpperCase() + split.substring(1);
+  return newAcc;
+};
+
 const createNewCamelObj = (obj) => {
   const newKeys = R.pipe(
     R.map(
