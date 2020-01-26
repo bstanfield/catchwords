@@ -115,7 +115,7 @@ ReactDOM.render(
             )}
           />
           <Route
-            path="/player-board/:boardId"
+            path="/player-board/:gameUrl"
             render={() => (
               <App hasDottedBg>
                 <GetBoard>
@@ -125,7 +125,7 @@ ReactDOM.render(
             )}
           />
           <Route
-            path="/game-master-1/:boardId"
+            path="/game-master-1/:gameUrl"
             render={() => (
               <App hasDottedBg>
                 <GetBoard>
@@ -135,12 +135,20 @@ ReactDOM.render(
             )}
           />
           <Route
-            path="/game-master-2/:boardId"
+            path="/game-master-2/:gameUrl"
             render={() => (
               <App hasDottedBg>
                 <GetBoard>
                   <GameMasterBoard teamTurn="team2" />
                 </GetBoard>
+              </App>
+            )}
+          />
+          <Route
+            path="/:gameUrl"
+            render={() => (
+              <App hasDottedBg>
+                <StartGame />
               </App>
             )}
           />

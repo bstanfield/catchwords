@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
-import { Redirect } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SetToast } from '../actions/toaster';
@@ -37,22 +37,30 @@ const messageIcon = scale({
 });
 
 const StartGame = props => {
-  const { board, guesses, game } = props;
+  const { board, match, game } = props;
   const { teamTurn } = game;
   const { words } = board;
 
-  const [boardCode, setBoardCode] = useState();
+  const [boardCode, setBoardCode] = useState(match.params.gameUrl);
   const [role, setRole] = useState('player');
-  const [redirect, setRedirect] = useState(false);
+  const [redirectLink, setRedirectLink] = useState();
 
-  if (redirect) {
+  const asyncRedirect = async () => {
+    let boardCodeToUse = boardCode;
+    if (!boardCode) {
+      boardCodeToUse = await props.NewGame();
+    }
     const link =
       role === 'team1'
-        ? `/game-master-1/${redirect}`
+        ? `/game-master-1/${boardCodeToUse}`
         : role === 'team2'
-        ? `/game-master-2/${redirect}`
-        : `/player-board/${redirect}`;
-    return <Redirect to={link} />;
+        ? `/game-master-2/${boardCodeToUse}`
+        : `/player-board/${boardCodeToUse}`;
+    setRedirectLink(link);
+  };
+
+  if (redirectLink) {
+    return <Redirect push to={redirectLink} />;
   }
 
   return (
@@ -104,13 +112,7 @@ const StartGame = props => {
           <Button
             size="large"
             text={boardCode ? 'Enter existing game' : 'Start New Game'}
-            onClickFn={async () => {
-              let boardCodeToUse = boardCode;
-              if (!boardCode) {
-                boardCodeToUse = await props.NewGame();
-              }
-              setRedirect(boardCodeToUse);
-            }}
+            onClickFn={() => asyncRedirect()}
           />
         </CardContent>
       </Dialog>
@@ -133,4 +135,6 @@ function mapDispatchToProps(dispatch) {
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(StartGame);
+export default withRouter(
+  connect(mapStateToProps, mapDispatchToProps)(StartGame)
+);
