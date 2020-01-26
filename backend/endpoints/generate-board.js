@@ -1,5 +1,6 @@
 const R = require('ramda');
-const { matchPassword, getRandomWords } = require('../queries');
+const { matchPassword, getRandomWords, saveBoardAndPlayerKeys } = require('../queries');
+const randomWords = require('random-words');
 
 // 0 = neutral (13)
 // 1 = correct (9)
@@ -64,7 +65,6 @@ const playerOne = R.pipe(
   placeNumbersInArr(1, 9, R.__, false),
   placeNumbersInArr(2, numAssassin, R.__, false),
 )(baseArr);
-console.log('p1: ', playerOne);
 
 // PLAYER TWO
 const findOverlap = R.curry((p1, max) => {
@@ -128,20 +128,30 @@ exports.generateBoard = async (req, res) => {
     return { overlap, conjoinedArr };
   };
 
+  const boardIdAndUrl = await saveBoardAndPlayerKeys({
+    board_url: R.join('-', randomWords(5)),
+    words: wordsArr,
+    player_one: playerOne,
+    player_two: playerTwo,
+  });
+  const { board_id, board_url } = boardIdAndUrl;
+
   res.status(200).send({ 
     words: wordsArr,
+    boardId: board_id,
+    boardUrl: board_url,
     playerOne,
-    statsOne: {
-      1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerOne),
-      2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerOne),
-      0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerOne),
-    },
+    // statsOne: {
+    //   1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerOne),
+    //   2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerOne),
+    //   0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerOne),
+    // },
     playerTwo,
-    statsTwo: {
-      1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerTwo),
-      2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerTwo),
-      0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerTwo),
-      overlap: findNumOfOverlap(playerOne, playerTwo),
-    },
+    // statsTwo: {
+    //   1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerTwo),
+    //   2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerTwo),
+    //   0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerTwo),
+    //   overlap: findNumOfOverlap(playerOne, playerTwo),
+    // },
   });
 };

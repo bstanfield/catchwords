@@ -69,12 +69,13 @@ app.get('/free-board', async (req, res) => {
     res.status(200).send({ board: existingBoard[0].words_array, board_id: id });
     return;
   }
-  const words = await getRandomWords();
+  const words = await getRandomWords( );
   const wordsArr = R.pluck('name', words.rows);
   const boardId = await saveBoardId(wordsArr);
   res.status(200).send({ board: wordsArr, board_id: boardId[0] });
 });
 
-addEndpoint('post', 'add-word', 'addWord');
 
+
+addEndpoint('post', 'add-word', 'addWord');
 addEndpoint('post', 'generate-board', 'generateBoard');

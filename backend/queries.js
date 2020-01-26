@@ -33,7 +33,10 @@ const addWordToDb = async (name, difficulty) => {
   }
 }
 
+// for simple free endpoint
 const saveBoardId = async (words) => knex.insert({ words_array: words }).into('free_boards').returning('board_id');
+
+const saveBoardAndPlayerKeys = async (board) => knex.insert(board).into('boards').returning(['board_id', 'board_url']);
 
 const getExistingBoard = async (id) => knex.select().from('free_boards').where({ board_id: id });
 
@@ -64,4 +67,5 @@ module.exports = {
   addBoardToDb,
   saveBoardId,
   getExistingBoard,
+  saveBoardAndPlayerKeys,
 }
