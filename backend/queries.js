@@ -35,10 +35,18 @@ const addWordToDb = async (name, difficulty) => {
 
 // for simple free endpoint
 const saveBoardId = async (words) => knex.insert({ words_array: words }).into('free_boards').returning('board_id');
-
-const saveBoardAndPlayerKeys = async (board) => knex.insert(board).into('boards').returning(['board_id', 'board_url']);
-
 const getExistingBoard = async (id) => knex.select().from('free_boards').where({ board_id: id });
+
+// for app
+const saveBoardAndPlayerKeys = async (board) => {
+  const selectedRows = knex.raw(
+    `SELECT * FROM boards WHERE ts_insert < now()`
+  );
+  console.log('satisfies timestamp: ', selectedRows.rows);
+  return knex.insert(board).into('boards').returning(['board_id', 'board_url']);
+}
+
+const getBoardByBoardUrl = async (url) => knex.select().from('boards').where({ board_url: url });
 
 const postWordScript = R.curry(async (name, difficulty) => knex
   .insert({ name, difficulty })
@@ -68,4 +76,5 @@ module.exports = {
   saveBoardId,
   getExistingBoard,
   saveBoardAndPlayerKeys,
+  getBoardByBoardUrl,
 }

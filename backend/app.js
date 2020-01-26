@@ -79,3 +79,4 @@ app.get('/free-board', async (req, res) => {
 
 addEndpoint('post', 'add-word', 'addWord');
 addEndpoint('post', 'generate-board', 'generateBoard');
+addEndpoint('post', 'get-existing-board', 'getExistingBoard');

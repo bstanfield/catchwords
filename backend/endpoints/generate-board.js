@@ -133,8 +133,9 @@ exports.generateBoard = async (req, res) => {
     words: wordsArr,
     player_one: playerOne,
     player_two: playerTwo,
+    timestamp: new Date(),
   });
-  const { board_id, board_url } = boardIdAndUrl;
+  const { board_id, board_url } = boardIdAndUrl[0];
 
   res.status(200).send({ 
     words: wordsArr,
