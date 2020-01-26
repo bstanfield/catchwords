@@ -39,12 +39,11 @@ const getExistingBoard = async (id) => knex.select().from('free_boards').where({
 
 // for app
 const saveBoardAndPlayerKeys = async (board) => {
-  const selectedRows = knex.raw(
-    `SELECT * FROM boards WHERE ts_insert < now()`
+  await knex.raw(
+    `DELETE FROM boards WHERE timestamp < NOW() - INTERVAL '7 days'`
   );
-  console.log('satisfies timestamp: ', selectedRows.rows);
   return knex.insert(board).into('boards').returning(['board_id', 'board_url']);
-}
+};
 
 const getBoardByBoardUrl = async (url) => knex.select().from('boards').where({ board_url: url });
 
