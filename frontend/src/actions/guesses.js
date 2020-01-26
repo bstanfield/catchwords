@@ -1,8 +1,8 @@
-export const GuessCard = (cardIndex, teamTurn, teamKey) => ({
+export const GuessCard = (cardIndex, teamTurn, board) => ({
   type: 'GUESS_CARD',
   cardIndex,
   teamTurn,
-  teamKey,
+  board,
 });
 
 export const ResetGuesses = () => ({

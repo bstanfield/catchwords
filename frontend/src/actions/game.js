@@ -10,7 +10,7 @@ export const NewGame = () => dispatch => {
 };
 
 export const ResetGame = () => dispatch => {
-  dispatch(NewGame());
+  dispatch(ResetGuesses());
   return {
     type: 'RESET_GAME',
   };

@@ -37,7 +37,11 @@ const store = createStore(
 
 store.subscribe(
   throttle(() => {
-    saveState({ game: store.getState().game });
+    saveState({
+      game: store.getState().game,
+      board: store.getState().board,
+      guesses: store.getState().guesses,
+    });
   }, 1000)
 );
 

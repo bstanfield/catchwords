@@ -58,13 +58,15 @@ const initialState = {
 };
 
 const GuessCard = (state, action) => {
+  console.log('firing guess card', action);
   const stateClone = Object.assign({}, state);
-  stateClone[action.teamTurn][action.cardIndex] =
-    action.teamKey[action.cardIndex];
+  const teamGuessesClone = [...stateClone[action.teamTurn]];
+  const teamKeyClone = [...action.board[action.teamTurn]];
+  teamGuessesClone[action.cardIndex] = teamKeyClone[action.cardIndex];
   // if (stateClone.guesses[action.teamTurn][action.cardIndex] === 2) {
   //   return R.assoc(stateClone.gameOver, true, stateClone);
   // }
-  return stateClone;
+  return R.assoc(action.teamTurn, teamGuessesClone, stateClone);
 };
 
 const ResetGuesses = (state, action) => {

@@ -5,14 +5,14 @@ export const NewWords = words => ({
   words,
 });
 
-export const NewTeam1Key = team1Key => ({
+export const NewTeam1Key = team1 => ({
   type: 'NEW_TEAM1_KEY',
-  team1: team1Key,
+  team1,
 });
 
-export const NewTeam2Key = team2Key => ({
+export const NewTeam2Key = team2 => ({
   type: 'NEW_TEAM2_KEY',
-  team2: team2Key,
+  team2,
 });
 
 export const NewBoard = () => async dispatch => {
@@ -21,6 +21,7 @@ export const NewBoard = () => async dispatch => {
   });
   if (response.status === 200) {
     const json = await response.json();
+    console.log('newBoard', json)
     dispatch(NewWords(json.words));
     dispatch(NewTeam1Key(json.playerOne));
     dispatch(NewTeam2Key(json.playerTwo));

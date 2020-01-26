@@ -41,20 +41,17 @@ const PlayerBoard = props => {
   const { teamTurn } = game;
   const { words } = board;
 
-  console.log('team key', board[teamTurn]);
-  // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
+    const otherTeam = teamTurn === 'team1' ? 'team2' : 'team1';
     return (
       <Card
         key={index}
         name={cardName}
         index={index}
         guess={guesses[teamTurn][index]}
-        otherTeamGuess={
-          guesses[teamTurn === 'team1' ? 'team2' : 'team1'][index]
-        }
+        otherTeamGuess={guesses[otherTeam][index]}
         guessCard={() => {
-          props.GuessCard(index, teamTurn, board[teamTurn]);
+          props.GuessCard(index, teamTurn, board);
         }}
       />
     );
@@ -83,8 +80,6 @@ const PlayerBoard = props => {
     <div>
       <div css={headerDivider}></div>
       <h2>{teamTurn} Player board</h2>
-      {/* If other team has guesses remaining, show option to spectate */}
-      {/* If not, show loss */}
       <Dialog showDialog={assassinated}>
         <CardContent>
           <img src={alert} css={messageIcon} />

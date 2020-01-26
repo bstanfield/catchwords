@@ -7,7 +7,6 @@ import { jsx } from '@emotion/core';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ResetGame } from '../actions/game';
-import { userPropType, userDefaultProp } from '../helpers/propTypes';
 
 function Reset(props) {
   const { user } = props;
@@ -18,10 +17,6 @@ function Reset(props) {
     };
     handleResetGame();
   }, []);
-
-  if (!user.email) {
-    return <Redirect to={{ pathname: '/' }} />;
-  }
 
   return <div />;
 }

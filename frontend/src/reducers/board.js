@@ -84,15 +84,21 @@ const initialState = {
   ],
 };
 
-const NewTeam1Key = (state, action) => {
+const AssignTeam1Key = (state, action) => {
   const stateClone = Object.assign({}, state);
   stateClone.team1 = action.team1;
   return stateClone;
 };
 
-const NewTeam2Key = (state, action) => {
+const AssignTeam2Key = (state, action) => {
   const stateClone = Object.assign({}, state);
   stateClone.team2 = action.team2;
+  return stateClone;
+};
+
+const AssignWords = (state, action) => {
+  const stateClone = Object.assign({}, state);
+  stateClone.words = action.words;
   return stateClone;
 };
 
@@ -102,11 +108,11 @@ export default (state, action) => {
   }
   switch (action.type) {
     case 'NEW_TEAM1_KEY':
-      return NewTeam1Key(action, state);
+      return AssignTeam1Key(state, action);
     case 'NEW_TEAM2_KEY':
-      return NewTeam2Key(action, state);
+      return AssignTeam2Key(state, action);
     case 'NEW_WORDS':
-      return R.assoc('words', action.words, state);
+      return AssignWords(state, action);
     case 'RESET_WORDS':
       return { ...initialState };
     default:
