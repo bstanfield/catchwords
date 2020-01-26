@@ -41,9 +41,9 @@ const PlayerBoard = props => {
   const { teamTurn } = game;
   const { words } = board;
 
+  console.log('team key', board[teamTurn]);
   // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
-    console.log('guesses[teamTurn][index]', guesses[teamTurn][index]);
     return (
       <Card
         key={index}
@@ -76,10 +76,8 @@ const PlayerBoard = props => {
 
   const assassinated = R.includes(2, guesses[teamTurn]);
 
-  // TODO: Disable board when alert shows for win/loss
   // TODO: Move win/loss logic to reducer (?)
-  // TODO: Create dialog box to show winning success and losing
-  // Sometimes props.NewGame() doesn't work
+  // TODO: Sometimes GuessCard will guess card for both teams using incorrect key
 
   return (
     <div>
