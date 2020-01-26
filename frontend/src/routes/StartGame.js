@@ -28,12 +28,15 @@ const roleButton = scale({
 });
 
 const messageIcon = scale({
-  width: '50px',
-  textAlign: 'center',
+  height: 'auto',
+  position: 'absolute',
+  top: ['-30px', '-30px', '-30px', '-40px'],
+  left: '0',
+  right: '0',
   margin: 'auto',
-  position: 'relative',
-  display: 'block',
+  width: ['50px', '50px', '50px', '60px'],
   marginBottom: '15px',
+  zIndex: 100000,
 });
 
 const StartGame = props => {
@@ -65,7 +68,6 @@ const StartGame = props => {
 
   return (
     <div>
-      >
       <Dialog showDialog={true}>
         <CardContent>
           <img src={handWave} css={messageIcon} />

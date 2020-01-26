@@ -115,6 +115,21 @@ ReactDOM.render(
             )}
           />
           <Route
+            exact
+            path="/player-board"
+            render={() => <Redirect to="/" />}
+          />
+          <Route
+            exact
+            path="/game-master-1"
+            render={() => <Redirect to="/" />}
+          />
+          <Route
+            exact
+            path="/game-master-2"
+            render={() => <Redirect to="/" />}
+          />
+          <Route
             path="/player-board/:gameUrl"
             render={() => (
               <App hasDottedBg>
