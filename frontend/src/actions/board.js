@@ -15,7 +15,13 @@ export const NewTeam2Key = team2Key => ({
   team2: team2Key,
 });
 
-export const NewGame = () => async dispatch => {
+export const GuessCard = (cardIndex, teamTurn) => ({
+  type: 'GUESS_CARD',
+  cardIndex,
+  teamTurn,
+});
+
+export const NewBoard = () => async dispatch => {
   const response = await hitAPI('generate-board', {
     password: '5PwhsP3Efoyi6HkgJ7+o0rGUHmU8sY8+yOtqbo+Euvg',
   });

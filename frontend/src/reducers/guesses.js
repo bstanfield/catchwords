@@ -59,11 +59,11 @@ const initialState = {
 
 const GuessCard = (state, action) => {
   const stateClone = Object.assign({}, state);
-  stateClone.guesses[stateClone.teamTurn][action.cardIndex] =
-    stateClone.keys[stateClone.teamTurn][action.cardIndex];
-  if (stateClone.guesses[stateClone.teamTurn][action.cardIndex] === 2) {
-    return R.assoc(stateClone.gameOver, true, stateClone);
-  }
+  stateClone[action.teamTurn][action.cardIndex] =
+    action.teamKey[action.cardIndex];
+  // if (stateClone.guesses[action.teamTurn][action.cardIndex] === 2) {
+  //   return R.assoc(stateClone.gameOver, true, stateClone);
+  // }
   return stateClone;
 };
 
@@ -75,7 +75,7 @@ export default (state, action) => {
     case 'GUESS_CARD':
       return GuessCard(state, action);
     case 'RESET_GUESSES':
-      return { ...initialState };
+      return initialState;
     default:
       return state;
   }

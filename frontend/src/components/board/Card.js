@@ -6,7 +6,6 @@ import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
-import { NewGame } from '../../actions/game';
 import { SetToast } from '../../actions/toaster';
 
 import { colors } from '../../style/theme';
@@ -104,7 +103,7 @@ function mapStateToProps(state) {
   return { toaster: state.toaster };
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ NewGame, SetToast }, dispatch);
+  return bindActionCreators({ SetToast }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Card);

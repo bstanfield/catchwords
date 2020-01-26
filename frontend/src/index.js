@@ -20,7 +20,7 @@ import PlayerBoard from './routes/PlayerBoard';
 import About from './routes/About';
 import NotFound from './routes/NotFound';
 import GameMasterBoard from './routes/GameMasterBoard';
-import Modal from './components/wrappers/Modal';
+import ResetGame from './routes/ResetGame';
 
 import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
@@ -97,6 +97,15 @@ ReactDOM.render(
             render={() => (
               <App hasDottedBg>
                 <PlayerBoard />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/reset"
+            render={() => (
+              <App hasDottedBg>
+                <ResetGame />
               </App>
             )}
           />

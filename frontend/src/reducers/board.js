@@ -94,7 +94,7 @@ export default (state, action) => {
     case 'NEW_TEAM2_KEY':
       return R.assoc('team2', action.team2, state);
     case 'NEW_WORDS':
-      return action.words;
+      return R.assoc('words', action.words, state);
     case 'RESET_WORDS':
       return { ...initialState };
     default:

@@ -5,7 +5,8 @@ import { jsx } from '@emotion/core';
 import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { EndTurn, NewGame, ResetGame } from '../actions/game';
+import { EndTurn, ResetGame } from '../actions/game';
+import { NewBoard } from '../actions/board';
 import { scale, projectCardScale } from '../style/scale';
 import { contentContainer } from '../style/layout';
 import { maxWidth, marginAuto } from '../style/misc';
@@ -26,8 +27,8 @@ const headerDivider = scale({
 });
 
 const GameMasterBoard = props => {
-  const { teamTurn } = props;
-  const { board, keys, guesses, started } = props.game;
+  const { teamTurn, board } = props;
+  const { words } = board;
   const [selectedCards, setSelectedCards] = useState([]);
   // Show which cards are selected here too!
 
@@ -36,7 +37,7 @@ const GameMasterBoard = props => {
       key={index}
       name={cardName}
       index={index}
-      gameKey={keys[teamTurn][index]}
+      gameKey={board[teamTurn][index]}
     />
   );
 
@@ -48,7 +49,7 @@ const GameMasterBoard = props => {
       <div css={headerDivider}></div>
       <h2>{teamTurn} Game master board</h2>
       <div css={genericFlex}>
-        {R.addIndex(R.map)(RenderGameMasterCard, board)}
+        {R.addIndex(R.map)(RenderGameMasterCard, words)}
       </div>
       <Button text="Reset Game" onClickFn={() => props.ResetGame()} />
     </div>
@@ -58,10 +59,11 @@ const GameMasterBoard = props => {
 function mapStateToProps(state) {
   return {
     game: state.game,
+    board: state.board,
   };
 }
 function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ EndTurn, NewGame, ResetGame }, dispatch);
+  return bindActionCreators({ EndTurn, NewBoard, ResetGame }, dispatch);
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(GameMasterBoard);

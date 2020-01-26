@@ -6,9 +6,8 @@ import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SetToast } from '../actions/toaster';
-import { EndTurn } from '../actions/game';
+import { EndTurn, NewGame } from '../actions/game';
 import { GuessCard } from '../actions/guesses';
-import { NewGame } from '../actions/board';
 import { scale, projectCardScale } from '../style/scale';
 import { contentContainer } from '../style/layout';
 import { maxWidth, fullWidth, marginAuto } from '../style/misc';
@@ -38,12 +37,9 @@ const messageIcon = scale({
 });
 
 const PlayerBoard = props => {
-  const { toaster } = props;
-  const { board, keys, guesses, teamTurn, started } = props.game;
-
-  useEffect(() => {
-    props.NewGame();
-  }, []);
+  const { board, guesses } = props;
+  const { teamTurn } = props.game;
+  const { words } = board;
 
   // Probably want to see if someone else has selected it
   const RenderPlayerCard = (cardName, index) => {
@@ -58,7 +54,7 @@ const PlayerBoard = props => {
           guesses[teamTurn === 'team1' ? 'team2' : 'team1'][index]
         }
         guessCard={() => {
-          props.GuessCard(index);
+          props.GuessCard(index, teamTurn, board[teamTurn]);
         }}
       />
     );
@@ -129,7 +125,7 @@ const PlayerBoard = props => {
       </Dialog>
       <div css={noWrapFlex}>
         <div css={genericFlex}>
-          {R.addIndex(R.map)(RenderPlayerCard, board)}
+          {R.addIndex(R.map)(RenderPlayerCard, words)}
         </div>
         <div css={[maxWidth(150), fullWidth]}>
           <Button
@@ -151,8 +147,10 @@ const PlayerBoard = props => {
 
 function mapStateToProps(state) {
   return {
+    board: state.board,
     game: state.game,
     toaster: state.toaster,
+    guesses: state.guesses,
   };
 }
 function mapDispatchToProps(dispatch) {
