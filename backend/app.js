@@ -52,7 +52,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // Standard messages
 app.get('/', (req, res) => {
-    res.json({ info: 'Hello catchword!' })
+    res.json({ info: 'Hello world 👩‍💻👨‍💻' })
 });
 
 // Get words
