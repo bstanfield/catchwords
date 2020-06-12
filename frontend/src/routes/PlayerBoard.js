@@ -34,6 +34,10 @@ const topContainer = scale({
   borderBottom: '2px solid #eeeeee',
 });
 
+const pageFade = scale({
+  // 
+});
+
 const absolutePassTurn = scale({
   backgroundColor: 'green',
   color: 'white',
@@ -175,6 +179,7 @@ const PlayerBoard = ({ match }) => {
 
   return (
     <div>
+      <div css={pageFade}>
       <div css={topContainer}>
         <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'team1' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
         <strong><p style={{ position: 'absolute', top: 2, right: 160, opacity: 0.7 }}>TURN #{turnCount}</p></strong>
@@ -189,6 +194,7 @@ const PlayerBoard = ({ match }) => {
       <button css={buttonStyle(showRemove)} onClick={() => {showRemove === false ? setShowRemove(true) : setShowRemove(false)}} >Edit words mode</button>
       {/* <Button text="End Turn" onClickFn={() => props.EndTurn(selectedCards)} /> */}
       <br />
+    </div>
     </div>
   );
 };
