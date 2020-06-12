@@ -1,12 +1,6 @@
 /** @jsx jsx */
 
 import { jsx } from '@emotion/core';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-
-import { NewGame } from '../../actions/game';
-import { SetToast } from '../../actions/toaster';
-
 import { colors } from '../../style/theme';
 import { scale } from '../../style/scale';
 import { center } from '../../style/text';
@@ -100,9 +94,9 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, guess, removeState, replaceWord, guessCard, selected, toaster, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
+  const { name, index, guess, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
 
-  if (guess === 2 && !toaster.show) {
+  if (guess === 2) {
     props.SetToast({
       text: 'YOU DIED!!!!',
       type: 'alert',
@@ -131,11 +125,4 @@ const Card = props => {
   );
 };
 
-function mapStateToProps(state) {
-  return { toaster: state.toaster };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ NewGame, SetToast }, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Card);
+export default Card;

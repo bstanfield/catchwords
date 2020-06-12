@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { Redirect, withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import { EndTurn, NewGame, GuessCard } from '../actions/game';
 import { scale, projectCardScale } from '../style/scale';
 import { hitAPIEndpoint } from '../helpers/util'
@@ -26,11 +24,21 @@ const getBoard = async (url) => {
   return board;
 }
 
+const primaryContainer = scale({
+  maxWidth: '1000px',
+  margin: 'auto',
+  'h1, h2, h3, h4, p, a': {
+    fontFamily: 'system-ui !important',
+    margin: 0,
+  }
+
+});
+
 const topContainer = scale({
   position: 'relative',
   marginTop: '12px',
-  paddingBottom: '18px',
-  marginBottom: '20px',
+  paddingBottom: '12px',
+  marginBottom: '8px',
   borderBottom: '2px solid #eeeeee',
 });
 
@@ -178,7 +186,7 @@ const PlayerBoard = ({ match }) => {
   //
 
   return (
-    <div>
+    <div css={primaryContainer}>
       <div css={pageFade}>
       <div css={topContainer}>
         <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'team1' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
@@ -198,14 +206,5 @@ const PlayerBoard = ({ match }) => {
     </div>
   );
 };
-
-function mapStateToProps(state) {
-  return {
-    game: state.game,
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators({ EndTurn, NewGame, GuessCard }, dispatch);
-}
 
 export default withRouter(PlayerBoard);

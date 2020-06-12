@@ -42,7 +42,7 @@ const saveBoardAndPlayerKeys = async (board) => {
   await knex.raw(
     `DELETE FROM boards WHERE timestamp < NOW() - INTERVAL '7 days'`
   );
-  return knex.insert(board).into('boards').returning(['board_id', 'board_url']);
+  return knex.insert(board).into('boards').returning(['board_url']);
 };
 
 const getBoardByBoardUrl = async (url) => knex.select().from('boards').where({ board_url: url });
