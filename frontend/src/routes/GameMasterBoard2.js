@@ -19,7 +19,9 @@ const headerDivider = scale({
   marginBottom: ['20px', '20px', '40px'],
 });
 
-const GameMasterBoard = props => {
+
+// BLUE TEAM
+const GameMasterBoard2 = props => {
   const { board, keys, guesses, teamTurn, started } = props.game;
   const [selectedCards, setSelectedCards] = useState([]);
   // Show which cards are selected here too!
@@ -29,7 +31,7 @@ const GameMasterBoard = props => {
       key={index}
       name={cardName}
       index={index}
-      gameKey={keys[teamTurn][index]}
+      gameKey={keys['team2'][index]}
     />
   );
 
@@ -39,7 +41,7 @@ const GameMasterBoard = props => {
   return (
     <div>
       <div css={headerDivider}></div>
-      <h2>{teamTurn} Master board</h2>
+      <h2>Master board (Team 2)</h2>
       <div css={genericFlex}>
         {R.addIndex(R.map)(RenderGameMasterCard, board)}
       </div>
@@ -57,4 +59,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators({ EndTurn, NewGame, ResetGame }, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(GameMasterBoard);
+export default connect(mapStateToProps, mapDispatchToProps)(GameMasterBoard2);

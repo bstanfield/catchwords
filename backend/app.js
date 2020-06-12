@@ -2,7 +2,7 @@ const express = require('express');
 var cors = require('cors')
 const app = express();
 const R = require('ramda');
-const port = 80;
+const port = 3333;
 
 app.use(cors());
 
@@ -52,7 +52,7 @@ app.listen(port, () => console.log(`Listening on port ${port}`));
 
 // Standard messages
 app.get('/', (req, res) => {
-    res.json({ info: 'Hello MIMI!' })
+  res.json({ info: 'Hello world!' })
 });
 
 // Get words
@@ -65,17 +65,16 @@ app.get('/free-board', async (req, res) => {
     if (R.isEmpty(existingBoard)) {
       res.status(404).send({ error: `Board not found with id ${id}!` });
       return;
-    } 
+    }
     res.status(200).send({ board: existingBoard[0].words_array, board_id: id });
     return;
   }
-  const words = await getRandomWords( );
+  console.log('getting random words....');
+  const words = await getRandomWords();
   const wordsArr = R.pluck('name', words.rows);
   const boardId = await saveBoardId(wordsArr);
   res.status(200).send({ board: wordsArr, board_id: boardId[0] });
 });
-
-
 
 addEndpoint('post', 'add-word', 'addWord');
 addEndpoint('post', 'generate-board', 'generateBoard');

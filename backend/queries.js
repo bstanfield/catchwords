@@ -3,10 +3,10 @@ const knex = require('knex')({
   client: 'pg',
   asyncStackTraces: true,
   connection: {
-    host: '35.236.47.240',
-    user: 'postgres',
-    password: 'basicallycodenames',
-    database: 'postgres',
+    host: '127.0.0.1',
+    user: 'ben',
+    password: '',
+    database: 'catchwords_local',
     port: 5432,
   }
 });
@@ -16,13 +16,13 @@ const getWords = async (req, res) => {
   res.status(200).json(results);
 };
 
-const addWordToDb = async (name, difficulty) => { 
+const addWordToDb = async (name, difficulty) => {
   const lowerCasedName = R.toLower(name);
   const retrieved = await knex
     .select('*')
     .from('words')
     .where({ name: lowerCasedName });
-  
+
   if (R.isEmpty(retrieved)) {
     const result = await knex
       .insert({ name: lowerCasedName, difficulty })
@@ -62,8 +62,8 @@ const getRandomWords = async (num) => knex
   );
 
 const addBoardToDb = async () => knex
-    .insert(board)
-    .into('boards');
+  .insert(board)
+  .into('boards');
 
 module.exports = {
   getWords,

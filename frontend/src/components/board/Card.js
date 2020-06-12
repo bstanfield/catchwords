@@ -13,43 +13,97 @@ import { colors } from '../../style/theme';
 import { scale } from '../../style/scale';
 import { center } from '../../style/text';
 import { capitalizeFirst, hexToRgba } from '../../helpers/util';
+import { withRouter } from 'react-router-dom';
 
-const cardContainer = guess =>
+const cardContainer = (colorToDisplay) =>
   scale({
     width: '180px',
-    height: '120px',
+    height: '100px',
     border: '1px solid #333333',
     borderRadius: '3px',
-    backgroundColor:
-      guess === 0
-        ? colors.neutralCard
-        : guess === 1
-        ? colors.correctCard
-        : guess === 2
-        ? colors.assassinCard
-        : 'white',
-    margin: '5px',
+    backgroundColor: colorToDisplay || 'white',
+    margin: '10px 5px',
   });
 
-const cardText = scale({
-  lineHeight: '120px',
+  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses) => {
+    let colorToDisplay = 'white';
+    if (showRed) {
+      if (redTeam[index] === 0) {
+        colorToDisplay = colors.neutralCard;
+      }
+      if (redTeam[index] === 1) {
+        colorToDisplay = colors.correctCard;
+      }
+      if (redTeam[index] === 2) {
+        colorToDisplay = colors.assassinCard;
+      }
+    }
+    if (showBlue) {
+      if (blueTeam[index] === 0) {
+        colorToDisplay = colors.neutralCard;
+      }
+      if (blueTeam[index] === 1) {
+        colorToDisplay = colors.correctCard;
+      }
+      if (blueTeam[index] === 2) {
+        colorToDisplay = colors.assassinCard;
+      }
+    }
+    if (turn === 'team1') {
+      if (redGuesses.includes(index)) {
+        const tileType = redTeam[index];
+        if (tileType === 0) {
+          colorToDisplay = colors.neutralCard;
+        }
+        if (tileType === 1) {
+          colorToDisplay = colors.correctCard;
+        }
+        if (tileType === 2) {
+          colorToDisplay = colors.assassinCard;
+        }
+      }
+    }
+    if (turn === 'team2') {
+      if (blueGuesses.includes(index)) {
+        const tileType = blueTeam[index];
+        if (tileType === 0) {
+          colorToDisplay = colors.neutralCard;
+        }
+        if (tileType === 1) {
+          colorToDisplay = colors.correctCard;
+        }
+        if (tileType === 2) {
+          colorToDisplay = colors.assassinCard;
+        }
+      }
+    }
+    if (correctGuesses.includes(index)) {
+      colorToDisplay = colors.correctCard;
+    }
+    return cardContainer(colorToDisplay);
+  }
+  
+
+const cardText = (size) => scale({
+  fontSize: size || 22,
+  lineHeight: '10px',
 });
 
 const buttonStyle = selected =>
   scale({
     cursor: 'pointer',
     outline: 'none',
-    transition: '300ms background-color',
+    transition: '300ms opacity',
     backgroundColor: selected && colors.neutralCard,
     opacity: 0.8,
     border: selected && '1px solid green',
     '&:hover': {
-      backgroundColor: !selected && 'rgba(0,0,0,0.03)',
+      opacity: 0.7,
     },
   });
 
 const Card = props => {
-  const { name, index, guess, gameKey, guessCard, selected, toaster } = props;
+  const { name, index, guess, gameKey, guessCard, selected, toaster, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
 
   if (guess === 2 && !toaster.show) {
     props.SetToast({
@@ -60,20 +114,24 @@ const Card = props => {
     });
   }
 
-  if (!R.isNil(guess) || !R.isNil(gameKey)) {
-    return (
-      <div css={cardContainer(R.defaultTo(gameKey, guess))} key={index}>
-        <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
-      </div>
-    );
+  // 0 is neutral
+// 1 is correct
+// 2 is assassin
+  let size = 22;
+  if (name) {
+    if (name.length > 0 && name.length < 9) {
+      size = 40;
+    } else if (name.length === 9) {
+      size = 30;
+    }
   }
   return (
     <button
-      css={[cardContainer(), buttonStyle(selected)]}
+      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses), buttonStyle(selected)]}
       key={index}
       onClick={() => guessCard()}
     >
-      <h4 css={[center, cardText]}>{capitalizeFirst(name)}</h4>
+      <h4 css={[center, cardText(size)]}>{capitalizeFirst(name)}</h4> 
     </button>
   );
 };

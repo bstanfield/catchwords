@@ -4,8 +4,6 @@ const body = scale({
   width: '90%',
   maxWidth: ['90%', '90%', '700px', '1020px'],
   margin: 'auto',
-  marginTop: ['40px', '50px', '80px'],
-  marginBottom: ['40px', '50px', '60px', '80px'],
   minHeight: '80vh',
 });
 

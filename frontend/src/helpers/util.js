@@ -118,4 +118,15 @@ export const sortContentByDate = R.curry((key, a, b) => {
   return a > b ? -1 : a < b ? 1 : 0;
 });
 
+export const hitAPIEndpoint = (endpoint, body) => {
+  const response = fetch(`http://34.94.51.71/api/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
+  return response;
+};
+
 // TODO: Why does module.exports not work :(

@@ -17,10 +17,14 @@ import rootReducers from './reducers';
 
 import App from './App';
 import PlayerBoard from './routes/PlayerBoard';
+import SimpleBoard from './routes/SimpleBoard';
 import About from './routes/About';
 import NotFound from './routes/NotFound';
 import GameMasterBoard from './routes/GameMasterBoard';
+import GameMasterBoard1 from './routes/GameMasterBoard1';
+import GameMasterBoard2 from './routes/GameMasterBoard2';
 import Modal from './components/wrappers/Modal';
+import New from './routes/New';
 
 import * as serviceWorker from './serviceWorker';
 import { loadState, saveState } from './localStorage';
@@ -91,9 +95,18 @@ ReactDOM.render(
     <Router>
       <Scroll>
         <Switch>
+        <Route
+            exact
+            path="/new"
+            render={() => (
+              <App hasDottedBg>
+                <New />
+              </App>
+            )}
+          />
           <Route
             exact
-            path="/"
+            path="/board/:id"
             render={() => (
               <App hasDottedBg>
                 <PlayerBoard />
@@ -102,10 +115,35 @@ ReactDOM.render(
           />
           <Route
             exact
+            path="/simple"
+            render={() => (
+              <SimpleBoard />
+            )}
+          />
+          <Route
+            exact
             path="/game-master"
             render={() => (
               <App hasDottedBg>
                 <GameMasterBoard />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/game-master-1"
+            render={() => (
+              <App hasDottedBg>
+                <GameMasterBoard1 />
+              </App>
+            )}
+          />
+          <Route
+            exact
+            path="/game-master-2"
+            render={() => (
+              <App hasDottedBg>
+                <GameMasterBoard2 />
               </App>
             )}
           />

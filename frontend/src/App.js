@@ -219,14 +219,12 @@ const App = props => {
   const { children, hasDottedBg } = props;
 
   return (
-    <div css={hasDottedBg && dottedBg}>
-      <Nav />
+    <div>
       <div css={body}>
         {children}
         <Toaster />
         <Global styles={globalStyles} />
       </div>
-      <Footer />
     </div>
   );
 };

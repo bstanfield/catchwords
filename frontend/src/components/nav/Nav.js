@@ -39,7 +39,7 @@ const innerContainer = scale({
 
 const linkStyle = scale({
   textDecoration: 'none !important',
-  fontFamily: 'AtlasGrotesk-Medium',
+  fontFamily: 'system-ui',
   fontWeight: 500,
   marginRight: '10px',
   outline: 'none',
@@ -78,11 +78,14 @@ const Nav = props => {
             <h4 css={homeLink}>catchwords</h4>
           </Link>
           <div css={genericFlex}>
-            <Link to="/about" css={[noStyleLink, linkStyle]}>
-              About
+            <Link to="/" css={[noStyleLink, linkStyle]}>
+              Main Board
             </Link>
-            <Link to="/game-master" css={[noStyleLink, linkStyle]}>
-              Game Master
+            <Link to="/game-master-1" css={[noStyleLink, linkStyle]}>
+              Master (Red team)
+            </Link>
+            <Link to="/game-master-2" css={[noStyleLink, linkStyle]}>
+              Master (Blue team)
             </Link>
           </div>
         </div>
