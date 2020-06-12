@@ -1,10 +1,8 @@
 /** @jsx jsx */
 
 import { jsx } from '@emotion/core';
-import { colors } from '../../style/theme';
-import { scale } from '../../style/scale';
-import { center } from '../../style/text';
-import { capitalizeFirst } from '../../helpers/util';
+import { scale } from '../style/scale';
+import { capitalizeFirst, colors } from '../helpers/util';
 
 const cardContainer = (colorToDisplay) =>
   scale({
@@ -76,12 +74,14 @@ const cardContainer = (colorToDisplay) =>
   
 
 const cardText = (size) => scale({
+  textAlign: 'center',
   fontSize: size || 22,
   lineHeight: '10px',
 });
 
 const buttonStyle = selected =>
   scale({
+    position: 'relative',
     cursor: 'pointer',
     outline: 'none',
     transition: '300ms opacity',
@@ -89,7 +89,7 @@ const buttonStyle = selected =>
     opacity: 0.8,
     border: selected && '1px solid green',
     '&:hover': {
-      opacity: 0.7,
+      opacity: 0.5,
     },
   });
 
@@ -119,8 +119,8 @@ const Card = props => {
       key={index}
       onClick={() => {removeState === false ? guessCard() : replaceWord()}}
     >
-      <h4 css={[center, cardText(size)]}>{capitalizeFirst(name)}</h4> 
-      {removeState && <p style={{ marginBottom: '-22px' }}>Swap</p>}
+      <h4 css={[cardText(size)]}>{capitalizeFirst(name)}</h4> 
+      {removeState && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
     </button>
   );
 };

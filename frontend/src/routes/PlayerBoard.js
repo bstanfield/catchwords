@@ -1,18 +1,17 @@
 /** @jsx jsx */
 
 import { useEffect, useState } from 'react';
-import { Redirect, withRouter, Link } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
-import { EndTurn, NewGame, GuessCard } from '../actions/game';
-import { scale, projectCardScale } from '../style/scale';
+import { scale } from '../style/scale';
 import { hitAPIEndpoint } from '../helpers/util'
 
 import {
   genericFlex,
 } from '../style/flex';
 
-import Card from '../components/board/Card';
+import Card from '../components/Card';
 
 const defaultGuessState = [];
 
@@ -30,8 +29,10 @@ const primaryContainer = scale({
   'h1, h2, h3, h4, p, a': {
     fontFamily: 'system-ui !important',
     margin: 0,
+  },
+  h4: {
+    fontWeight: 500,
   }
-
 });
 
 const topContainer = scale({
