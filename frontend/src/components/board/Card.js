@@ -1,8 +1,6 @@
 /** @jsx jsx */
 
-import { useEffect, useState } from 'react';
 import { jsx } from '@emotion/core';
-import * as R from 'ramda';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 
@@ -12,17 +10,16 @@ import { SetToast } from '../../actions/toaster';
 import { colors } from '../../style/theme';
 import { scale } from '../../style/scale';
 import { center } from '../../style/text';
-import { capitalizeFirst, hexToRgba } from '../../helpers/util';
-import { withRouter } from 'react-router-dom';
+import { capitalizeFirst } from '../../helpers/util';
 
 const cardContainer = (colorToDisplay) =>
   scale({
-    width: '180px',
-    height: '100px',
+    width: '185px',
+    height: '85px',
     border: '1px solid #333333',
     borderRadius: '3px',
     backgroundColor: colorToDisplay || 'white',
-    margin: '10px 5px',
+    margin: '5px 5px',
   });
 
   const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses) => {
@@ -103,7 +100,7 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, guess, gameKey, guessCard, selected, toaster, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
+  const { name, index, guess, removeState, replaceWord, guessCard, selected, toaster, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
 
   if (guess === 2 && !toaster.show) {
     props.SetToast({
@@ -114,9 +111,6 @@ const Card = props => {
     });
   }
 
-  // 0 is neutral
-// 1 is correct
-// 2 is assassin
   let size = 22;
   if (name) {
     if (name.length > 0 && name.length < 9) {
@@ -129,9 +123,10 @@ const Card = props => {
     <button
       css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses), buttonStyle(selected)]}
       key={index}
-      onClick={() => guessCard()}
+      onClick={() => {removeState === false ? guessCard() : replaceWord()}}
     >
       <h4 css={[center, cardText(size)]}>{capitalizeFirst(name)}</h4> 
+      {removeState && <p style={{ marginBottom: '-22px' }}>Swap</p>}
     </button>
   );
 };

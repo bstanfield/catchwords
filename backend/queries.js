@@ -65,6 +65,11 @@ const addBoardToDb = async () => knex
   .insert(board)
   .into('boards');
 
+const updateBoardWord = async (words, board_url) => knex
+  .update({ words })
+  .from('boards')
+  .where({ board_url });
+
 module.exports = {
   getWords,
   addWordToDb,
@@ -76,4 +81,5 @@ module.exports = {
   getExistingBoard,
   saveBoardAndPlayerKeys,
   getBoardByBoardUrl,
+  updateBoardWord,
 }

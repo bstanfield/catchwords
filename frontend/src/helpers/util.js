@@ -119,7 +119,7 @@ export const sortContentByDate = R.curry((key, a, b) => {
 });
 
 export const hitAPIEndpoint = (endpoint, body) => {
-  const response = fetch(`http://34.94.51.71/api/${endpoint}`, {
+  const response = fetch(`http://localhost:3333/api/${endpoint}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
