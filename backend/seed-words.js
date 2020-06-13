@@ -1,4 +1,5 @@
 const csv = require('csv-parser');
+require('dotenv').config();
 const fs = require('fs');
 const knex = require('knex')({
   client: 'pg',
@@ -7,7 +8,7 @@ const knex = require('knex')({
     host: '127.0.0.1',
     user: 'ben',
     password: '',
-    database: 'catchwords_migration_test',
+    database: process.env.DATABASE,
     port: 5432,
   }
 });

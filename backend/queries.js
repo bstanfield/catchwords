@@ -6,13 +6,13 @@ const knex = require('knex')({
     host: '127.0.0.1',
     user: 'ben',
     password: '',
-    database: 'catchwords_local',
+    database: process.env.DATABASE,
     port: 5432,
   }
 });
 
 const getWords = async (req, res) => {
-  const resFutilts = await knex.select('*').from('words');
+  const results = await knex.select('*').from('words');
   res.status(200).json(results);
 };
 
