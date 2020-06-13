@@ -7,7 +7,7 @@ const AddWord = () => {
   const addWordToDb = async () => {
     const response = await hitAPIEndpoint('add-word', {
       name: word,
-      password: '5PwhsP3Efoyi6HkgJ7+o0rGUHmU8sY8+yOtqbo+Euvg',
+      password: 'buckslake',
     });
     console.log('response: ', response);
     if (response.status === 422) {

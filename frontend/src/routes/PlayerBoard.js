@@ -17,7 +17,7 @@ const defaultGuessState = [];
 
 const getBoard = async (url) => {
   const board = await hitAPIEndpoint('get-existing-board', {
-    password: '5PwhsP3Efoyi6HkgJ7+o0rGUHmU8sY8+yOtqbo+Euvg',
+    password: 'buckslake',
     board_url: url,
   });
   return board;
@@ -122,7 +122,7 @@ const PlayerBoard = ({ match }) => {
 
   const replaceWord = async (index, url, board) => {
     const response = await hitAPIEndpoint('swap-word-on-existing-board', {
-      password: '5PwhsP3Efoyi6HkgJ7+o0rGUHmU8sY8+yOtqbo+Euvg',
+      password: 'buckslake',
       board_url: url,
       index,
     });
