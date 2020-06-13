@@ -6,13 +6,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "migrate": "db-migrate up"
+    "migrate": "db-migrate up",
+    "seed": "node seed-words.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
     "cors": "^2.8.5",
+    "csv-parser": "^2.3.3",
     "db-migrate": "^0.11.11",
     "db-migrate-pg": "^1.2.2",
     "express": "^4.17.1",

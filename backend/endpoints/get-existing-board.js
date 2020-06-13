@@ -1,6 +1,6 @@
 const R = require('ramda');
 const { getBoardByBoardUrl, matchPassword } = require('../queries');
-const { toCamel } = require('../generalFunctions');
+const { toCamel } = require('../util');
 exports.getExistingBoard = async (req, res) => {
   const { password, board_url } = req.body;
   if (!password || !board_url) {

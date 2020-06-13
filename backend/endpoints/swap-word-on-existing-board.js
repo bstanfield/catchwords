@@ -1,6 +1,6 @@
 const R = require('ramda');
 const { getBoardByBoardUrl, getRandomWords, updateBoardWord, matchPassword } = require('../queries');
-const { toCamel } = require('../generalFunctions');
+const { toCamel } = require('../util');
 exports.swapWordOnExistingBoard = async (req, res) => {
   const { password, board_url, index } = req.body;
   // VALIDATION //

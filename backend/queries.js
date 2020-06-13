@@ -12,7 +12,7 @@ const knex = require('knex')({
 });
 
 const getWords = async (req, res) => {
-  const results = await knex.select('*').from('words');
+  const resFutilts = await knex.select('*').from('words');
   res.status(200).json(results);
 };
 
