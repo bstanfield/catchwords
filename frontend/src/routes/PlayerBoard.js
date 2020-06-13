@@ -37,28 +37,46 @@ const primaryContainer = scale({
 
 const topContainer = scale({
   position: 'relative',
-  marginTop: '12px',
+  paddingTop: '12px',
   paddingBottom: '12px',
-  marginBottom: '8px',
-  borderBottom: '2px solid #eeeeee',
+  marginBottom: '16px',
+  borderBottom: '2px solid #e0e0e0',
 });
 
 const pageFade = scale({
-  // 
+  position: 'absolute',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  width: '100vw',
+  height: '100%',
+  zIndex: 9999,
 });
 
-const absolutePassTurn = scale({
+const modal = scale({
+  borderRadius: '6px',
+  fontFamily: 'system-ui',
+  backgroundColor: 'white',
+  padding: '20px 40px'
+});
+
+const absolutePassTurn = (guesses) => scale({
   backgroundColor: 'green',
   color: 'white',
   border: 'none',
-  padding: '8px 18px',
+  padding: '10px 20px',
   cursor: 'pointer',
   borderRadius: '3px',
   margin: '20px 20px 20px 0',
-  fontSize: '20px',
+  fontSize: '22px',
   position: 'absolute',
-  top: '-22px',
-  right: 0,
+  top: '-12px', 
+  right: '-12px',
+  opacity: guesses > 0 ? 1 : 0.5,
+  '&:hover': {
+    opacity: 1,
+  }
 });
 
 const buttonStyle = (showing) => scale({
@@ -86,10 +104,21 @@ const PlayerBoard = ({ match }) => {
   const [showRed, setShowRed] = useState(false);
   const [turnCount, incrementTurnCount] = useState(1);
   const [correctGuesses, setCorrectGuesses] = useState([]);
-  // const { board, keys, guesses, teamTurn, started } = props.game;
+  const [correctGuessesByBlueTeam, setCorrectGuessesByBlueTeam] = useState([]);
+  const [correctGuessesByRedTeam, setCorrectGuessesByRedTeam] = useState([]);
   const [selectedCards, setSelectedCards] = useState([]);
   const [showRemove, setShowRemove] = useState(false);
   const [refreshCard, triggerRefreshCard] = useState(0);
+  const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
+  const [showModal, setShowModal] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
+
+  const triggerModal = () => {
+    setShowModal(true);
+    setTimeout(() => {
+      setShowModal(false);
+    }, 3000);
+  };
 
   const replaceWord = async (index, url, board) => {
     const response = await hitAPIEndpoint('swap-word-on-existing-board', {
@@ -116,9 +145,17 @@ const PlayerBoard = ({ match }) => {
     if (turn === 'team1') {
       const newArr = R.concat(redGuesses, [index]);
       setRedGuesses(newArr); 
+      if (tileType === 1) {
+        const newArr = R.concat(correctGuessesByBlueTeam, [index]);
+        setCorrectGuessesByBlueTeam(newArr);
+      }
     } else {
       const newArr = R.concat(blueGuesses, [index]);
       setBlueGuesses(newArr); 
+      if (tileType === 1) {
+        const newArr = R.concat(correctGuessesByRedTeam, [index]);
+        setCorrectGuessesByRedTeam(newArr);
+      }
     }
   };
 
@@ -154,6 +191,7 @@ const PlayerBoard = ({ match }) => {
 
     return (
       <Card
+        darkMode={darkMode}
         key={index}
         refreshCard={refreshCard}
         name={cardName}
@@ -166,6 +204,8 @@ const PlayerBoard = ({ match }) => {
         redGuesses={redGuesses}
         blueGuesses={blueGuesses}
         correctGuesses={correctGuesses}
+        correctGuessesByBlueTeam={correctGuessesByBlueTeam}
+        correctGuessesByRedTeam={correctGuessesByRedTeam}
         turn={turn}
         selected={selected}
         select={() => {
@@ -175,6 +215,7 @@ const PlayerBoard = ({ match }) => {
         }}
         guessCard={() => {
           attemptGuess(index);
+          setCurrentTurnGuesses(currentTurnGuesses + 1);
         }}
         replaceWord={() => {
           replaceWord(index, match.params.id, board);
@@ -187,23 +228,32 @@ const PlayerBoard = ({ match }) => {
   //
 
   return (
-    <div css={primaryContainer}>
-      <div css={pageFade}>
-      <div css={topContainer}>
-        <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'team1' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
-        <strong><p style={{ position: 'absolute', top: 2, right: 160, opacity: 0.7 }}>TURN #{turnCount}</p></strong>
-        <button css={absolutePassTurn} onClick={() => {
-          setTurn(turn === 'team1' ? 'team2' : 'team1')
-          incrementTurnCount(turnCount + 1);
-        }}>End turn</button>
-       </div>
-      <div css={genericFlex}>{R.addIndex(R.map)(RenderPlayerCard, board)}</div>
-      <button css={buttonStyle(showBlue)} onClick={() => {showBlue === false ? toggleMaster('blue') : toggleMaster('reset')}} >Blue leader cheatsheet</button>
-      <button css={buttonStyle(showRed)} onClick={() => {showRed === false ? toggleMaster('red') : toggleMaster('reset')}} >Red leader cheatsheet</button>
-      <button css={buttonStyle(showRemove)} onClick={() => {showRemove === false ? setShowRemove(true) : setShowRemove(false)}} >Edit words mode</button>
-      {/* <Button text="End Turn" onClickFn={() => props.EndTurn(selectedCards)} /> */}
-      <br />
-    </div>
+    <div>
+      {showModal && 
+        <div css={pageFade}>
+          <div css={modal}>
+            <h1>{turn === 'team2' ? '🔷 Blue Leader' : '🔴 Red Leader'}: Give a clue!</h1>
+          </div>
+        </div>
+      }
+      <div css={primaryContainer}>
+        <div css={topContainer}>
+          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'team1' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
+          <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{turnCount}</p></strong>
+          <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
+            setTurn(turn === 'team1' ? 'team2' : 'team1')
+            incrementTurnCount(turnCount + 1);
+            setCurrentTurnGuesses(0);
+            triggerModal();
+          }}>End turn</button>
+        </div>
+        <div css={genericFlex}>{R.addIndex(R.map)(RenderPlayerCard, board)}</div>
+        <button css={buttonStyle(showRed)} onClick={() => {showRed === false ? toggleMaster('red') : toggleMaster('reset')}} >🔴 Red leader cheatsheet</button>
+        <button css={buttonStyle(showBlue)} onClick={() => {showBlue === false ? toggleMaster('blue') : toggleMaster('reset')}} >🔷 Blue leader cheatsheet</button>
+        <button css={buttonStyle(showRemove)} onClick={() => {showRemove === false ? setShowRemove(true) : setShowRemove(false)}} >Edit words mode</button>
+        {/* <Button text="End Turn" onClickFn={() => props.EndTurn(selectedCards)} /> */}
+        <br />
+      </div>
     </div>
   );
 };

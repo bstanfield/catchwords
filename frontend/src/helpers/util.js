@@ -21,9 +21,9 @@ export const colors = {
   errorRed: '#e93710',
   lightBorder: '#BCBCBC',
   veryLightGray: 'rgba(0,0,0,0.1)',
-  neutralCard: 'grey',
-  correctCard: '#2ef72e',
-  assassinCard: 'red',
+  neutralCard: '#A8BAC3',
+  correctCard: '#61ea44',
+  assassinCard: '#E14938',
 };
 
 export const hitAPIEndpoint = (endpoint, body) => {

@@ -16,7 +16,7 @@ const getWords = async (req, res) => {
   res.status(200).json(results);
 };
 
-const addWordToDb = async (name, difficulty) => {
+const addWordToDb = async (name) => {
   const lowerCasedName = R.toLower(name);
   const retrieved = await knex
     .select('*')
@@ -25,7 +25,7 @@ const addWordToDb = async (name, difficulty) => {
 
   if (R.isEmpty(retrieved)) {
     const result = await knex
-      .insert({ name: lowerCasedName, difficulty })
+      .insert({ name: lowerCasedName })
       .into('words');
     return result;
   } else {

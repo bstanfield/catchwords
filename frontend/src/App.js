@@ -6,6 +6,7 @@ import {
 } from "react-router-dom";
 import New from './routes/New';
 import PlayerBoard from "./routes/PlayerBoard";
+import AddWord from "./routes/AddWord";
 
 export default function App() {
   return (
@@ -19,6 +20,9 @@ export default function App() {
           </Route>
           <Route path="/board/:id">
             <PlayerBoard />
+          </Route>
+          <Route path="/words/add">
+            <AddWord />
           </Route>
         </Switch>
     </Router>

@@ -2,7 +2,7 @@ const R = require('ramda');
 const { matchPassword, addWordToDb } = require('../queries');
 
 exports.addWord = async (req, res) => {
-  const { name, difficulty, password } = req.body;
+  const { name, password } = req.body;
   if (!password) {
     res.status(422).send({ error: 'permission denied (needs pw)' });
     return;
@@ -13,9 +13,9 @@ exports.addWord = async (req, res) => {
     return;
   }
 
-  const result = await addWordToDb(name, difficulty);
+  const result = await addWordToDb(name);
   if (!result) {
-    res.status(422).send( { err: `word ${name} already exists.`});
+    res.status(422).send({ err: `word ${name} already exists.` });
     return;
   }
   res.status(200).send({ success: `word ${name} added` });

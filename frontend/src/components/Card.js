@@ -12,61 +12,44 @@ const cardContainer = (colorToDisplay) =>
     borderRadius: '3px',
     backgroundColor: colorToDisplay || 'white',
     margin: '5px 5px',
+    boxShadow: '0 2px 5px 0 #cacaca'
   });
 
-  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses) => {
+  const setCardColor = (condition) => {
+    switch (condition) {
+      case 0:
+        return colors.neutralCard;
+      case 1:
+        return colors.correctCard;
+      case 2:
+        return colors.assassinCard;
+      default:
+        return colors.neutralCard;
+    }
+  }
+
+  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, darkMode) => {
     let colorToDisplay = 'white';
     if (showRed) {
-      if (redTeam[index] === 0) {
-        colorToDisplay = colors.neutralCard;
-      }
-      if (redTeam[index] === 1) {
-        colorToDisplay = colors.correctCard;
-      }
-      if (redTeam[index] === 2) {
-        colorToDisplay = colors.assassinCard;
-      }
+      colorToDisplay = setCardColor(redTeam[index]);
     }
     if (showBlue) {
-      if (blueTeam[index] === 0) {
-        colorToDisplay = colors.neutralCard;
-      }
-      if (blueTeam[index] === 1) {
-        colorToDisplay = colors.correctCard;
-      }
-      if (blueTeam[index] === 2) {
-        colorToDisplay = colors.assassinCard;
-      }
+      colorToDisplay = setCardColor(blueTeam[index]);
     }
     if (turn === 'team1') {
       if (redGuesses.includes(index)) {
         const tileType = redTeam[index];
-        if (tileType === 0) {
-          colorToDisplay = colors.neutralCard;
-        }
-        if (tileType === 1) {
-          colorToDisplay = colors.correctCard;
-        }
-        if (tileType === 2) {
-          colorToDisplay = colors.assassinCard;
-        }
+        colorToDisplay = setCardColor(tileType);
       }
     }
     if (turn === 'team2') {
       if (blueGuesses.includes(index)) {
         const tileType = blueTeam[index];
-        if (tileType === 0) {
-          colorToDisplay = colors.neutralCard;
-        }
-        if (tileType === 1) {
-          colorToDisplay = colors.correctCard;
-        }
-        if (tileType === 2) {
-          colorToDisplay = colors.assassinCard;
-        }
+        colorToDisplay = setCardColor(tileType);
       }
     }
-    if (correctGuesses.includes(index)) {
+    // Green guesses persist between turns, but toggles off when cheatsheet is on
+    if (correctGuesses.includes(index) && !showBlue && !showRed) {
       colorToDisplay = colors.correctCard;
     }
     return cardContainer(colorToDisplay);
@@ -86,41 +69,37 @@ const buttonStyle = selected =>
     outline: 'none',
     transition: '300ms opacity',
     backgroundColor: selected && colors.neutralCard,
-    opacity: 0.8,
+    opacity: 1,
+    color: '#333333',
     border: selected && '1px solid green',
     '&:hover': {
-      opacity: 0.5,
+      opacity: 0.8,
     },
   });
 
 const Card = props => {
-  const { name, index, guess, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses } = props;
+  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam, darkMode } = props;
 
-  if (guess === 2) {
-    props.SetToast({
-      text: 'YOU DIED!!!!',
-      type: 'alert',
-      buttonAction: () => props.NewGame(),
-      buttonText: 'New Game',
-    });
-  }
-
-  let size = 22;
+  let size = 28;
   if (name) {
-    if (name.length > 0 && name.length < 9) {
-      size = 40;
-    } else if (name.length === 9) {
-      size = 30;
+    if (name.length > 0 && name.length <= 8) {
+      size = 38;
+    } else if (name.length > 8 && name.length <= 12) {
+      size = 32;
+    } else if (name.length > 12) {
+      size = 24;
     }
   }
   return (
     <button
-      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses), buttonStyle(selected)]}
+      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, darkMode), buttonStyle(selected)]}
       key={index}
       onClick={() => {removeState === false ? guessCard() : replaceWord()}}
     >
       <h4 css={[cardText(size)]}>{capitalizeFirst(name)}</h4> 
       {removeState && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
+      {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}>🔷</p>}
+      {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}>🔴</p>}
     </button>
   );
 };
