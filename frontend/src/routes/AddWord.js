@@ -1,5 +1,4 @@
-import React, { useEffect, useState } from 'react';
-import { Redirect } from 'react-router-dom';
+import React, { useState } from 'react';
 import { hitAPIEndpoint } from '../helpers/util'
 
 const AddWord = () => {

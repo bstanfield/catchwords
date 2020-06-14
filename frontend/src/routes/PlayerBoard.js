@@ -5,7 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
 import { scale } from '../style/scale';
-import { hitAPIEndpoint } from '../helpers/util'
+import { hitAPIEndpoint, triggerModal, replaceWord } from '../helpers/util'
 
 import {
   genericFlex,
@@ -91,43 +91,33 @@ const buttonStyle = (showing) => scale({
 });
 
 const PlayerBoard = ({ match }) => {
+  // STATE -----
+  // Board state
   const [board, setBoard] = useState([]);
-  const [turn, setTurn] = useState('team1'); // team1 = red
+  const [turn, setTurn] = useState('red');
+  const [turnCount, incrementTurnCount] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
+
+  // Card state
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [showRemove, setShowRemove] = useState(false);
+  const [refreshCard, triggerRefreshCard] = useState(0);
+  const [correctGuesses, setCorrectGuesses] = useState([]);
+
+  // Team state
   const [redTeam, setRedTeam] = useState([]);
   const [blueTeam, setBlueTeam] = useState([]);
   const [blueGuesses, setBlueGuesses] = useState(defaultGuessState);
   const [redGuesses, setRedGuesses] = useState(defaultGuessState);
   const [showBlue, setShowBlue] = useState(false);
   const [showRed, setShowRed] = useState(false);
-  const [turnCount, incrementTurnCount] = useState(1);
-  const [correctGuesses, setCorrectGuesses] = useState([]);
   const [correctGuessesByBlueTeam, setCorrectGuessesByBlueTeam] = useState([]);
   const [correctGuessesByRedTeam, setCorrectGuessesByRedTeam] = useState([]);
-  const [selectedCards, setSelectedCards] = useState([]);
-  const [showRemove, setShowRemove] = useState(false);
-  const [refreshCard, triggerRefreshCard] = useState(0);
-  const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
-  const [showModal, setShowModal] = useState(false);
-  const [darkMode, setDarkMode] = useState(true);
-
-  const triggerModal = () => {
-    setShowModal(true);
-    setTimeout(() => {
-      setShowModal(false);
-    }, 3000);
-  };
-
-  const replaceWord = async (index, url, board) => {
-    const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
-    const updatedBoard = await (response.json());
-    const newWord = updatedBoard.word;
-    board.splice(index, 1, newWord);
-    setBoard(board);
-    triggerRefreshCard(refreshCard + 1);
-  }
+  // END STATE -----
 
   const attemptGuess = (index) => {
-    const tileType = turn === 'team1'
+    const tileType = turn === 'red'
       ? redTeam[index]
       : blueTeam[index];
     if (tileType === 1) {
@@ -135,7 +125,7 @@ const PlayerBoard = ({ match }) => {
       setCorrectGuesses(newArr);
     }
 
-    if (turn === 'team1') {
+    if (turn === 'red') {
       const newArr = R.concat(redGuesses, [index]);
       setRedGuesses(newArr); 
       if (tileType === 1) {
@@ -184,7 +174,6 @@ const PlayerBoard = ({ match }) => {
 
     return (
       <Card
-        darkMode={darkMode}
         key={index}
         refreshCard={refreshCard}
         name={cardName}
@@ -211,14 +200,11 @@ const PlayerBoard = ({ match }) => {
           setCurrentTurnGuesses(currentTurnGuesses + 1);
         }}
         replaceWord={() => {
-          replaceWord(index, match.params.id, board);
+          replaceWord(index, match.params.id, board, { setBoard, refreshCard, triggerRefreshCard });
         }}
       />
     );
   };
-
-  // can guess as many as you want - need to store selected cards until turn ends
-  //
 
   return (
     <div>
@@ -231,13 +217,13 @@ const PlayerBoard = ({ match }) => {
       }
       <div css={primaryContainer}>
         <div css={topContainer}>
-          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'team1' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
+          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'red' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
           <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{turnCount}</p></strong>
           <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
-            setTurn(turn === 'team1' ? 'team2' : 'team1')
+            setTurn(turn === 'red' ? 'blue' : 'red')
             incrementTurnCount(turnCount + 1);
             setCurrentTurnGuesses(0);
-            triggerModal();
+            triggerModal(setShowModal);
           }}>End turn</button>
         </div>
         <div css={genericFlex}>{R.addIndex(R.map)(RenderPlayerCard, board)}</div>

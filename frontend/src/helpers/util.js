@@ -37,4 +37,21 @@ export const hitAPIEndpoint = (method, endpoint, body) => {
   return response;
 };
 
+// Helper fns
+export const triggerModal = (setShowModal) => {
+  setShowModal(true);
+  setTimeout(() => {
+    setShowModal(false);
+  }, 3000);
+};
+
+export const replaceWord = async (index, url, board, state) => {
+  const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
+  const updatedBoard = await (response.json());
+  const newWord = updatedBoard.word;
+  board.splice(index, 1, newWord);
+  state.setBoard(board);
+  state.triggerRefreshCard(state.refreshCard + 1);
+}
+
 // TODO: Why does module.exports not work :(

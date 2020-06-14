@@ -28,7 +28,7 @@ const cardContainer = (colorToDisplay) =>
     }
   }
 
-  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, darkMode) => {
+  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ) => {
     let colorToDisplay = 'white';
     if (showRed) {
       colorToDisplay = setCardColor(redTeam[index]);
@@ -36,13 +36,13 @@ const cardContainer = (colorToDisplay) =>
     if (showBlue) {
       colorToDisplay = setCardColor(blueTeam[index]);
     }
-    if (turn === 'team1') {
+    if (turn === 'red') {
       if (redGuesses.includes(index)) {
         const tileType = redTeam[index];
         colorToDisplay = setCardColor(tileType);
       }
     }
-    if (turn === 'team2') {
+    if (turn === 'blue') {
       if (blueGuesses.includes(index)) {
         const tileType = blueTeam[index];
         colorToDisplay = setCardColor(tileType);
@@ -78,7 +78,7 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam, darkMode } = props;
+  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam } = props;
 
   let size = 28;
   if (name) {
@@ -92,7 +92,7 @@ const Card = props => {
   }
   return (
     <button
-      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, darkMode), buttonStyle(selected)]}
+      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ), buttonStyle(selected)]}
       key={index}
       onClick={() => {removeState === false ? guessCard() : replaceWord()}}
     >

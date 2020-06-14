@@ -16,7 +16,7 @@ exports.swapWord = async (req, res) => {
   const randomWords = await getRandomWords();
   const wordToAdd = randomWords.rows[0].name;
   words.splice(index, 1, wordToAdd);
-  await updateBoardWord(words, retrievedBoard);
+  await updateBoardWord(words, board);
   res.status(200).send({
     board: toCamel(retrievedBoard),
     word: wordToAdd,
