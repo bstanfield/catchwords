@@ -1,7 +1,6 @@
 const express = require('express');
 var cors = require('cors')
 const app = express();
-const R = require('ramda');
 const port = 3333;
 
 app.use(cors());
@@ -20,7 +19,6 @@ app.use(
   })
 );
 
-// Confirms server is running in console
 app.listen(port, () => console.log(`Listening on port localhost:${port}`));
 
 // Standard messages

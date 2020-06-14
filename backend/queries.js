@@ -1,5 +1,4 @@
 require('dotenv').config();
-const R = require('ramda');
 const knex = require('knex')({
   client: 'pg',
   asyncStackTraces: true,
@@ -12,19 +11,14 @@ const knex = require('knex')({
   }
 });
 
-const getWords = async (req, res) => {
-  const results = await knex.select('*').from('words');
-  res.status(200).json(results);
-};
-
 const addWordToDb = async (name) => {
-  const lowerCasedName = R.toLower(name);
+  const lowerCasedName = name.toLowerCase();
   const retrieved = await knex
     .select('*')
     .from('words')
     .where({ name: lowerCasedName });
 
-  if (R.isEmpty(retrieved)) {
+  if (!retrieved.length) {
     const result = await knex
       .insert({ name: lowerCasedName })
       .into('words');
@@ -34,12 +28,10 @@ const addWordToDb = async (name) => {
   }
 }
 
-// for simple free endpoint
-const saveBoardId = async (words) => knex.insert({ words_array: words }).into('free_boards').returning('board_id');
 const getExistingBoard = async (id) => knex.select().from('free_boards').where({ board_id: id });
 
-// for app
 const saveBoardAndPlayerKeys = async (board) => {
+  // deletes boards older than 1 week
   await knex.raw(
     `DELETE FROM boards WHERE timestamp < NOW() - INTERVAL '7 days'`
   );
@@ -48,18 +40,10 @@ const saveBoardAndPlayerKeys = async (board) => {
 
 const getBoardByBoardUrl = async (url) => knex.select().from('boards').where({ board_url: url });
 
-const postWordScript = R.curry(async (name, difficulty) => knex
-  .insert({ name, difficulty })
-  .into('words'));
-
 const getRandomWords = async (num) => knex
   .raw(
     `SELECT name FROM words ORDER BY random() LIMIT ${num || 25}`
   );
-
-const addBoardToDb = async () => knex
-  .insert(board)
-  .into('boards');
 
 const updateBoardWord = async (words, board_url) => knex
   .update({ words })
@@ -67,12 +51,8 @@ const updateBoardWord = async (words, board_url) => knex
   .where({ board_url });
 
 module.exports = {
-  getWords,
   addWordToDb,
-  postWordScript,
   getRandomWords,
-  addBoardToDb,
-  saveBoardId,
   getExistingBoard,
   saveBoardAndPlayerKeys,
   getBoardByBoardUrl,
