@@ -1,17 +1,8 @@
 const R = require('ramda');
-const { getBoardByBoardUrl, getRandomWords, updateBoardWord, matchPassword } = require('../queries');
+const { getBoardByBoardUrl, getRandomWords, updateBoardWord } = require('../queries');
 const { toCamel } = require('../util');
 exports.swapWordOnExistingBoard = async (req, res) => {
-  const { password, board_url, index } = req.body;
-  // VALIDATION //
-  if (!password || !board_url) {
-    return res.status(422).send({ error: !password ? 'permission denied (needs pw)' : 'needs board_url' });
-  }
-  const validate = await matchPassword(password);
-  if (R.isEmpty(validate)) {
-    return res.status(422).send({ error: 'permission denied (needs pw)' });
-  }
-  // END VALIDATION //
+  const { board_url, index } = req.body;
   if (!index) {
     return res.status(422).send({ error: 'needs index' });
   }

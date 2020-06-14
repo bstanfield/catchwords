@@ -4,11 +4,6 @@ CREATE TABLE IF NOT EXISTS words (
   votes integer DEFAULT 0
 );
 
-CREATE TABLE IF NOT EXISTS passwords (
-  id SERIAL PRIMARY KEY,
-  password text
-);
-
 CREATE TABLE IF NOT EXISTS boards (
   id SERIAL PRIMARY KEY,
   board_url text,

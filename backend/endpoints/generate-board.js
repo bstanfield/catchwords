@@ -1,5 +1,5 @@
 const R = require('ramda');
-const { matchPassword, getRandomWords, saveBoardAndPlayerKeys } = require('../queries');
+const { getRandomWords, saveBoardAndPlayerKeys } = require('../queries');
 const randomWords = require('random-words');
 
 // 0 = neutral (13)
@@ -9,7 +9,7 @@ const randomWords = require('random-words');
 const simpleArr = () => {
   let i = 25;
   let arr = [];
-  while(i > 0) {
+  while (i > 0) {
     arr.push('x');
     i--;
   }
@@ -21,7 +21,7 @@ const findPositions = (item, arr) => {
   let positions = [];
   while (i >= 0) {
     if (arr[i] === item) {
-      positions.push(i); 
+      positions.push(i);
     }
     i--;
   }
@@ -100,17 +100,7 @@ const playerTwo = R.pipe(
 )(arrWithOverlap);
 
 exports.generateBoard = async (req, res) => {
-  const { password, numberOfWords } = req.body;
-  if (!password) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
-  const validate = await matchPassword(password);
-  if (R.isEmpty(validate)) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
-
+  const { numberOfWords } = req.body;
   const wordsObjs = await getRandomWords(numberOfWords || 25);
   const wordsArr = R.pluck('name', wordsObjs.rows);
 
@@ -118,7 +108,7 @@ exports.generateBoard = async (req, res) => {
     let i = 0;
     let overlap = 0;
     let conjoinedArr = [];
-    while(i < 25) {
+    while (i < 25) {
       if (p1[i] === 1 && p2[i] === 1) {
         overlap++;
       }
@@ -137,7 +127,7 @@ exports.generateBoard = async (req, res) => {
   });
   const { board_id, board_url } = boardIdAndUrl[0];
 
-  res.status(200).send({ 
+  res.status(200).send({
     words: wordsArr,
     boardId: board_id,
     boardUrl: board_url,

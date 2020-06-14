@@ -1,17 +1,8 @@
 const R = require('ramda');
-const { matchPassword, addWordToDb } = require('../queries');
+const { addWordToDb } = require('../queries');
 
 exports.addWord = async (req, res) => {
-  const { name, password } = req.body;
-  if (!password) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
-  const validate = await matchPassword(password);
-  if (R.isEmpty(validate)) {
-    res.status(422).send({ error: 'permission denied (needs pw)' });
-    return;
-  }
+  const { name } = req.body;
 
   const result = await addWordToDb(name);
   if (!result) {
