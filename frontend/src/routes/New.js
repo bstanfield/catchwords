@@ -6,9 +6,7 @@ const NewBoard = () => {
   const [url, setUrl] = useState(false);
 
   const generateBoard = async () => {
-    const board = await hitAPIEndpoint('generate-board', {
-      password: 'buckslake',
-    });
+    const board = await hitAPIEndpoint('get', 'get-new-board');
     return board;
   }
 

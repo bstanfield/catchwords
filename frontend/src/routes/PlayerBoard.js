@@ -16,10 +16,7 @@ import Card from '../components/Card';
 const defaultGuessState = [];
 
 const getBoard = async (url) => {
-  const board = await hitAPIEndpoint('get-existing-board', {
-    password: 'buckslake',
-    board_url: url,
-  });
+  const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
   return board;
 }
 
@@ -121,11 +118,7 @@ const PlayerBoard = ({ match }) => {
   };
 
   const replaceWord = async (index, url, board) => {
-    const response = await hitAPIEndpoint('swap-word-on-existing-board', {
-      password: 'buckslake',
-      board_url: url,
-      index,
-    });
+    const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
     const updatedBoard = await (response.json());
     const newWord = updatedBoard.word;
     board.splice(index, 1, newWord);

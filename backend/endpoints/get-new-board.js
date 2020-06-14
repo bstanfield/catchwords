@@ -99,9 +99,8 @@ const playerTwo = R.pipe(
   placeNumbersInArr(2, numAssassin, R.__, false),
 )(arrWithOverlap);
 
-exports.generateBoard = async (req, res) => {
-  const { numberOfWords } = req.body;
-  const wordsObjs = await getRandomWords(numberOfWords || 25);
+exports.getNewBoard = async (req, res) => {
+  const wordsObjs = await getRandomWords(25);
   const wordsArr = R.pluck('name', wordsObjs.rows);
 
   const findNumOfOverlap = (p1, p2) => {
@@ -132,17 +131,6 @@ exports.generateBoard = async (req, res) => {
     boardId: board_id,
     boardUrl: board_url,
     playerOne,
-    // statsOne: {
-    //   1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerOne),
-    //   2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerOne),
-    //   0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerOne),
-    // },
     playerTwo,
-    // statsTwo: {
-    //   1: R.reduce((acc, tile) => tile === 1 ? acc + 1 : acc, 0, playerTwo),
-    //   2: R.reduce((acc, tile) => tile === 2 ? acc + 1 : acc, 0, playerTwo),
-    //   0: R.reduce((acc, tile) => tile === 0 ? acc + 1 : acc, 0, playerTwo),
-    //   overlap: findNumOfOverlap(playerOne, playerTwo),
-    // },
   });
 };

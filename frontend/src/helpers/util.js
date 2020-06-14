@@ -26,9 +26,9 @@ export const colors = {
   assassinCard: '#E14938',
 };
 
-export const hitAPIEndpoint = (endpoint, body) => {
+export const hitAPIEndpoint = (method, endpoint, body) => {
   const response = fetch(`http://localhost:3333/api/${endpoint}`, {
-    method: 'POST',
+    method: method || 'POST',
     headers: {
       'Content-Type': 'application/json',
     },

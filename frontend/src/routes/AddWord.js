@@ -5,9 +5,8 @@ import { hitAPIEndpoint } from '../helpers/util'
 const AddWord = () => {
   const [word, setWord] = useState('');
   const addWordToDb = async () => {
-    const response = await hitAPIEndpoint('add-word', {
+    const response = await hitAPIEndpoint('post', 'add-word', {
       name: word,
-      password: 'buckslake',
     });
     console.log('response: ', response);
     if (response.status === 422) {

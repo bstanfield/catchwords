@@ -2,7 +2,7 @@ const R = require('ramda');
 const { getBoardByBoardUrl } = require('../queries');
 const { toCamel } = require('../util');
 exports.getExistingBoard = async (req, res) => {
-  const { board_url } = req.body;
+  const board_url = req.params.board;
 
   const board = await getBoardByBoardUrl(board_url);
   if (R.isEmpty(board) || R.isNil(board)) {
