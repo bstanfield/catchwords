@@ -7,16 +7,11 @@ export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));
 export const colors = {
   primaryText: '#4A4A4A',
   lightGrayText: 'rgba(200, 200, 200, 0.9)',
-  // primaryText: '#333333',
   backgroundWhite: '#FcFcFc',
   backgroundShadow: '#EEECE5',
   primaryRed: '#ff4622',
-  // backgroundWhite: 'rgb(245, 245, 245)',
   primaryGreen: '#1A3C34',
   greenButton: '#4dc156',
-  highlightOrange: '#F79F22',
-  hoverOrange: '#DD7812',
-  buttonGlowOrange: '#F2C357',
   progressBar: '#ffd506',
   errorRed: '#e93710',
   lightBorder: '#BCBCBC',
@@ -26,6 +21,7 @@ export const colors = {
   assassinCard: '#E14938',
 };
 
+// General helper fns
 export const hitAPIEndpoint = (method, endpoint, body) => {
   const response = fetch(`http://localhost:3333/api/${endpoint}`, {
     method: method || 'POST',
@@ -37,7 +33,12 @@ export const hitAPIEndpoint = (method, endpoint, body) => {
   return response;
 };
 
-// Helper fns
+export const getBoard = async (url) => {
+  const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
+  return board;
+}
+
+// PlayerBoard helper fns
 export const triggerModal = (setShowModal) => {
   setShowModal(true);
   setTimeout(() => {
@@ -54,4 +55,28 @@ export const replaceWord = async (index, url, board, state) => {
   state.triggerRefreshCard(state.refreshCard + 1);
 }
 
-// TODO: Why does module.exports not work :(
+export const attemptGuess = (index, state, modifiers) => {
+  const tileType = state.turn === 'red'
+    ? state.redTeam[index]
+    : state.blueTeam[index];
+  if (tileType === 1) {
+    const newArr = R.concat(state.correctGuesses, [index]);
+    modifiers.setCorrectGuesses(newArr);
+  }
+
+  if (state.turn === 'red') {
+    const newArr = R.concat(state.redGuesses, [index]);
+    modifiers.setRedGuesses(newArr); 
+    if (tileType === 1) {
+      const newArr = R.concat(state.correctGuessesByBlueTeam, [index]);
+      modifiers.setCorrectGuessesByBlueTeam(newArr);
+    }
+  } else {
+    const newArr = R.concat(state.blueGuesses, [index]);
+    modifiers.setBlueGuesses(newArr); 
+    if (tileType === 1) {
+      const newArr = R.concat(state.correctGuessesByRedTeam, [index]);
+      modifiers.setCorrectGuessesByRedTeam(newArr);
+    }
+  }
+};

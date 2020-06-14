@@ -28,12 +28,12 @@ const cardContainer = (colorToDisplay) =>
     }
   }
 
-  const chooseCardToShow = (showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ) => {
+  const chooseCardToShow = (showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ) => {
     let colorToDisplay = 'white';
-    if (showRed) {
+    if (showCheatsheet.red === true) {
       colorToDisplay = setCardColor(redTeam[index]);
     }
-    if (showBlue) {
+    if (showCheatsheet.blue === true) {
       colorToDisplay = setCardColor(blueTeam[index]);
     }
     if (turn === 'red') {
@@ -49,7 +49,7 @@ const cardContainer = (colorToDisplay) =>
       }
     }
     // Green guesses persist between turns, but toggles off when cheatsheet is on
-    if (correctGuesses.includes(index) && !showBlue && !showRed) {
+    if (correctGuesses.includes(index) && !showCheatsheet.blue && !showCheatsheet.red) {
       colorToDisplay = colors.correctCard;
     }
     return cardContainer(colorToDisplay);
@@ -59,7 +59,7 @@ const cardContainer = (colorToDisplay) =>
 const cardText = (size) => scale({
   textAlign: 'center',
   fontSize: size || 22,
-  lineHeight: '10px',
+  lineHeight: '30px',
 });
 
 const buttonStyle = selected =>
@@ -78,7 +78,7 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showBlue, showRed, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam } = props;
+  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showCheatsheet, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam } = props;
 
   let size = 28;
   if (name) {
@@ -92,7 +92,7 @@ const Card = props => {
   }
   return (
     <button
-      css={[chooseCardToShow(showRed, showBlue, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ), buttonStyle(selected)]}
+      css={[chooseCardToShow(showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ), buttonStyle(selected)]}
       key={index}
       onClick={() => {removeState === false ? guessCard() : replaceWord()}}
     >
