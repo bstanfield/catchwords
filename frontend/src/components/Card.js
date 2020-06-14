@@ -28,7 +28,7 @@ const cardContainer = (colorToDisplay) =>
     }
   }
 
-  const chooseCardToShow = (showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, ) => {
+  const chooseCardToShow = (showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses) => {
     let colorToDisplay = 'white';
     if (showCheatsheet.red === true) {
       colorToDisplay = setCardColor(redTeam[index]);
@@ -98,8 +98,8 @@ const Card = props => {
     >
       <h4 css={[cardText(size)]}>{capitalizeFirst(name)}</h4> 
       {removeState && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
-      {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}>🔷</p>}
-      {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}>🔴</p>}
+      {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔷</span></p>}
+      {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔴</span></p>}
     </button>
   );
 };
