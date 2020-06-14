@@ -7,7 +7,7 @@ const NewBoard = () => {
 
   const generateBoard = async () => {
     const board = await hitAPIEndpoint('generate-board', {
-      password: '5PwhsP3Efoyi6HkgJ7+o0rGUHmU8sY8+yOtqbo+Euvg',
+      password: 'buckslake',
     });
     return board;
   }

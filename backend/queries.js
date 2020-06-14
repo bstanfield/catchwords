@@ -1,12 +1,13 @@
+require('dotenv').config();
 const R = require('ramda');
 const knex = require('knex')({
   client: 'pg',
   asyncStackTraces: true,
   connection: {
     host: '127.0.0.1',
-    user: 'ben',
-    password: '',
-    database: process.env.DATABASE,
+    user: process.env.DATABASE_USER,
+    password: process.env.DATABASE_PW,
+    database: process.env.DATABASE_NAME,
     port: 5432,
   }
 });
