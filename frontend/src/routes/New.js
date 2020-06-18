@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { hitAPIEndpoint } from '../helpers/util';
+import Network from '../../lib/network';
 
 const NewBoard = () => {
   const [url, setUrl] = useState(false);
 
   const generateBoard = async () => {
-    const board = await hitAPIEndpoint('get', 'get-new-board');
-    return board;
-  };
+    const [response, responseBody] = await Network.get('get-new-board');
+    if (response.ok) {
+      return responseBody;
+    }
+  }
 
   useEffect(() => {
     const asyncFn = async () => {

@@ -3,13 +3,8 @@
 import { useState } from 'react';
 import { jsx } from '@emotion/core';
 import { withRouter, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { SetToast } from '../actions/toaster';
-import { EndTurn, NewGame } from '../actions/game';
-import { GuessCard } from '../actions/guesses';
 import { scale } from '../style/scale';
-import { genericFlext } from '../style/flex';
+import { genericFlex } from '../style/flex';
 
 import TextInput from '../components/UI/TextInput';
 import handWave from '../static/images/waving-hand.png';
@@ -45,7 +40,8 @@ const StartGame = (props) => {
   const asyncRedirect = async () => {
     let boardCodeToUse = boardCode;
     if (!boardCode) {
-      boardCodeToUse = await props.NewGame();
+      // removing redux
+      // boardCodeToUse = await props.NewGame();
     }
     const link =
       role === 'team1'
@@ -116,21 +112,5 @@ const StartGame = (props) => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    board: state.board,
-    game: state.game,
-    toaster: state.toaster,
-    guesses: state.guesses,
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { EndTurn, NewGame, GuessCard, SetToast },
-    dispatch
-  );
-}
-
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(StartGame)
+export default withRouter(StartGame)
 );
