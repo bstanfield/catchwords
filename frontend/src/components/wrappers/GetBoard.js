@@ -1,21 +1,17 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import PropTypes from 'prop-types';
 import { GetAndSetBoard } from '../../actions/board';
 
-const GetBoard = props => {
+const GetBoard = (props) => {
   const { children, match, location, id, game } = props;
-
-  console.log('location', location);
-  console.log('match', match);
 
   useEffect(() => {
     if (game.gameUrl !== match.params.gameUrl && match.params.gameUrl) {
       props.GetAndSetBoard(match.params.gameUrl);
     }
-  }, [match.params.gameUrl]);
+  }, [game.gameUrl, match.params.gameUrl, props]);
 
   return <div key={id}>{children}</div>;
 };

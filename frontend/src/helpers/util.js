@@ -2,7 +2,7 @@
 
 import * as R from 'ramda';
 
-export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));
+export const capitalizeFirst = (x) => R.concat(R.toUpper(R.head(x)), R.tail(x));
 
 export const colors = {
   primaryText: '#4A4A4A',
@@ -36,7 +36,7 @@ export const hitAPIEndpoint = (method, endpoint, body) => {
 export const getBoard = async (url) => {
   const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
   return board;
-}
+};
 
 // PlayerBoard helper fns
 export const triggerModal = (setShowModal) => {
@@ -48,17 +48,16 @@ export const triggerModal = (setShowModal) => {
 
 export const replaceWord = async (index, url, board, state) => {
   const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
-  const updatedBoard = await (response.json());
+  const updatedBoard = await response.json();
   const newWord = updatedBoard.word;
   board.splice(index, 1, newWord);
   state.setBoard(board);
   state.triggerRefreshCard(state.refreshCard + 1);
-}
+};
 
 export const attemptGuess = (index, state, modifiers) => {
-  const tileType = state.turn === 'red'
-    ? state.redTeam[index]
-    : state.blueTeam[index];
+  const tileType =
+    state.turn === 'red' ? state.redTeam[index] : state.blueTeam[index];
   if (tileType === 1) {
     const newArr = R.concat(state.correctGuesses, [index]);
     modifiers.setCorrectGuesses(newArr);
@@ -66,14 +65,14 @@ export const attemptGuess = (index, state, modifiers) => {
 
   if (state.turn === 'red') {
     const newArr = R.concat(state.redGuesses, [index]);
-    modifiers.setRedGuesses(newArr); 
+    modifiers.setRedGuesses(newArr);
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByBlueTeam, [index]);
       modifiers.setCorrectGuessesByBlueTeam(newArr);
     }
   } else {
     const newArr = R.concat(state.blueGuesses, [index]);
-    modifiers.setBlueGuesses(newArr); 
+    modifiers.setBlueGuesses(newArr);
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByRedTeam, [index]);
       modifiers.setCorrectGuessesByRedTeam(newArr);

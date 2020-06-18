@@ -1,27 +1,21 @@
 /** @jsx jsx */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { jsx } from '@emotion/core';
-import * as R from 'ramda';
 import { withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { SetToast } from '../actions/toaster';
 import { EndTurn, NewGame } from '../actions/game';
 import { GuessCard } from '../actions/guesses';
-import { scale, projectCardScale } from '../style/scale';
-import { contentContainer } from '../style/layout';
-import { maxWidth, fullWidth, marginAuto } from '../style/misc';
-import { genericFlex, noWrapFlex, justifyContentStart } from '../style/flex';
+import { scale } from '../style/scale';
+import { genericFlext } from '../style/flex';
 
 import TextInput from '../components/UI/TextInput';
 import handWave from '../static/images/waving-hand.png';
 import Dialog from '../components/UI/Dialog';
-import Card from '../components/board/Card';
 import CardContent from '../components/UI/CardContent';
 import Button from '../components/UI/Button';
-
-import { hitAPI } from '../helpers/util';
 
 const roleButton = scale({
   width: ['100%', '100%', '32%'],
@@ -39,7 +33,7 @@ const messageIcon = scale({
   zIndex: 100000,
 });
 
-const StartGame = props => {
+const StartGame = (props) => {
   const { board, match, game } = props;
   const { teamTurn } = game;
   const { words } = board;
@@ -105,7 +99,7 @@ const StartGame = props => {
           </div>
           <br />
           <TextInput
-            handleInputChange={v => setBoardCode(v)}
+            handleInputChange={(v) => setBoardCode(v)}
             placeholder="Board Code"
             value={boardCode}
           />
