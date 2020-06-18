@@ -16,8 +16,3 @@ set up your own local psql database:
    words.
 
 5. Seed the database with a set of ~700 words by running `npm run seed`
-
-6. You need a default password:
-   ```sql
-   insert into passwords(password) values('somepig');
-   ```
