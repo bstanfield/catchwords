@@ -116,7 +116,7 @@ const PlayerBoard = ({ match }) => {
   // Loads board
   useEffect(() => {
     const asyncFn = async () => {
-      const genBoard = await (await getBoard(match.params.id)).json();
+      const genBoard = await getBoard(match.params.id);
       const { words, playerOne, playerTwo } = genBoard[0];
       setBoard(words);
       setRedTeam(playerOne);
