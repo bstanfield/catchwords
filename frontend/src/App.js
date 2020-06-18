@@ -25,7 +25,7 @@ export default function App() {
           <Route path="/words/add">
             <AddWord />
           </Route>
-          <Route path="/socket">
+          <Route path="/socket/:id">
             <Socket />
           </Route>
         </Switch>

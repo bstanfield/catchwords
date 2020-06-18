@@ -5,11 +5,14 @@ import { withRouter } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
 import { scale } from '../style/scale';
-import { triggerModal, replaceWord, getBoard, attemptGuess } from '../helpers/util'
-
 import {
-  genericFlex,
-} from '../style/flex';
+  triggerModal,
+  replaceWord,
+  getBoard,
+  attemptGuess,
+} from '../helpers/util';
+
+import { genericFlex } from '../style/flex';
 
 import Card from '../components/Card';
 
@@ -22,7 +25,7 @@ const primaryContainer = scale({
   },
   h4: {
     fontWeight: 500,
-  }
+  },
 });
 
 const topContainer = scale({
@@ -48,40 +51,42 @@ const modal = scale({
   borderRadius: '6px',
   fontFamily: 'system-ui',
   backgroundColor: 'white',
-  padding: '20px 40px'
+  padding: '20px 40px',
 });
 
-const absolutePassTurn = (guesses) => scale({
-  backgroundColor: 'green',
-  color: 'white',
-  border: 'none',
-  padding: '10px 20px',
-  cursor: 'pointer',
-  borderRadius: '3px',
-  margin: '20px 20px 20px 0',
-  fontSize: '22px',
-  position: 'absolute',
-  top: '-12px', 
-  right: '-12px',
-  opacity: guesses > 0 ? 1 : 0.5,
-  '&:hover': {
-    opacity: 1,
-  }
-});
+const absolutePassTurn = (guesses) =>
+  scale({
+    backgroundColor: 'green',
+    color: 'white',
+    border: 'none',
+    padding: '10px 20px',
+    cursor: 'pointer',
+    borderRadius: '3px',
+    margin: '20px 20px 20px 0',
+    fontSize: '22px',
+    position: 'absolute',
+    top: '-12px',
+    right: '-12px',
+    opacity: guesses > 0 ? 1 : 0.5,
+    '&:hover': {
+      opacity: 1,
+    },
+  });
 
-const buttonStyle = (showing) => scale({
-  padding: '8px 18px',
-  borderRadius: '3px',
-  border: 'none',
-  cursor: 'pointer',
-  margin: '20px 20px 20px 0',
-  fontSize: '20px',
-  backgroundColor: showing ? '#2ef72e' : '#eeeeee',
-  '&:hover': {
-    backgroundColor: showing ? '#2ef72e' : '#d0d0d0',
-    opacity: showing ? 0.7 : 1,
-  }
-});
+const buttonStyle = (showing) =>
+  scale({
+    padding: '8px 18px',
+    borderRadius: '3px',
+    border: 'none',
+    cursor: 'pointer',
+    margin: '20px 20px 20px 0',
+    fontSize: '20px',
+    backgroundColor: showing ? '#2ef72e' : '#eeeeee',
+    '&:hover': {
+      backgroundColor: showing ? '#2ef72e' : '#d0d0d0',
+      opacity: showing ? 0.7 : 1,
+    },
+  });
 
 const PlayerBoard = ({ match }) => {
   // STATE -----
@@ -116,7 +121,7 @@ const PlayerBoard = ({ match }) => {
       setBoard(words);
       setRedTeam(playerOne);
       setBlueTeam(playerTwo);
-    }
+    };
     asyncFn();
   }, [match.params.id]);
 
@@ -138,55 +143,121 @@ const PlayerBoard = ({ match }) => {
       turn={turn}
       guessCard={() => {
         attemptGuess(
-          index, 
-          { 
-            board, turn, turnCount, showModal, currentTurnGuesses,
-            selectedCards, showRemove, refreshCard, correctGuesses,
-            redTeam, blueTeam, blueGuesses, redGuesses, showCheatsheet,
-            correctGuessesByBlueTeam, correctGuessesByRedTeam 
-          }, 
+          index,
           {
-            setCorrectGuesses, setBlueGuesses, setRedGuesses, 
-            setCorrectGuessesByBlueTeam, setCorrectGuessesByRedTeam
+            board,
+            turn,
+            turnCount,
+            showModal,
+            currentTurnGuesses,
+            selectedCards,
+            showRemove,
+            refreshCard,
+            correctGuesses,
+            redTeam,
+            blueTeam,
+            blueGuesses,
+            redGuesses,
+            showCheatsheet,
+            correctGuessesByBlueTeam,
+            correctGuessesByRedTeam,
+          },
+          {
+            setCorrectGuesses,
+            setBlueGuesses,
+            setRedGuesses,
+            setCorrectGuessesByBlueTeam,
+            setCorrectGuessesByRedTeam,
           }
         );
         setCurrentTurnGuesses(currentTurnGuesses + 1);
       }}
       replaceWord={() => {
-        replaceWord(index, match.params.id, board, { setBoard, refreshCard, triggerRefreshCard });
+        replaceWord(index, match.params.id, board, {
+          setBoard,
+          refreshCard,
+          triggerRefreshCard,
+        });
       }}
     />
   );
-   
 
   return (
     <div>
-      {showModal && 
+      {showModal && (
         <div css={pageFade}>
           <div css={modal}>
-            <h1>{turn === 'blue' ? '🔷 Blue Leader' : '🔴 Red Leader'}: Give a clue!</h1>
+            <h1>
+              {turn === 'blue' ? '🔷 Blue Leader' : '🔴 Red Leader'}: Give a
+              clue!
+            </h1>
           </div>
         </div>
-      }
+      )}
       <div css={primaryContainer}>
         <div css={topContainer}>
-          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'red' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
-          <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{turnCount}</p></strong>
-          <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
-            setTurn(turn === 'red' ? 'blue' : 'red');
-            incrementTurnCount(turnCount + 1);
-            setCurrentTurnGuesses(0);
-            triggerModal(setShowModal);
-          }}>End turn</button>
+          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>
+            {turn === 'red'
+              ? '🔴 Red Leader: Give a clue!'
+              : '🔷 Blue Leader: Give a clue!'}{' '}
+          </h2>
+          <strong>
+            <p
+              style={{
+                position: 'absolute',
+                top: 20,
+                right: 160,
+                opacity: 0.7,
+              }}
+            >
+              Turn #{turnCount}
+            </p>
+          </strong>
+          <button
+            css={absolutePassTurn(currentTurnGuesses)}
+            onClick={() => {
+              setTurn(turn === 'red' ? 'blue' : 'red');
+              incrementTurnCount(turnCount + 1);
+              setCurrentTurnGuesses(0);
+              triggerModal(setShowModal);
+            }}
+          >
+            End turn
+          </button>
         </div>
         <div css={genericFlex}>{R.addIndex(R.map)(RenderCard, board)}</div>
-        <button css={buttonStyle(showCheatsheet.red)} onClick={() => {showCheatsheet.red === false ? setCheatsheet({ blue: false, red: true }) : setCheatsheet({ blue: false, red: false })}} >
-          <span role="img" aria-label="Red circle">🔴</span> Red leader cheatsheet
+        <button
+          css={buttonStyle(showCheatsheet.red)}
+          onClick={() => {
+            showCheatsheet.red === false
+              ? setCheatsheet({ blue: false, red: true })
+              : setCheatsheet({ blue: false, red: false });
+          }}
+        >
+          <span role="img" aria-label="Red circle">
+            🔴
+          </span>{' '}
+          Red leader cheatsheet
         </button>
-        <button css={buttonStyle(showCheatsheet.blue)} onClick={() => {showCheatsheet.blue === false ? setCheatsheet({ blue: true, red: false }) : setCheatsheet({ blue: false, red: false })}} >
-          <span role="img" aria-label="Blue diamond">🔷</span> Blue leader cheatsheet
+        <button
+          css={buttonStyle(showCheatsheet.blue)}
+          onClick={() => {
+            showCheatsheet.blue === false
+              ? setCheatsheet({ blue: true, red: false })
+              : setCheatsheet({ blue: false, red: false });
+          }}
+        >
+          <span role="img" aria-label="Blue diamond">
+            🔷
+          </span>{' '}
+          Blue leader cheatsheet
         </button>
-        <button css={buttonStyle(showRemove)} onClick={() => {showRemove === false ? setShowRemove(true) : setShowRemove(false)}} >
+        <button
+          css={buttonStyle(showRemove)}
+          onClick={() => {
+            showRemove === false ? setShowRemove(true) : setShowRemove(false);
+          }}
+        >
           Edit words
         </button>
       </div>

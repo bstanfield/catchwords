@@ -1,9 +1,8 @@
 /** @jsx jsx */
 
 import PropTypes from 'prop-types';
-import * as R from 'ramda';
-import { css, jsx } from '@emotion/core';
-import { fonts, fontSizes, colors } from '../../style/theme';
+import { jsx } from '@emotion/core';
+import { fonts, fontSizes } from '../../style/theme';
 import { scale } from '../../style/scale';
 
 const inputBox = scale({
@@ -41,7 +40,7 @@ function TextInput(props) {
       placeholder={placeholder}
       css={inputBox}
       value={value}
-      onChange={event => handleInputChange(event.target.value)}
+      onChange={(event) => handleInputChange(event.target.value)}
     />
   );
 }

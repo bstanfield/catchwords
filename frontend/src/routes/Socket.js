@@ -1,32 +1,37 @@
 import React, { useState, useEffect, useRef } from "react";
-import socketIOClient from "socket.io-client";
+import { withRouter } from 'react-router-dom';
+import io from "socket.io-client";
 const ENDPOINT = "http://127.0.0.1:4242";
 
-function Socket() {
-  const [response, setResponse] = useState("");
-  const { current: socket } = useRef(socketIOClient(ENDPOINT));
+function Socket({ match }) {
+  const [response, setResponse] = useState('');
+  const [log, setLog] = useState(0);
+  const [socket, setSocket] = useState({});
 
   const sendMessageToSocket = () => {
-    socket.send('hi');
+    socket.send({ id: match.params.id, alert: 'hi' });
   };
-
+  
   useEffect(() => {
-    socket.on("FromAPI", data => {
-      setResponse(data);
+    const socket = io(ENDPOINT);
+    socket.send({ join: match.params.id});
+    setSocket(socket);
+    socket.on('log', data => {
+      setLog(data);
     });
-
+    socket.on('welcome', data => {
+      console.log(data);
+    });
     // CLEAN UP THE EFFECT
     return () => socket.disconnect();
-  }, [socket]);
+  }, []);
 
   return (
     <div>
-      <p>
-        It's <time dateTime={response}>{response}</time>
-      </p>
+      <p>Participants: {log}</p>
       <button onClick={() => sendMessageToSocket()}>Send message</button>
     </div>
   );
 }
 
-export default Socket;
+export default withRouter(Socket);

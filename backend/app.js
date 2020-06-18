@@ -5,36 +5,6 @@ const socketIo = require("socket.io");
 const app = express();
 const port = 3333;
 
-// websocket
-const index = require("./endpoints/index.js");
-app.use(index);
-const server = http.createServer(app);
-const io = socketIo(server);
-
-let interval;
-
-io.on("connection", (socket) => {
-  console.log("New client connected");
-  socket.on("disconnect", () => {
-    console.log("Client disconnected");
-    clearInterval(interval);
-  });
-
-  socket.on('message', () => {
-    getApiAndEmit(socket);
-  });
-});
-
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-};
-
-server.listen(4242, () => console.log(`Socket listening on port localhost:4242`));
-
-// end websocket
-
 app.use(cors());
 
 const bodyParser = require('body-parser');
@@ -52,6 +22,44 @@ app.use(
 );
 
 app.listen(port, () => console.log(`Listening on port localhost:${port}`));
+// websocket
+const index = require("./endpoints/index.js");
+app.use(index);
+const server = http.createServer(app);
+const io = socketIo(server);
+
+server.listen(4242, () => console.log(`Socket listening on port localhost:4242`));
+
+let connections = 0;
+io.on("connection", (socket) => {
+  console.log('new connection');
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+
+  connections++;
+  socket.broadcast.emit('log', connections);
+
+  socket.on('message', (message) => {
+    if (message.join) {
+      console.log('Joined room: ', message.join);
+      socket.join(message.join);
+      // io.to(message.join).emit('welcome', `Welcome to room ${message.join}`);
+    }
+
+    if (message.alert) {
+      io.to(message.id).emit('welcome', `Hello room ${message.id}`);
+    }
+  });
+});
+
+const getApiAndEmit = socket => {
+  const response = new Date();
+  // Emitting a new message. Will be consumed by the client
+  socket.broadcast.emit("FromAPI", response);
+};
+
+// end websocket
 
 // Standard messages
 app.get('/', (req, res) => {
