@@ -7,6 +7,7 @@ import {
 import New from './routes/New';
 import PlayerBoard from "./routes/PlayerBoard";
 import AddWord from "./routes/AddWord";
+import Socket from "./routes/Socket";
 
 export default function App() {
   return (
@@ -23,6 +24,9 @@ export default function App() {
           </Route>
           <Route path="/words/add">
             <AddWord />
+          </Route>
+          <Route path="/socket">
+            <Socket />
           </Route>
         </Switch>
     </Router>
