@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import Network from '../../lib/network';
+import Network from '../lib/network';
 
 const AddWord = () => {
   const [word, setWord] = useState('');

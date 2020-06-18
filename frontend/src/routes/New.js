@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import Network from '../../lib/network';
+import Network from '../lib/network';
 
 const NewBoard = () => {
   const [url, setUrl] = useState(false);
