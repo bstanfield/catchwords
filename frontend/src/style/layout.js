@@ -2,7 +2,7 @@ const { scale } = require('../style/scale');
 
 const body = scale({
   width: '90%',
-  maxWidth: ['90%', '90%', '700px', '1020px'],
+  maxWidth: ['90%', '90%', '90%', '1020px'],
   margin: 'auto',
   minHeight: '80vh',
 });
