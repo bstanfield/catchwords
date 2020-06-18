@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { hitAPIEndpoint } from '../helpers/util'
+import { hitAPIEndpoint } from '../helpers/util';
 
 const AddWord = () => {
   const [word, setWord] = useState('');
@@ -14,11 +14,11 @@ const AddWord = () => {
       alert(`${word} added to the game!`);
     }
     setWord('');
-  }
+  };
 
   const handleChange = (event) => {
     setWord(event.target.value);
-  }
+  };
 
   return (
     <div>
