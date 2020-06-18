@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { jsx } from '@emotion/core';
 import { withRouter, Redirect } from 'react-router-dom';
 import { scale } from '../style/scale';
@@ -28,7 +28,7 @@ const messageIcon = scale({
   zIndex: 100000,
 });
 
-const StartGame = props => {
+const StartGame = (props) => {
   const { board, match, game } = props;
   const { teamTurn } = game;
   const { words } = board;
@@ -95,7 +95,7 @@ const StartGame = props => {
           </div>
           <br />
           <TextInput
-            handleInputChange={v => setBoardCode(v)}
+            handleInputChange={(v) => setBoardCode(v)}
             placeholder="Board Code"
             value={boardCode}
           />

@@ -6,7 +6,7 @@ const NewBoard = () => {
   const [url, setUrl] = useState(false);
 
   const generateBoard = async () => {
-    const [response, responseBody] = await network.get('get-new-board');
+    const [response, responseBody] = await Network.get('get-new-board');
     if (response.ok) {
       return responseBody;
     }
@@ -16,14 +16,14 @@ const NewBoard = () => {
     const asyncFn = async () => {
       const response = await (await generateBoard()).json();
       setUrl(response.boardUrl);
-    }
+    };
     asyncFn();
   }, []);
 
   return (
     <div>
       <h1>Creating board...</h1>
-      { url ? <Redirect to={`/board/${url}`} /> : null}
+      {url ? <Redirect to={`/board/${url}`} /> : null}
     </div>
   );
 };

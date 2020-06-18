@@ -14,11 +14,11 @@ const AddWord = () => {
       alert(`${word} added to the game!`);
     }
     setWord('');
-  }
+  };
 
   const handleChange = (event) => {
     setWord(event.target.value);
-  }
+  };
 
   return (
     <div>

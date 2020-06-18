@@ -8,10 +8,8 @@
     "concurrently": "^5.2.0",
     "contentful": "^7.11.3",
     "emotion": "^10.0.23",
-    "eslint": "^6.6.0",
     "facepaint": "^1.2.1",
     "gh-pages": "^2.1.1",
-    "prettier": "^1.19.1",
     "prop-types": "^15.7.2",
     "ramda": "^0.26.1",
     "react": "^16.12.0",
@@ -24,7 +22,7 @@
     "redux-thunk": "^2.3.0"
   },
   "scripts": {
-    "dev": "concurrently \"npm start\" \"cd ../backend && nodemon app.js\"",
+    "dev": "concurrently \"npm start\" \"cd ../backend && npx nodemon app.js\"",
     "start-react-dev": "cd react && npm run start",
     "start-server-dev": "cd backend && npm run dev",
     "start": "react-scripts start",
@@ -48,5 +46,13 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.10.1",
+    "eslint-config-problems": "^4.0.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "eslint-plugin-react": "^7.19.0",
+    "prettier": "^2.0.2"
   }
 }

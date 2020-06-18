@@ -3,7 +3,7 @@
 import * as R from 'ramda';
 import Network from '../lib/network';
 
-export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));
+export const capitalizeFirst = (x) => R.concat(R.toUpper(R.head(x)), R.tail(x));
 
 export const colors = {
   primaryText: '#4A4A4A',
@@ -23,9 +23,9 @@ export const colors = {
 };
 
 export const getBoard = async (url) => {
-  const board = await Network.get(`get-existing-board/${url}`);
-  return board;
-}
+  const [response, responseBody] = await Network.get(`get-existing-board/${url}`);
+  return responseBody;
+};
 
 // PlayerBoard helper fns
 export const triggerModal = (setShowModal) => {
@@ -36,18 +36,17 @@ export const triggerModal = (setShowModal) => {
 };
 
 export const replaceWord = async (index, url, board, state) => {
-  const response = await Network.get(`swap-word/${url}/${index}`);
-  const updatedBoard = await (response.json());
+  const [response, responseBody] = await Network.get(`swap-word/${url}/${index}`);
+  const updatedBoard = responseBody;
   const newWord = updatedBoard.word;
   board.splice(index, 1, newWord);
   state.setBoard(board);
   state.triggerRefreshCard(state.refreshCard + 1);
-}
+};
 
 export const attemptGuess = (index, state, modifiers) => {
-  const tileType = state.turn === 'red'
-    ? state.redTeam[index]
-    : state.blueTeam[index];
+  const tileType =
+    state.turn === 'red' ? state.redTeam[index] : state.blueTeam[index];
   if (tileType === 1) {
     const newArr = R.concat(state.correctGuesses, [index]);
     modifiers.setCorrectGuesses(newArr);
@@ -55,14 +54,14 @@ export const attemptGuess = (index, state, modifiers) => {
 
   if (state.turn === 'red') {
     const newArr = R.concat(state.redGuesses, [index]);
-    modifiers.setRedGuesses(newArr); 
+    modifiers.setRedGuesses(newArr);
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByBlueTeam, [index]);
       modifiers.setCorrectGuessesByBlueTeam(newArr);
     }
   } else {
     const newArr = R.concat(state.blueGuesses, [index]);
-    modifiers.setBlueGuesses(newArr); 
+    modifiers.setBlueGuesses(newArr);
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByRedTeam, [index]);
       modifiers.setCorrectGuessesByRedTeam(newArr);
