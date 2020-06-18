@@ -1,12 +1,15 @@
 const express = require('express');
+var cors = require('cors')
 const app = express();
-const R = require('ramda');
 const port = 3333;
-const { getRandomWords } = require('./queries');
 
-var pgp = require('pg-promise');
-const db = require('./queries');
+app.use(cors());
+
 const bodyParser = require('body-parser');
+const { getExistingBoard } = require('./endpoints/get-existing-board');
+const { addWord } = require('./endpoints/add-word');
+const { getNewBoard } = require('./endpoints/get-new-board');
+const { swapWord } = require('./endpoints/swap-word');
 
 // bodyParser middleware to help parse JSON
 app.use(bodyParser.json())
@@ -14,53 +17,27 @@ app.use(
   bodyParser.urlencoded({
     extended: true,
   })
-)
-
-const genericEndpoint = R.curry(
-  (appToUse, requestType, filenameAndURL, exportName) => {
-    appToUse[requestType](
-      `/api/${filenameAndURL}`,
-      require(`./endpoints/${filenameAndURL}`)[exportName]
-    );
-  }
 );
-const addEndpoint = genericEndpoint(app);
 
-// Confirms server is running in console
-app.listen(port, () => console.log(`Listening on port ${port}`));
-
-// // Use this endpoint to get all persona names and characteristics
-// app.get('/personas', db.getPersonas);
-
-// // Use this endpoint to get all persona-specific recipes
-// app.get('/persona_recipes/:personaId', db.getPersonaSpecificRecipes);
-
-// // Use this endpoint to get all recipe names
-// app.get('/recipenames', db.getRecipeNames);
-
-// // This might not be useful
-// app.get('/ingredients/:id', db.getRecipeIngredients);
-
-// // Use this endpoint for primary recipe page
-// app.get('/survey_results/:cost/:cookTime/:restriction', db.getSurveyResults);
-
-// // Use this endpoint for primary recipe page
-// app.get('/master_recipes/:name', db.getMasterRecipe)
+app.listen(port, () => console.log(`Listening on port localhost:${port}`));
 
 // Standard messages
 app.get('/', (req, res) => {
-    res.json({ info: 'Hello catchword!' })
+  res.json({ info: 'Hello world!' })
 });
 
-// Get words
-app.get('/words', db.getWords);
-
-app.get('/free-board', async () => {
-  const words = await getRandomWords();
-  const wordsArr = R.pluck('name', words.rows);
-  res.status(200).send({ board: wordsArr });
+app.get('/api/get-existing-board/:board', async (req, res) => {
+  await getExistingBoard(req, res);
 });
 
-addEndpoint('post', 'add-word', 'addWord');
+app.post('/api/add-word', async (req, res) => {
+  await addWord(req, res);
+});
 
-addEndpoint('post', 'generate-board', 'generateBoard');
+app.get('/api/get-new-board', async (req, res) => {
+  await getNewBoard(req, res);
+});
+
+app.get('/api/swap-word/:board/:index', async (req, res) => {
+  await swapWord(req, res);
+});

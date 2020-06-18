@@ -1,156 +1,197 @@
 /** @jsx jsx */
 
 import { useEffect, useState } from 'react';
+import { withRouter } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import * as R from 'ramda';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { SetToast } from '../actions/toaster';
-import { EndTurn, NewGame } from '../actions/game';
-import { GuessCard } from '../actions/guesses';
-import { scale, projectCardScale } from '../style/scale';
-import { contentContainer } from '../style/layout';
-import { maxWidth, fullWidth, marginAuto } from '../style/misc';
-import { genericFlex, noWrapFlex, justifyContentStart } from '../style/flex';
+import { scale } from '../style/scale';
+import { triggerModal, replaceWord, getBoard, attemptGuess } from '../helpers/util'
 
-import checkmark from '../static/checkmark.svg';
-import alert from '../static/alert.svg';
-import Dialog from '../components/UI/Dialog';
-import Card from '../components/board/Card';
-import CardContent from '../components/UI/CardContent';
-import Button from '../components/UI/Button';
+import {
+  genericFlex,
+} from '../style/flex';
 
-import { hitAPI } from '../helpers/util';
+import Card from '../components/Card';
 
-const headerDivider = scale({
-  marginTop: ['10px', '10px', '20px'],
-  marginBottom: ['20px', '20px', '40px'],
-});
-
-const messageIcon = scale({
-  width: '50px',
-  textAlign: 'center',
+const primaryContainer = scale({
+  maxWidth: '1000px',
   margin: 'auto',
-  position: 'relative',
-  display: 'block',
-  marginBottom: '15px',
+  'h1, h2, h3, h4, p, a': {
+    fontFamily: 'system-ui !important',
+    margin: 0,
+  },
+  h4: {
+    fontWeight: 500,
+  }
 });
 
-const PlayerBoard = props => {
-  const { board, guesses, game } = props;
-  const { teamTurn } = game;
-  const { words } = board;
+const topContainer = scale({
+  position: 'relative',
+  paddingTop: '12px',
+  paddingBottom: '12px',
+  marginBottom: '16px',
+  borderBottom: '2px solid #e0e0e0',
+});
 
-  const RenderPlayerCard = (cardName, index) => {
-    const otherTeam = teamTurn === 'team1' ? 'team2' : 'team1';
-    return (
-      <Card
-        key={index}
-        name={cardName}
-        index={index}
-        guess={guesses[teamTurn][index]}
-        otherTeamGuess={guesses[otherTeam][index]}
-        guessCard={() => {
-          props.GuessCard(index, teamTurn, board);
-        }}
-      />
-    );
-  };
+const pageFade = scale({
+  position: 'absolute',
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  width: '100vw',
+  height: '100%',
+  zIndex: 9999,
+});
 
-  const correctGuesses = x => R.equals(x, 1);
-  const calculateTeamPoints = teamTurn =>
-    R.pipe(R.filter(correctGuesses), R.length)(guesses[teamTurn]);
+const modal = scale({
+  borderRadius: '6px',
+  fontFamily: 'system-ui',
+  backgroundColor: 'white',
+  padding: '20px 40px'
+});
 
-  const currentTeamPoints = calculateTeamPoints(teamTurn);
-  const totalPoints =
-    calculateTeamPoints('team1') + calculateTeamPoints('team2');
+const absolutePassTurn = (guesses) => scale({
+  backgroundColor: 'green',
+  color: 'white',
+  border: 'none',
+  padding: '10px 20px',
+  cursor: 'pointer',
+  borderRadius: '3px',
+  margin: '20px 20px 20px 0',
+  fontSize: '22px',
+  position: 'absolute',
+  top: '-12px', 
+  right: '-12px',
+  opacity: guesses > 0 ? 1 : 0.5,
+  '&:hover': {
+    opacity: 1,
+  }
+});
 
-  const guessesRemaining = R.pipe(
-    R.reject(R.isNil),
-    R.length,
-    R.subtract(9)
-  )(guesses[teamTurn]);
+const buttonStyle = (showing) => scale({
+  padding: '8px 18px',
+  borderRadius: '3px',
+  border: 'none',
+  cursor: 'pointer',
+  margin: '20px 20px 20px 0',
+  fontSize: '20px',
+  backgroundColor: showing ? '#2ef72e' : '#eeeeee',
+  '&:hover': {
+    backgroundColor: showing ? '#2ef72e' : '#d0d0d0',
+    opacity: showing ? 0.7 : 1,
+  }
+});
 
-  const assassinated = R.includes(2, guesses[teamTurn]);
+const PlayerBoard = ({ match }) => {
+  // STATE -----
+  // Board state
+  const [board, setBoard] = useState([]);
+  const [turn, setTurn] = useState('red');
+  const [turnCount, incrementTurnCount] = useState(1);
+  const [showModal, setShowModal] = useState(false);
+  const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
 
-  // TODO: Move win/loss logic to reducer (?)
-  // TODO: Sometimes GuessCard will guess card for both teams using incorrect key
+  // Card state
+  const [selectedCards, setSelectedCards] = useState([]);
+  const [showRemove, setShowRemove] = useState(false);
+  const [refreshCard, triggerRefreshCard] = useState(0);
+  const [correctGuesses, setCorrectGuesses] = useState([]);
+
+  // Team state
+  const [redTeam, setRedTeam] = useState([]);
+  const [blueTeam, setBlueTeam] = useState([]);
+  const [blueGuesses, setBlueGuesses] = useState([]);
+  const [redGuesses, setRedGuesses] = useState([]);
+  const [showCheatsheet, setCheatsheet] = useState({ blue: false, red: false });
+  const [correctGuessesByBlueTeam, setCorrectGuessesByBlueTeam] = useState([]);
+  const [correctGuessesByRedTeam, setCorrectGuessesByRedTeam] = useState([]);
+  // END STATE -----
+
+  // Loads board
+  useEffect(() => {
+    const asyncFn = async () => {
+      const genBoard = await (await getBoard(match.params.id)).json();
+      const { words, playerOne, playerTwo } = genBoard[0];
+      setBoard(words);
+      setRedTeam(playerOne);
+      setBlueTeam(playerTwo);
+    }
+    asyncFn();
+  }, [match.params.id]);
+
+  const RenderCard = (cardName, index) => (
+    <Card
+      key={index}
+      refreshCard={refreshCard}
+      name={cardName}
+      index={index}
+      blueTeam={blueTeam}
+      redTeam={redTeam}
+      showCheatsheet={showCheatsheet}
+      removeState={showRemove}
+      redGuesses={redGuesses}
+      blueGuesses={blueGuesses}
+      correctGuesses={correctGuesses}
+      correctGuessesByBlueTeam={correctGuessesByBlueTeam}
+      correctGuessesByRedTeam={correctGuessesByRedTeam}
+      turn={turn}
+      guessCard={() => {
+        attemptGuess(
+          index, 
+          { 
+            board, turn, turnCount, showModal, currentTurnGuesses,
+            selectedCards, showRemove, refreshCard, correctGuesses,
+            redTeam, blueTeam, blueGuesses, redGuesses, showCheatsheet,
+            correctGuessesByBlueTeam, correctGuessesByRedTeam 
+          }, 
+          {
+            setCorrectGuesses, setBlueGuesses, setRedGuesses, 
+            setCorrectGuessesByBlueTeam, setCorrectGuessesByRedTeam
+          }
+        );
+        setCurrentTurnGuesses(currentTurnGuesses + 1);
+      }}
+      replaceWord={() => {
+        replaceWord(index, match.params.id, board, { setBoard, refreshCard, triggerRefreshCard });
+      }}
+    />
+  );
+   
 
   return (
     <div>
-      <div css={headerDivider}></div>
-      <h2>{teamTurn} Player board</h2>
-      <Dialog showDialog={assassinated}>
-        <CardContent>
-          <img src={alert} css={messageIcon} />
-          <h2>Shoot, you died. Want to play again?</h2>
-          <br />
-          <Button
-            size="medium"
-            text="New Game"
-            onClickFn={() => props.NewGame()}
-          />
-        </CardContent>
-      </Dialog>
-      <Dialog showDialog={guessesRemaining === 0}>
-        <CardContent>
-          <img src={alert} css={messageIcon} />
-          <h2>You ran out of guesses! Play again?</h2>
-          <br />
-          <Button
-            size="medium"
-            text="New Game"
-            onClickFn={() => props.NewGame()}
-          />
-        </CardContent>
-      </Dialog>
-      <Dialog showDialog={totalPoints === 15}>
-        <CardContent>
-          <img src={checkmark} css={messageIcon} />
-          <h2>You guessed all of the cards! Play again?</h2>
-          <br />
-          <Button
-            size="medium"
-            text="New Game"
-            onClickFn={() => props.NewGame()}
-          />
-        </CardContent>
-      </Dialog>
-      <div css={noWrapFlex}>
-        <div css={genericFlex}>
-          {words && R.addIndex(R.map)(RenderPlayerCard, words)}
+      {showModal && 
+        <div css={pageFade}>
+          <div css={modal}>
+            <h1>{turn === 'blue' ? '🔷 Blue Leader' : '🔴 Red Leader'}: Give a clue!</h1>
+          </div>
         </div>
-        <div css={[maxWidth(150), fullWidth]}>
-          <Button
-            size="large"
-            text="End Turn"
-            onClickFn={() => props.EndTurn()}
-          />
-          <br />
-          <br />
-          <h4>Team 1 + 2 Points: {totalPoints}</h4>
-          <h4>Team Points: {currentTeamPoints}</h4>
-          <h4>Remaining Guesses: {guessesRemaining}</h4>
+      }
+      <div css={primaryContainer}>
+        <div css={topContainer}>
+          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{turn === 'red' ? "🔴 Red Leader: Give a clue!" : "🔷 Blue Leader: Give a clue!"} </h2>
+          <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{turnCount}</p></strong>
+          <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
+            setTurn(turn === 'red' ? 'blue' : 'red');
+            incrementTurnCount(turnCount + 1);
+            setCurrentTurnGuesses(0);
+            triggerModal(setShowModal);
+          }}>End turn</button>
         </div>
+        <div css={genericFlex}>{R.addIndex(R.map)(RenderCard, board)}</div>
+        <button css={buttonStyle(showCheatsheet.red)} onClick={() => {showCheatsheet.red === false ? setCheatsheet({ blue: false, red: true }) : setCheatsheet({ blue: false, red: false })}} >
+          <span role="img" aria-label="Red circle">🔴</span> Red leader cheatsheet
+        </button>
+        <button css={buttonStyle(showCheatsheet.blue)} onClick={() => {showCheatsheet.blue === false ? setCheatsheet({ blue: true, red: false }) : setCheatsheet({ blue: false, red: false })}} >
+          <span role="img" aria-label="Blue diamond">🔷</span> Blue leader cheatsheet
+        </button>
+        <button css={buttonStyle(showRemove)} onClick={() => {showRemove === false ? setShowRemove(true) : setShowRemove(false)}} >
+          Edit words
+        </button>
       </div>
-      <br />
     </div>
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    board: state.board,
-    game: state.game,
-    toaster: state.toaster,
-    guesses: state.guesses,
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { EndTurn, NewGame, GuessCard, SetToast },
-    dispatch
-  );
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PlayerBoard);
+export default withRouter(PlayerBoard);
