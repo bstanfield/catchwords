@@ -1,6 +1,7 @@
 /** @jsx jsx */
 
 import * as R from 'ramda';
+import Network from '../lib/network';
 
 export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));
 
@@ -21,20 +22,8 @@ export const colors = {
   assassinCard: '#E14938',
 };
 
-// General helper fns
-export const hitAPIEndpoint = (method, endpoint, body) => {
-  const response = fetch(`http://localhost:3333/api/${endpoint}`, {
-    method: method || 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(body),
-  });
-  return response;
-};
-
 export const getBoard = async (url) => {
-  const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
+  const board = await Network.get(`get-existing-board/${url}`);
   return board;
 }
 
@@ -47,7 +36,7 @@ export const triggerModal = (setShowModal) => {
 };
 
 export const replaceWord = async (index, url, board, state) => {
-  const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
+  const response = await Network.get(`swap-word/${url}/${index}`);
   const updatedBoard = await (response.json());
   const newWord = updatedBoard.word;
   board.splice(index, 1, newWord);

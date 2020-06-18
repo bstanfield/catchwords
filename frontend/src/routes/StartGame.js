@@ -2,26 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import { jsx } from '@emotion/core';
-import * as R from 'ramda';
 import { withRouter, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { SetToast } from '../actions/toaster';
-import { EndTurn, NewGame } from '../actions/game';
-import { GuessCard } from '../actions/guesses';
-import { scale, projectCardScale } from '../style/scale';
-import { contentContainer } from '../style/layout';
-import { maxWidth, fullWidth, marginAuto } from '../style/misc';
-import { genericFlex, noWrapFlex, justifyContentStart } from '../style/flex';
+import { scale } from '../style/scale';
+import { genericFlex } from '../style/flex';
 
 import TextInput from '../components/UI/TextInput';
 import handWave from '../static/images/waving-hand.png';
 import Dialog from '../components/UI/Dialog';
-import Card from '../components/board/Card';
 import CardContent from '../components/UI/CardContent';
 import Button from '../components/UI/Button';
-
-import { hitAPI } from '../helpers/util';
 
 const roleButton = scale({
   width: ['100%', '100%', '32%'],
@@ -51,7 +40,8 @@ const StartGame = props => {
   const asyncRedirect = async () => {
     let boardCodeToUse = boardCode;
     if (!boardCode) {
-      boardCodeToUse = await props.NewGame();
+      // removing redux
+      // boardCodeToUse = await props.NewGame();
     }
     const link =
       role === 'team1'
@@ -122,21 +112,5 @@ const StartGame = props => {
   );
 };
 
-function mapStateToProps(state) {
-  return {
-    board: state.board,
-    game: state.game,
-    toaster: state.toaster,
-    guesses: state.guesses,
-  };
-}
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(
-    { EndTurn, NewGame, GuessCard, SetToast },
-    dispatch
-  );
-}
-
-export default withRouter(
-  connect(mapStateToProps, mapDispatchToProps)(StartGame)
+export default withRouter(StartGame)
 );

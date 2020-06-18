@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { hitAPIEndpoint } from '../helpers/util'
+import Network from '../../lib/network';
 
 const AddWord = () => {
   const [word, setWord] = useState('');
   const addWordToDb = async () => {
-    const response = await hitAPIEndpoint('post', 'add-word', {
+    const [response] = await Network.post('add-word', {
       name: word,
     });
     console.log('response: ', response);
