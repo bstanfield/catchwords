@@ -2,7 +2,8 @@
 
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import { capitalizeFirst, colors } from '../helpers/util';
+import { colors } from '../style/theme';
+import { capitalizeFirst } from '../lib/format';
 
 const cardContainer = (colorToDisplay) =>
   scale({
