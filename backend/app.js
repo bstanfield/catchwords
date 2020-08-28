@@ -10,6 +10,8 @@ const { getExistingBoard } = require('./endpoints/get-existing-board');
 const { addWord } = require('./endpoints/add-word');
 const { getNewBoard } = require('./endpoints/get-new-board');
 const { swapWord } = require('./endpoints/swap-word');
+const { updateGuesses } = require('./endpoints/update-guesses');
+const { updateTurn } = require('./endpoints/update-turn');
 
 // bodyParser middleware to help parse JSON
 app.use(bodyParser.json())
@@ -32,6 +34,14 @@ app.get('/api/get-existing-board/:board', async (req, res) => {
 
 app.post('/api/add-word', async (req, res) => {
   await addWord(req, res);
+});
+
+app.post('/api/update-guesses', async (req, res) => {
+  await updateGuesses(req, res);
+});
+
+app.post('/api/update-turn', async (req, res) => {
+  await updateTurn(req, res);
 });
 
 app.get('/api/get-new-board', async (req, res) => {

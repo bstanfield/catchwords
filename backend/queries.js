@@ -11,6 +11,27 @@ const knex = require('knex')({
   }
 });
 
+const updateTurn = async (turn_count, board_url) => {
+  await knex
+    .update({ turn_count })
+    .from('boards')
+    .where({ board_url });
+}
+
+const updateGuessesArr = async (player, board_url, guessesArr) => {
+  if (player == 1) {
+    await knex
+      .update({ player_one_guesses: guessesArr })
+      .from('boards')
+      .where({ board_url });
+  } else {
+    await knex
+      .update({ player_two_guesses: guessesArr })
+      .from('boards')
+      .where({ board_url });
+  }
+}
+
 const addWordToDb = async (name) => {
   const lowerCasedName = name.toLowerCase();
   const retrieved = await knex
@@ -57,4 +78,6 @@ module.exports = {
   saveBoardAndPlayerKeys,
   getBoardByBoardUrl,
   updateBoardWord,
+  updateGuessesArr,
+  updateTurn
 }

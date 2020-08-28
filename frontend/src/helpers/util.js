@@ -56,24 +56,38 @@ export const replaceWord = async (index, url, board, state) => {
 }
 
 export const attemptGuess = (index, state, modifiers) => {
-  const tileType = state.turn === 'red'
-    ? state.redTeam[index]
-    : state.blueTeam[index];
+  const tileType = state.turnCount % 2 === 0
+    ? state.blueTeam[index]
+    : state.redTeam[index];
+
+  // sets general correct guesses
   if (tileType === 1) {
     const newArr = R.concat(state.correctGuesses, [index]);
     modifiers.setCorrectGuesses(newArr);
   }
 
-  if (state.turn === 'red') {
+  if (state.turnCount % 2 == 0) { // RED TEAM
+    console.log('Red team made a guess...');
     const newArr = R.concat(state.redGuesses, [index]);
-    modifiers.setRedGuesses(newArr); 
+    modifiers.setRedGuesses(newArr);
+    hitAPIEndpoint('post', `update-guesses`, {
+      board_url: state.url,
+      team: 'red',
+      guesses: newArr
+    });
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByBlueTeam, [index]);
       modifiers.setCorrectGuessesByBlueTeam(newArr);
     }
-  } else {
+  } else { // BLUE TEAM
+    console.log('Blue team made a guess...');
     const newArr = R.concat(state.blueGuesses, [index]);
-    modifiers.setBlueGuesses(newArr); 
+    modifiers.setBlueGuesses(newArr);
+    hitAPIEndpoint('post', `update-guesses`, {
+      board_url: state.url,
+      team: 'blue',
+      guesses: newArr
+    });
     if (tileType === 1) {
       const newArr = R.concat(state.correctGuessesByRedTeam, [index]);
       modifiers.setCorrectGuessesByRedTeam(newArr);
