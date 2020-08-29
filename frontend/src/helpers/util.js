@@ -88,6 +88,4 @@ export const attemptGuess = (index, state, modifiers) => {
       guesses: newArr
     });
   }
-  modifiers.setCorrectBlueGuesses(findCorrectGuesses(state.redTeam, state.blueGuesses || []));
-  modifiers.setCorrectRedGuesses(findCorrectGuesses(state.blueTeam, state.redGuesses || []));
 };
