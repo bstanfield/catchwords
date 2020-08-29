@@ -82,7 +82,7 @@ const PlayerBoard = ({ match }) => {
   // STATE -----
   // Board state
   const [board, setBoard] = useState([]);
-  const [url, setUrl] = useState('');
+  const [id, setId] = useState('');
   const [localTurnCount, setLocalTurnCount] = useState(1);
   const [showModal, setShowModal] = useState(false);
   const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
@@ -109,7 +109,7 @@ const PlayerBoard = ({ match }) => {
   useEffect(() => {
     const asyncFn = async () => {
       const genBoard = await (await getBoard(match.params.id)).json();
-      const { words, red, blue, redGuesses, blueGuesses, turnCount, boardUrl } = genBoard[0];
+      const { words, red, blue, redGuesses, blueGuesses, turnCount, id } = genBoard;
       setBoard(words);
       setRedTeam(red);
       setBlueTeam(blue);
@@ -119,7 +119,7 @@ const PlayerBoard = ({ match }) => {
       setIncorrectGuesses(allIncorrectGuesses);
       setCorrectRedGuesses(findCorrectGuesses(blue, redGuesses || []));
       setCorrectBlueGuesses(findCorrectGuesses(red, blueGuesses || []));
-      setUrl(boardUrl);
+      setId(id);
       setLocalTurnCount(turnCount);
     }
     asyncFn();
@@ -128,7 +128,7 @@ const PlayerBoard = ({ match }) => {
   useEffect(() => {
     const intervalId = setInterval(async () => {
       const genBoard = await (await getBoard(match.params.id)).json();
-      const { red, blue, redGuesses, blueGuesses, turnCount } = genBoard[0];
+      const { red, blue, redGuesses, blueGuesses, turnCount } = genBoard;
       setRedGuesses(redGuesses || []);
       setBlueGuesses(blueGuesses || []);
       const allIncorrectGuesses = findIncorrectGuesses(red, blueGuesses || []).concat(findIncorrectGuesses(blue, redGuesses || []));
@@ -166,8 +166,8 @@ const PlayerBoard = ({ match }) => {
           <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{localTurnCount}</p></strong>
           <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
             hitAPIEndpoint('post', `update-turn`, {
-              board_url: url,
-              turn_count: localTurnCount + 1,
+              id,
+              turnCount: localTurnCount + 1,
             });
             setLocalTurnCount(localTurnCount + 1);
             setCurrentTurnGuesses(0);
@@ -177,7 +177,7 @@ const PlayerBoard = ({ match }) => {
           <Cards
             refreshCard={refreshCard} 
             state={{
-            board, localTurnCount, showModal, currentTurnGuesses, url,
+            board, localTurnCount, showModal, currentTurnGuesses, id,
             selectedCards, showRemove, refreshCard, correctBlueGuesses, correctRedGuesses,
             redTeam, blueTeam, blueGuesses, redGuesses, showCheatsheet, incorrectGuesses, guessingState
             }} 
@@ -206,19 +206,19 @@ const PlayerBoard = ({ match }) => {
         <button css={buttonStyle(showRemove)} onClick={() => { 
             // sets turn count to 1 and current turn guesses to none
             hitAPIEndpoint('post', `update-turn`, {
-              board_url: url,
-              turn_count: 1,
+              id,
+              turnCount: 1,
             });
             setCurrentTurnGuesses(0);
 
             // resets player guesses
             hitAPIEndpoint('post', `update-guesses`, {
-              board_url: url,
+              id: id,
               team: 'red',
               guesses: []
             });
             hitAPIEndpoint('post', `update-guesses`, {
-              board_url: url,
+              id: id,
               team: 'blue',
               guesses: []
             });

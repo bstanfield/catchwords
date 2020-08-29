@@ -13,7 +13,8 @@ const NewBoard = () => {
   useEffect(() => {
     const asyncFn = async () => {
       const response = await (await generateBoard()).json();
-      setUrl(response.boardUrl);
+      console.log('generated board: ', response);
+      setUrl(response.id);
     }
     asyncFn();
   }, []);

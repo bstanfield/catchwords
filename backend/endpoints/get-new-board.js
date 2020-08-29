@@ -1,5 +1,6 @@
 const R = require('ramda');
-const { getRandomWords, saveBoardAndPlayerKeys } = require('../queries');
+const { saveBoardAndPlayerKeys, getAllWords } = require('../queries');
+const { getRandomWords, gameBoards } = require('../data');
 const randomWords = require('random-words');
 
 // 0 = neutral (13)
@@ -100,37 +101,20 @@ const blue = R.pipe(
 )(arrWithOverlap);
 
 exports.getNewBoard = async (req, res) => {
-  const wordsObjs = await getRandomWords(25);
-  const wordsArr = R.pluck('name', wordsObjs.rows);
+  const wordsArr = getRandomWords(25);
+  const id = R.join('-', randomWords(5));
 
-  const findNumOfOverlap = (p1, p2) => {
-    let i = 0;
-    let overlap = 0;
-    let conjoinedArr = [];
-    while (i < 25) {
-      if (p1[i] === 1 && p2[i] === 1) {
-        overlap++;
-      }
-      conjoinedArr.push([p1[i], p2[i]]);
-      i++;
-    }
-    return { overlap, conjoinedArr };
-  };
-
-  const boardIdAndUrl = await saveBoardAndPlayerKeys({
-    board_url: R.join('-', randomWords(5)),
+  // adds new board to memory
+  gameBoards[id] = {
+    id,
     words: wordsArr,
     red,
     blue,
     timestamp: new Date(),
-  });
-  const { board_id, board_url } = boardIdAndUrl[0];
+    redGuesses: [],
+    blueGuesses: [],
+    turnCount: 1
+  }
 
-  res.status(200).send({
-    words: wordsArr,
-    boardId: board_id,
-    boardUrl: board_url,
-    red,
-    blue,
-  });
+  res.status(200).send(gameBoards[id]);
 };

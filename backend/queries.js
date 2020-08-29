@@ -61,11 +61,6 @@ const saveBoardAndPlayerKeys = async (board) => {
 
 const getBoardByBoardUrl = async (url) => knex.select().from('boards').where({ board_url: url });
 
-const getRandomWords = async (num) => knex
-  .raw(
-    `SELECT name FROM words ORDER BY random() LIMIT ${num || 25}`
-  );
-
 const updateBoardWord = async (words, board_url) => knex
   .update({ words })
   .from('boards')
@@ -73,11 +68,10 @@ const updateBoardWord = async (words, board_url) => knex
 
 module.exports = {
   addWordToDb,
-  getRandomWords,
   getExistingBoard,
   saveBoardAndPlayerKeys,
   getBoardByBoardUrl,
   updateBoardWord,
   updateGuessesArr,
-  updateTurn
+  updateTurn,
 }

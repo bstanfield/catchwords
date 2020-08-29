@@ -55,7 +55,7 @@ const RenderCard = (cardName, index, state, modifiers) => {
       modifiers.setCurrentTurnGuesses(state.currentTurnGuesses + 1);
     }}
     replaceWord={() => {
-      replaceWord(index, state.url, state.board, { setBoard: modifiers.setBoard, refreshCard: state.refreshCard, triggerRefreshCard: modifiers.triggerRefreshCard });
+      replaceWord(index, state.id, state.board, { setBoard: modifiers.setBoard, refreshCard: state.refreshCard, triggerRefreshCard: modifiers.triggerRefreshCard });
     }}
   />)
 };

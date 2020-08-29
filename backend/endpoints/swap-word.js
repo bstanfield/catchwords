@@ -1,24 +1,11 @@
-const R = require('ramda');
-const { getBoardByBoardUrl, getRandomWords, updateBoardWord } = require('../queries');
-const { toCamel } = require('../util');
+const { gameBoards, getRandomWords } = require('../data');
+
 exports.swapWord = async (req, res) => {
-  const { board, index } = req.params;
-  if (!index) {
-    return res.status(422).send({ error: 'needs index' });
-  }
+  const { id, index } = req.params;
+  const newWord = getRandomWords(1)[0];
+  gameBoards[id].words[index] = newWord;
 
-  const retrievedBoard = await getBoardByBoardUrl(board);
-  if (R.isEmpty(retrievedBoard) || R.isNil(retrievedBoard)) {
-    return res.status(404).send({ error: 'board not found' });
-  }
-
-  const { words } = retrievedBoard[0];
-  const randomWords = await getRandomWords();
-  const wordToAdd = randomWords.rows[0].name;
-  words.splice(index, 1, wordToAdd);
-  await updateBoardWord(words, board);
   res.status(200).send({
-    board: toCamel(retrievedBoard),
-    word: wordToAdd,
+    word: newWord,
   });
 }

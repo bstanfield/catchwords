@@ -48,6 +48,6 @@ app.get('/api/get-new-board', async (req, res) => {
   await getNewBoard(req, res);
 });
 
-app.get('/api/swap-word/:board/:index', async (req, res) => {
+app.get('/api/swap-word/:id/:index', async (req, res) => {
   await swapWord(req, res);
 });

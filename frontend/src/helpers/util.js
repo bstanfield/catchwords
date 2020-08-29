@@ -23,7 +23,7 @@ export const colors = {
 
 // General helper fns
 export const hitAPIEndpoint = (method, endpoint, body) => {
-  const response = fetch(`http://35b2350b56c8.ngrok.io/api/${endpoint}`, {
+  const response = fetch(`http://localhost:3333/api/${endpoint}`, {
     method: method || 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -73,7 +73,7 @@ export const attemptGuess = (index, state, modifiers) => {
     const newArr = R.concat(state.redGuesses, [index]);
     modifiers.setRedGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {
-      board_url: state.url,
+      id: state.id,
       team: 'red',
       guesses: newArr
     });
@@ -81,7 +81,7 @@ export const attemptGuess = (index, state, modifiers) => {
     const newArr = R.concat(state.blueGuesses, [index]);
     modifiers.setBlueGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {
-      board_url: state.url,
+      id: state.id,
       team: 'blue',
       guesses: newArr
     });
