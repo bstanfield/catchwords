@@ -7,7 +7,6 @@ const AddWord = () => {
     const response = await hitAPIEndpoint('post', 'add-word', {
       name: word,
     });
-    console.log('response: ', response);
     if (response.status === 422) {
       alert(`${word} already exists in the game 😲`);
     } else {

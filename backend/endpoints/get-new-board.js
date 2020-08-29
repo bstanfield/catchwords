@@ -60,7 +60,7 @@ const numAssassin = 3; /// = 2
 
 // PLAYER ONE
 const baseArr = simpleArr();
-const playerOne = R.pipe(
+const red = R.pipe(
   placeNumbersInArr(0, numNeutral, R.__, false),
   placeNumbersInArr(1, 9, R.__, false),
   placeNumbersInArr(2, numAssassin, R.__, false),
@@ -90,10 +90,10 @@ const findOverlap = R.curry((p1, max) => {
   return overlap;
 });
 
-const overlap = findOverlap(playerOne, 3);
+const overlap = findOverlap(red, 3);
 const arrWithOverlap = placeNumbersInArr(1, overlap.length, simpleArr(), overlap);
 
-const playerTwo = R.pipe(
+const blue = R.pipe(
   placeNumbersInArr(0, numNeutral, R.__, false),
   placeNumbersInArr(1, numCorrect, R.__, false),
   placeNumbersInArr(2, numAssassin, R.__, false),
@@ -120,8 +120,8 @@ exports.getNewBoard = async (req, res) => {
   const boardIdAndUrl = await saveBoardAndPlayerKeys({
     board_url: R.join('-', randomWords(5)),
     words: wordsArr,
-    player_one: playerOne,
-    player_two: playerTwo,
+    red,
+    blue,
     timestamp: new Date(),
   });
   const { board_id, board_url } = boardIdAndUrl[0];
@@ -130,7 +130,7 @@ exports.getNewBoard = async (req, res) => {
     words: wordsArr,
     boardId: board_id,
     boardUrl: board_url,
-    playerOne,
-    playerTwo,
+    red,
+    blue,
   });
 };

@@ -19,14 +19,14 @@ const updateTurn = async (turn_count, board_url) => {
 }
 
 const updateGuessesArr = async (player, board_url, guessesArr) => {
-  if (player == 1) {
+  if (player == 'red') {
     await knex
-      .update({ player_one_guesses: guessesArr })
+      .update({ red_guesses: guessesArr })
       .from('boards')
       .where({ board_url });
   } else {
     await knex
-      .update({ player_two_guesses: guessesArr })
+      .update({ blue_guesses: guessesArr })
       .from('boards')
       .where({ board_url });
   }

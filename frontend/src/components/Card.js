@@ -28,35 +28,8 @@ const setCardColor = (condition) => {
   }
 }
 
-const chooseCardToShow = (showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turnCount, correctGuesses, incorrectGuesses) => {
-  let colorToDisplay = 'white';
-  if (showCheatsheet.red === true) {
-    colorToDisplay = setCardColor(redTeam[index]);
-  }
-  if (showCheatsheet.blue === true) {
-    colorToDisplay = setCardColor(blueTeam[index]);
-  }
-  if (turnCount % 2 !== 0) {
-    if (redGuesses.includes(index)) {
-      const tileType = redTeam[index];
-      colorToDisplay = setCardColor(tileType);
-    }
-  }
-  if (turnCount % 2 === 0) {
-    if (blueGuesses.includes(index)) {
-      const tileType = blueTeam[index];
-      colorToDisplay = setCardColor(tileType);
-    }
-  }
-  // Green guesses persist between turns, but toggles off when cheatsheet is on
-  if (correctGuesses.includes(index) && !showCheatsheet.blue && !showCheatsheet.red) {
-    colorToDisplay = colors.correctCard;
-  }
-  // Red guesses persists between turns
-  if (incorrectGuesses.includes(index) && !showCheatsheet.blue && !showCheatsheet.red) {
-    colorToDisplay = colors.correctCard;
-  }
-  return cardContainer(colorToDisplay);
+const chooseCardToShow = (color) => {
+  return cardContainer(color || 'white');
 }
 
 
@@ -82,7 +55,7 @@ const buttonStyle = selected =>
   });
 
 const Card = props => {
-  const { name, index, removeState, replaceWord, guessCard, selected, redTeam, blueTeam, showCheatsheet, redGuesses, blueGuesses, turn, correctGuesses, correctGuessesByBlueTeam, correctGuessesByRedTeam, incorrectGuesses } = props;
+  const { name, index, replaceWord, attemptGuess, selected, color, guessing } = props;
 
   let size = 28;
   if (name) {
@@ -96,14 +69,14 @@ const Card = props => {
   }
   return (
     <button
-      css={[chooseCardToShow(showCheatsheet, redTeam, blueTeam, index, redGuesses, blueGuesses, turn, correctGuesses, incorrectGuesses), buttonStyle(selected)]}
+      css={[chooseCardToShow(color), buttonStyle(selected)]}
       key={index}
-      onClick={() => { removeState === false ? guessCard() : replaceWord() }}
+      onClick={() => { guessing ? attemptGuess() : replaceWord() }}
     >
       <h4 css={[cardText(size)]}>{capitalizeFirst(name)}</h4>
-      {removeState && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
-      {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔷</span></p>}
-      {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔴</span></p>}
+      {!guessing && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
+      {/* {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔷</span></p>}
+      {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔴</span></p>} */}
     </button>
   );
 };

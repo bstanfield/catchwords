@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react';
 import { withRouter } from 'react-router-dom';
 import { jsx } from '@emotion/core';
-import * as R from 'ramda';
 import { scale } from '../style/scale';
-import { triggerModal, replaceWord, getBoard, attemptGuess, hitAPIEndpoint } from '../helpers/util'
+import { triggerModal, replaceWord, getBoard, attemptGuess, hitAPIEndpoint, findCorrectGuesses, findIncorrectGuesses } from '../helpers/util'
 
 import {
   genericFlex,
@@ -83,20 +82,6 @@ const buttonStyle = (showing) => scale({
   }
 });
 
-const findCorrectGuesses = (teamBoard, teamGuesses) => {
-  return teamGuesses.filter(
-    guess => teamBoard[guess] === 1
-  )
-}
-
-const findIncorrectGuesses = (teamBoard, teamGuesses) => {
-  const incorrect = teamGuesses.filter(
-    guess => teamBoard[guess] === 2
-  )
-  console.log(`found these: `, incorrect);
-  return incorrect;
-}
-
 const PlayerBoard = ({ match }) => {
   // STATE -----
   // Board state
@@ -110,90 +95,126 @@ const PlayerBoard = ({ match }) => {
   const [selectedCards, setSelectedCards] = useState([]);
   const [showRemove, setShowRemove] = useState(false);
   const [refreshCard, triggerRefreshCard] = useState(0);
-  const [correctGuesses, setCorrectGuesses] = useState([]);
   const [incorrectGuesses, setIncorrectGuesses] = useState([]);
+  const [guessingState, setGuessingState] = useState(true); // false = word swap mdoe
 
   // Team state
   const [redTeam, setRedTeam] = useState([]);
   const [blueTeam, setBlueTeam] = useState([]);
-  const [blueGuesses, setBlueGuesses] = useState([]);
   const [redGuesses, setRedGuesses] = useState([]);
+  const [blueGuesses, setBlueGuesses] = useState([]);
+  const [correctRedGuesses, setCorrectRedGuesses] = useState([]);
+  const [correctBlueGuesses, setCorrectBlueGuesses] = useState([]);
+
   const [showCheatsheet, setCheatsheet] = useState({ blue: false, red: false });
-  const [correctGuessesByBlueTeam, setCorrectGuessesByBlueTeam] = useState([]);
-  const [correctGuessesByRedTeam, setCorrectGuessesByRedTeam] = useState([]);
   // END STATE -----
 
   // Loads board
   useEffect(() => {
     const asyncFn = async () => {
       const genBoard = await (await getBoard(match.params.id)).json();
-      const { words, playerOne, playerTwo, playerOneGuesses, playerTwoGuesses, turnCount, boardUrl } = genBoard[0];
+      const { words, red, blue, redGuesses, blueGuesses, turnCount, boardUrl } = genBoard[0];
       setBoard(words);
-      setRedTeam(playerOne);
-      setBlueTeam(playerTwo);
-      setBlueGuesses(playerTwoGuesses || []);
-      setRedGuesses(playerOneGuesses || []);
-      setCorrectGuessesByBlueTeam(findCorrectGuesses(playerTwo, playerTwoGuesses || []));
-      setCorrectGuessesByRedTeam(findCorrectGuesses(playerOne, playerOneGuesses || []));
-      const allIncorrectGuesses = findIncorrectGuesses(playerTwo, playerTwoGuesses || []).concat(findIncorrectGuesses(playerOne, playerOneGuesses || []));
-      console.log('all incorrect guesses: ', allIncorrectGuesses)
+      setRedTeam(red);
+      setBlueTeam(blue);
+      setRedGuesses(redGuesses || []);
+      setBlueGuesses(blueGuesses || []);
+      const allIncorrectGuesses = findIncorrectGuesses(red, blueGuesses || []).concat(findIncorrectGuesses(blue, redGuesses || []));
       setIncorrectGuesses(allIncorrectGuesses);
+      setCorrectRedGuesses(findCorrectGuesses(blue, redGuesses || []));
+      setCorrectBlueGuesses(findCorrectGuesses(red, blueGuesses || []));
       setUrl(boardUrl);
+      setLocalTurnCount(turnCount);
     }
     asyncFn();
   }, [match.params.id]);
 
-  useEffect(() => {
-    const intervalId = setInterval(async () => {
-      const genBoard = await (await getBoard(match.params.id)).json();
-      const { words, playerOne, playerTwo, playerOneGuesses, playerTwoGuesses, turnCount } = genBoard[0];
-      setBlueGuesses(playerTwoGuesses || []);
-      setRedGuesses(playerOneGuesses || []);
-      setCorrectGuessesByBlueTeam(findCorrectGuesses(playerTwo, playerTwoGuesses || []));
-      setCorrectGuessesByRedTeam(findCorrectGuesses(playerOne, playerOneGuesses || []));
-      const allIncorrectGuesses = findIncorrectGuesses(playerTwo, playerTwoGuesses || []).concat(findIncorrectGuesses(playerOne, playerOneGuesses || []));
-      console.log('all incorrect guesses: ', allIncorrectGuesses)
-      setIncorrectGuesses(allIncorrectGuesses);
-      setLocalTurnCount(turnCount);
-    }, 2000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(async () => {
+  //     const genBoard = await (await getBoard(match.params.id)).json();
+  //     const { red, blue, redGuesses, blueGuesses, turnCount } = genBoard[0];
+  //     setRedGuesses(redGuesses || []);
+  //     setBlueGuesses(blueGuesses || []);
+  //     const allIncorrectGuesses = findIncorrectGuesses(blue, blueGuesses || []).concat(findIncorrectGuesses(red, redGuesses || []));
+  //     setIncorrectGuesses(allIncorrectGuesses);
+  //     setCorrectRedGuesses(findCorrectGuesses(red, redGuesses || []));
+  //     setCorrectBlueGuesses(findCorrectGuesses(blue, blueGuesses || []));
+  //     setLocalTurnCount(turnCount);
+  //   }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, [match.params.id]);
+  //   return () => clearInterval(intervalId);
+  // }, [match.params.id]);
 
   useEffect(() => {
     if (localTurnCount === 1) return;
     triggerModal(setShowModal);
   }, [localTurnCount]);
 
-  const RenderCard = (cardName, index) => (
-    <Card
+  const RenderCard = (cardName, index) => {
+    let color = 'white';
+    // edit this for edit words capability
+    if (showCheatsheet.red || showCheatsheet.blue) {
+      if (showCheatsheet.red) {
+        if (redTeam[index] === 1) {
+          color = 'green'
+        } else if (redTeam[index] === 2) {
+          color = 'red';
+        } else if (redTeam[index] === 0) {
+          color = 'grey';
+        }
+      } else if (showCheatsheet.blue) {
+        if (blueTeam[index] === 1) {
+          color = 'green'
+        } else if (blueTeam[index] === 2) {
+          color = 'red';
+        } else if (blueTeam[index] === 0) {
+          color = 'grey';
+        }
+      }
+    } else {
+      // TO-DO: Distinct correct guesses arrays for each team
+      // console.log('correct guesses (blue): ', correctBlueGuesses);
+      // console.log('correct guesses (red): ', correctRedGuesses);
+      if (correctBlueGuesses.includes(index) || correctRedGuesses.includes(index)) {
+        // console.log('index is including in correct guesses!')
+        color = 'green';
+      } else if (incorrectGuesses.includes(index)) {
+        // console.log('index is including in WRONG guesses!')
+        color = 'red';
+      } else if (redGuesses.includes(index) || blueGuesses.includes(index)) {
+        // console.log('index is including in OK guesses!')
+        color = 'grey';
+      }
+    }
+
+    // if (index === 6) {
+    //   console.log('card name: ', cardName);
+    //   console.log('color: ', color);
+    // }
+
+
+    // console.log('---');
+    // console.log('INDEX: ', index);
+    // console.log('color: ', color);
+    // console.log('---');
+
+    return (<Card
       key={index}
       refreshCard={refreshCard}
       name={cardName}
+      color={color}
       index={index}
-      blueTeam={blueTeam}
-      redTeam={redTeam}
-      showCheatsheet={showCheatsheet}
-      removeState={showRemove}
-      redGuesses={redGuesses}
-      blueGuesses={blueGuesses}
-      correctGuesses={correctGuesses}
-      correctGuessesByBlueTeam={correctGuessesByBlueTeam}
-      correctGuessesByRedTeam={correctGuessesByRedTeam}
-      incorrectGuesses={incorrectGuesses}
-      turnCount={localTurnCount}
-      guessCard={() => {
+      guessing={guessingState}
+      attemptGuess={() => {
         attemptGuess(
           index,
           {
             board, localTurnCount, showModal, currentTurnGuesses, url,
-            selectedCards, showRemove, refreshCard, correctGuesses,
+            selectedCards, showRemove, refreshCard, correctBlueGuesses, correctRedGuesses,
             redTeam, blueTeam, blueGuesses, redGuesses, showCheatsheet,
-            correctGuessesByBlueTeam, correctGuessesByRedTeam
           },
           {
-            setCorrectGuesses, setBlueGuesses, setRedGuesses,
-            setCorrectGuessesByBlueTeam, setCorrectGuessesByRedTeam
+            setCorrectBlueGuesses, setCorrectRedGuesses, setBlueGuesses, setRedGuesses,
           }
         );
         setCurrentTurnGuesses(currentTurnGuesses + 1);
@@ -201,8 +222,8 @@ const PlayerBoard = ({ match }) => {
       replaceWord={() => {
         replaceWord(index, match.params.id, board, { setBoard, refreshCard, triggerRefreshCard });
       }}
-    />
-  );
+    />)
+  };
 
 
   return (
@@ -210,13 +231,13 @@ const PlayerBoard = ({ match }) => {
       {showModal &&
         <div css={pageFade}>
           <div css={modal}>
-            <h1>{localTurnCount % 2 === 0 ? "🔷 Blue Leader: Give a clue!" : "🔴 Red Leader: Give a clue!"}</h1>
+            <h1>{localTurnCount % 2 === 0 ? "🔷 Blue: Give a clue!" : "🔴 Red: Give a clue!"}</h1>
           </div>
         </div>
       }
       <div css={primaryContainer}>
         <div css={topContainer}>
-          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{localTurnCount % 2 === 0 ? "🔷 Blue Leader: Give a clue!" : "🔴 Red Leader: Give a clue!"} </h2>
+          <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{localTurnCount % 2 === 0 ? "🔷 Blue: Give a clue!" : "🔴 Red: Give a clue!"} </h2>
           <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{localTurnCount}</p></strong>
           <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
             setLocalTurnCount(localTurnCount + 1)
@@ -227,16 +248,49 @@ const PlayerBoard = ({ match }) => {
             setCurrentTurnGuesses(0);
           }}>End turn</button>
         </div>
-        <div css={genericFlex}>{R.addIndex(R.map)(RenderCard, board)}</div>
+        <div css={genericFlex}>{board.map((item, index) => RenderCard(item, index))}</div>
         <button css={buttonStyle(showCheatsheet.red)} onClick={() => { showCheatsheet.red === false ? setCheatsheet({ blue: false, red: true }) : setCheatsheet({ blue: false, red: false }) }} >
-          <span role="img" aria-label="Red circle">🔴</span> Red leader cheatsheet
+          <span role="img" aria-label="Red circle">🔴</span> Red cheatsheet
         </button>
         <button css={buttonStyle(showCheatsheet.blue)} onClick={() => { showCheatsheet.blue === false ? setCheatsheet({ blue: true, red: false }) : setCheatsheet({ blue: false, red: false }) }} >
-          <span role="img" aria-label="Blue diamond">🔷</span> Blue leader cheatsheet
+          <span role="img" aria-label="Blue diamond">🔷</span> Blue cheatsheet
         </button>
-        <button css={buttonStyle(showRemove)} onClick={() => { showRemove === false ? setShowRemove(true) : setShowRemove(false) }} >
+        <button css={buttonStyle(showRemove)} onClick={() => { 
+          if (showRemove === false) {
+            setShowRemove(true)
+            setGuessingState(false)
+          } else {
+            setShowRemove(false)
+            setGuessingState(true)
+          }
+          }} >
           Edit words
         </button>
+        <button css={buttonStyle(showRemove)} onClick={() => { 
+            // sets turn count to 1 and current turn guesses to none
+            hitAPIEndpoint('post', `update-turn`, {
+              board_url: url,
+              turn_count: 1,
+            });
+            setCurrentTurnGuesses(0);
+
+            // resets player guesses
+            hitAPIEndpoint('post', `update-guesses`, {
+              board_url: url,
+              team: 'red',
+              guesses: []
+            });
+            hitAPIEndpoint('post', `update-guesses`, {
+              board_url: url,
+              team: 'blue',
+              guesses: []
+            });
+          }} >
+          Reset answers
+        </button>
+        <a href="/new"><button css={buttonStyle(showRemove)}>
+          New board
+        </button></a>
       </div>
     </div>
   );

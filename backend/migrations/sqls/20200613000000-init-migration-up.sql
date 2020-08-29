@@ -8,8 +8,8 @@ CREATE TABLE IF NOT EXISTS boards (
   id SERIAL PRIMARY KEY,
   board_url text,
   words text[],
-  player_one integer[],
-  player_two integer[],
+  red integer[],
+  blue integer[],
   timestamp date
 );
 

@@ -55,18 +55,21 @@ export const replaceWord = async (index, url, board, state) => {
   state.triggerRefreshCard(state.refreshCard + 1);
 }
 
+export const findCorrectGuesses = (teamBoard, teamGuesses) => {
+  return teamGuesses.filter(
+    guess => teamBoard[guess] === 1
+  )
+}
+
+export const findIncorrectGuesses = (teamBoard, teamGuesses) => {
+  const incorrect = teamGuesses.filter(
+    guess => teamBoard[guess] === 2
+  )
+  return incorrect;
+}
+
 export const attemptGuess = (index, state, modifiers) => {
-  const tileType = state.turnCount % 2 === 0
-    ? state.blueTeam[index]
-    : state.redTeam[index];
-
-  // sets general correct guesses
-  if (tileType === 1) {
-    const newArr = R.concat(state.correctGuesses, [index]);
-    modifiers.setCorrectGuesses(newArr);
-  }
-
-  if (state.turnCount % 2 == 0) { // RED TEAM
+  if (state.turnCount % 2 === 0) { // RED TEAM
     console.log('Red team made a guess...');
     const newArr = R.concat(state.redGuesses, [index]);
     modifiers.setRedGuesses(newArr);
@@ -75,10 +78,6 @@ export const attemptGuess = (index, state, modifiers) => {
       team: 'red',
       guesses: newArr
     });
-    if (tileType === 1) {
-      const newArr = R.concat(state.correctGuessesByBlueTeam, [index]);
-      modifiers.setCorrectGuessesByBlueTeam(newArr);
-    }
   } else { // BLUE TEAM
     console.log('Blue team made a guess...');
     const newArr = R.concat(state.blueGuesses, [index]);
@@ -88,9 +87,7 @@ export const attemptGuess = (index, state, modifiers) => {
       team: 'blue',
       guesses: newArr
     });
-    if (tileType === 1) {
-      const newArr = R.concat(state.correctGuessesByRedTeam, [index]);
-      modifiers.setCorrectGuessesByRedTeam(newArr);
-    }
   }
+  modifiers.setCorrectBlueGuesses(findCorrectGuesses(state.redTeam, state.blueGuesses || []));
+  modifiers.setCorrectRedGuesses(findCorrectGuesses(state.blueTeam, state.redGuesses || []));
 };
