@@ -31,13 +31,10 @@ const RenderCard = (cardName, index, state, modifiers) => {
     }
   } else {
     if (state.correctBlueGuesses.includes(index) || state.correctRedGuesses.includes(index)) {
-      // console.log('index is including in correct guesses!')
       color = 'green';
     } else if (state.incorrectGuesses.includes(index)) {
-      // console.log('index is including in WRONG guesses!')
       color = 'red';
     } else if (state.redGuesses.includes(index) || state.blueGuesses.includes(index)) {
-      // console.log('index is including in OK guesses!')
       color = 'grey';
     }
   }

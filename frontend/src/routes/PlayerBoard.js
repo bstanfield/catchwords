@@ -136,7 +136,7 @@ const PlayerBoard = ({ match }) => {
       setCorrectRedGuesses(findCorrectGuesses(blue, redGuesses || []));
       setCorrectBlueGuesses(findCorrectGuesses(red, blueGuesses || []));
       setLocalTurnCount(turnCount);
-    }, 2000);
+    }, 1000);
 
     return () => clearInterval(intervalId);
   }, [match.params.id]);
@@ -165,11 +165,11 @@ const PlayerBoard = ({ match }) => {
           <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>{localTurnCount % 2 === 0 ? "🔷 Blue: Give a clue!" : "🔴 Red: Give a clue!"} </h2>
           <strong><p style={{ position: 'absolute', top: 20, right: 160, opacity: 0.7 }}>Turn #{localTurnCount}</p></strong>
           <button css={absolutePassTurn(currentTurnGuesses)} onClick={() => {
-            setLocalTurnCount(localTurnCount + 1)
             hitAPIEndpoint('post', `update-turn`, {
               board_url: url,
-              turn_count: localTurnCount,
+              turn_count: localTurnCount + 1,
             });
+            setLocalTurnCount(localTurnCount + 1);
             setCurrentTurnGuesses(0);
           }}>End turn</button>
         </div>

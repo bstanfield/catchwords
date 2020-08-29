@@ -23,7 +23,7 @@ export const colors = {
 
 // General helper fns
 export const hitAPIEndpoint = (method, endpoint, body) => {
-  const response = fetch(`http://localhost:3333/api/${endpoint}`, {
+  const response = fetch(`http://35b2350b56c8.ngrok.io/api/${endpoint}`, {
     method: method || 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -69,8 +69,7 @@ export const findIncorrectGuesses = (teamBoard, teamGuesses) => {
 }
 
 export const attemptGuess = (index, state, modifiers) => {
-  if (state.turnCount % 2 === 0) { // RED TEAM
-    console.log('Red team made a guess...');
+  if (state.localTurnCount % 2 === 0) { // RED TEAM
     const newArr = R.concat(state.redGuesses, [index]);
     modifiers.setRedGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {
@@ -79,7 +78,6 @@ export const attemptGuess = (index, state, modifiers) => {
       guesses: newArr
     });
   } else { // BLUE TEAM
-    console.log('Blue team made a guess...');
     const newArr = R.concat(state.blueGuesses, [index]);
     modifiers.setBlueGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {
