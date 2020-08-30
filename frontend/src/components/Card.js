@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import { capitalizeFirst, colors } from '../helpers/util';
 
-const cardContainer = (colorToDisplay) =>
+const cardContainer = colorToDisplay =>
   scale({
     width: '185px',
     height: '85px',
@@ -15,7 +15,7 @@ const cardContainer = (colorToDisplay) =>
     boxShadow: '0 2px 5px 0 #cacaca'
   });
 
-const setCardColor = (condition) => {
+const setCardColor = condition => {
   switch (condition) {
     case 0:
       return colors.neutralCard;
@@ -26,18 +26,18 @@ const setCardColor = (condition) => {
     default:
       return colors.neutralCard;
   }
-}
+};
 
-const chooseCardToShow = (color) => {
+const chooseCardToShow = color => {
   return cardContainer(color || 'white');
-}
+};
 
-
-const cardText = (size) => scale({
-  textAlign: 'center',
-  fontSize: size || 22,
-  lineHeight: '30px',
-});
+const cardText = size =>
+  scale({
+    textAlign: 'center',
+    fontSize: size || 22,
+    lineHeight: '30px'
+  });
 
 const buttonStyle = selected =>
   scale({
@@ -50,12 +50,20 @@ const buttonStyle = selected =>
     color: '#333333',
     border: selected && '1px solid green',
     '&:hover': {
-      opacity: 0.8,
-    },
+      opacity: 0.8
+    }
   });
 
 const Card = props => {
-  const { name, index, replaceWord, attemptGuess, selected, color, guessing } = props;
+  const {
+    name,
+    index,
+    replaceWord,
+    attemptGuess,
+    selected,
+    color,
+    guessing
+  } = props;
 
   let size = 28;
   if (name) {
@@ -71,10 +79,14 @@ const Card = props => {
     <button
       css={[chooseCardToShow(color), buttonStyle(selected)]}
       key={index}
-      onClick={() => { guessing ? attemptGuess() : replaceWord() }}
+      onClick={() => {
+        guessing ? attemptGuess() : replaceWord();
+      }}
     >
       <h4 css={[cardText(size)]}>{capitalizeFirst(name)}</h4>
-      {!guessing && <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>}
+      {!guessing && (
+        <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>
+      )}
       {/* {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔷</span></p>}
       {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔴</span></p>} */}
     </button>

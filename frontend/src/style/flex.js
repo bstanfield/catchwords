@@ -4,52 +4,52 @@ const genericFlex = scale({
   display: 'flex',
   flexWrap: 'wrap',
   justifyContent: 'space-between',
-  alignContent: 'flex-start',
+  alignContent: 'flex-start'
 });
 
 const flexReverseOnSmall = scale({
-  flexDirection: ['column-reverse', 'column-reverse', 'row', 'row'],
+  flexDirection: ['column-reverse', 'column-reverse', 'row', 'row']
 });
 
 const justifyContentStart = scale({
-  justifyContent: 'flex-start',
+  justifyContent: 'flex-start'
 });
 
 const justifyContentEnd = scale({
-  justifyContent: 'flex-end',
+  justifyContent: 'flex-end'
 });
 
 const justifyContentSpaceBetween = scale({
-  justifyContent: 'space-between',
+  justifyContent: 'space-between'
 });
 
 const justifyContentCenter = scale({
-  justifyContent: 'center',
+  justifyContent: 'center'
 });
 
 const flexUntilMobile = scale({
-  display: ['block', 'flex'],
+  display: ['block', 'flex']
 });
 
 const flexUntilSmall = scale({
-  display: ['block', 'block', 'flex'],
+  display: ['block', 'block', 'flex']
 });
 
 const flexOnMedium = scale({
-  display: ['block', 'block', 'flex', 'block'],
+  display: ['block', 'block', 'flex', 'block']
 });
 
 const flexCenter = scale({
   alignItems: 'center',
-  textAlign: 'center',
+  textAlign: 'center'
 });
 
 const alignCenter = scale({
-  alignItems: 'center',
+  alignItems: 'center'
 });
 
 const alignStretch = scale({
-  alignItems: 'stretch',
+  alignItems: 'stretch'
 });
 
 const noWrapFlex = scale({
@@ -58,66 +58,66 @@ const noWrapFlex = scale({
   width: 'fit-content',
   maxWidth: '100%',
   justifyContent: 'space-between',
-  alignItems: 'center',
+  alignItems: 'center'
 });
 
 const flexText = scale({
   display: 'flex',
   justifyContent: ['center', 'center', 'flex-start'],
   flexWrap: 'wrap',
-  alignItems: 'baseline',
+  alignItems: 'baseline'
 });
 
 const flexGrid = scale({
   display: 'flex',
   justifyContent: ['center', 'center', 'flex-start'],
   flexWrap: 'wrap',
-  margin: '-10px',
+  margin: '-10px'
 });
 
 const twoColumnFlex = scale({
   display: ['block', 'block', 'flex'],
   flexBasis: '45%',
   flexWrap: ['wrap', 'nowrap'],
-  justifyContent: 'space-between',
+  justifyContent: 'space-between'
 });
 
 const twoColumnFlexItem = scale({
   position: 'relative',
-  width: ['100%', '100%', '48%', '48%'],
+  width: ['100%', '100%', '48%', '48%']
 });
 
 const flexGrow = scale({
-  flexGrow: 1,
+  flexGrow: 1
 });
 
 const rowReverse = scale({
   display: ['block', 'block', 'flex', 'flex'],
   flexWrap: 'wrap',
   flexDirection: 'row-reverse',
-  justifyContent: 'flex-start',
+  justifyContent: 'flex-start'
 });
 
 const alignItemsStart = scale({
-  alignItems: 'flex-start',
+  alignItems: 'flex-start'
 });
 
 const alignItemsBaseline = scale({
-  alignItems: 'baseline',
+  alignItems: 'baseline'
 });
 
 const threeColumnGrid = scale({
   display: 'flex',
   flexBasis: '33%',
   flexWrap: 'wrap',
-  margin: [0, '0 -10px'],
+  margin: [0, '0 -10px']
 });
 
 const threeColumnGridItem = scale({
   position: 'relative',
   minWidth: '200px',
   width: ['100%', '100%', '45%', '30%'],
-  margin: ['10px auto', '10px'],
+  margin: ['10px auto', '10px']
 });
 
 module.exports = {
@@ -143,5 +143,5 @@ module.exports = {
   alignItemsBaseline,
   rowReverse,
   flexReverseOnSmall,
-  flexOnMedium,
+  flexOnMedium
 };

@@ -18,7 +18,7 @@ export const colors = {
   veryLightGray: 'rgba(0,0,0,0.1)',
   neutralCard: '#A8BAC3',
   correctCard: '#61ea44',
-  assassinCard: '#E14938',
+  assassinCard: '#E14938'
 };
 
 // General helper fns
@@ -26,20 +26,20 @@ export const hitAPIEndpoint = (method, endpoint, body) => {
   const response = fetch(`http://localhost:3333/api/${endpoint}`, {
     method: method || 'POST',
     headers: {
-      'Content-Type': 'application/json',
+      'Content-Type': 'application/json'
     },
-    body: JSON.stringify(body),
+    body: JSON.stringify(body)
   });
   return response;
 };
 
-export const getBoard = async (url) => {
+export const getBoard = async url => {
   const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
   return board;
-}
+};
 
 // PlayerBoard helper fns
-export const triggerModal = (setShowModal) => {
+export const triggerModal = setShowModal => {
   setShowModal(true);
   setTimeout(() => {
     setShowModal(false);
@@ -48,28 +48,25 @@ export const triggerModal = (setShowModal) => {
 
 export const replaceWord = async (index, url, board, state) => {
   const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
-  const updatedBoard = await (response.json());
+  const updatedBoard = await response.json();
   const newWord = updatedBoard.word;
   board.splice(index, 1, newWord);
   state.setBoard(board);
   state.triggerRefreshCard(state.refreshCard + 1);
-}
+};
 
 export const findCorrectGuesses = (teamBoard, teamGuesses) => {
-  return teamGuesses.filter(
-    guess => teamBoard[guess] === 1
-  )
-}
+  return teamGuesses.filter(guess => teamBoard[guess] === 1);
+};
 
 export const findIncorrectGuesses = (teamBoard, teamGuesses) => {
-  const incorrect = teamGuesses.filter(
-    guess => teamBoard[guess] === 2
-  )
+  const incorrect = teamGuesses.filter(guess => teamBoard[guess] === 2);
   return incorrect;
-}
+};
 
 export const attemptGuess = (index, state, modifiers) => {
-  if (state.localTurnCount % 2 === 0) { // RED TEAM
+  if (state.localTurnCount % 2 === 0) {
+    // RED TEAM
     const newArr = R.concat(state.redGuesses, [index]);
     modifiers.setRedGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {
@@ -77,7 +74,8 @@ export const attemptGuess = (index, state, modifiers) => {
       team: 'red',
       guesses: newArr
     });
-  } else { // BLUE TEAM
+  } else {
+    // BLUE TEAM
     const newArr = R.concat(state.blueGuesses, [index]);
     modifiers.setBlueGuesses(newArr);
     hitAPIEndpoint('post', `update-guesses`, {

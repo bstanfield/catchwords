@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { hitAPIEndpoint } from '../helpers/util'
+import { hitAPIEndpoint } from '../helpers/util';
 
 const AddWord = () => {
   const [word, setWord] = useState('');
   const addWordToDb = async () => {
     const response = await hitAPIEndpoint('post', 'add-word', {
-      name: word,
+      name: word
     });
     if (response.status === 422) {
       alert(`${word} already exists in the game 😲`);
@@ -13,11 +13,11 @@ const AddWord = () => {
       alert(`${word} added to the game!`);
     }
     setWord('');
-  }
+  };
 
-  const handleChange = (event) => {
+  const handleChange = event => {
     setWord(event.target.value);
-  }
+  };
 
   return (
     <div>

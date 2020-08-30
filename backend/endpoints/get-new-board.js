@@ -1,5 +1,4 @@
 const R = require('ramda');
-const { saveBoardAndPlayerKeys, getAllWords } = require('../queries');
 const { getRandomWords, gameBoards } = require('../data');
 const randomWords = require('random-words');
 
