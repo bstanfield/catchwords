@@ -1,18 +1,17 @@
 /** @jsx jsx */
 
-import { useEffect, useState } from 'react';
-import { withRouter } from 'react-router-dom';
+import { useEffect, useReducer } from 'react';
+import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import {
-  triggerModal,
-  getBoard,
   hitAPIEndpoint,
   findCorrectGuesses,
   findIncorrectGuesses
 } from '../helpers/util';
 
 import Cards from '../components/Cards';
+import Network from '../helpers/network';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -71,7 +70,7 @@ const absolutePassTurn = guesses =>
     }
   });
 
-const buttonStyle = showing =>
+const buttonStyle = isSelected =>
   scale({
     padding: '8px 18px',
     borderRadius: '3px',
@@ -79,123 +78,272 @@ const buttonStyle = showing =>
     cursor: 'pointer',
     margin: '20px 20px 20px 0',
     fontSize: '20px',
-    backgroundColor: showing ? '#2ef72e' : '#eeeeee',
+    backgroundColor: isSelected ? '#2ef72e' : '#eeeeee',
     '&:hover': {
-      backgroundColor: showing ? '#2ef72e' : '#d0d0d0',
-      opacity: showing ? 0.7 : 1
+      backgroundColor: isSelected ? '#2ef72e' : '#d0d0d0',
+      opacity: isSelected ? 0.7 : 1
     }
   });
 
-const turnText = (turn, team) => {
-  // blue gives clue
-  let text = '';
-  if (!team) {
-    return 'Choose your team...';
+const initialState = {
+  words: [],
+  id: '',
+  localTurnCount: 1,
+  showModal: false,
+  currentTurnGuesses: 0,
+  editWordsMode: false,
+  refreshCard: 0,
+  incorrectGuesses: [],
+  guessingState: true, // false = word swap mode
+  userTeam: null,
+  redKey: [],
+  blueKey: [],
+  redGuesses: [],
+  blueGuesses: [],
+  correctRedGuesses: [],
+  correctBlueGuesses: [],
+  showCheatsheet: false
+};
+
+function boardReducer(state, action) {
+  const swapWords = (state, action) => {
+    state.words.splice(action.index, 1, action.word);
+    return {
+      ...state,
+      words: state.words
+    };
+  };
+
+  switch (action.type) {
+    case 'update':
+      return { ...state, ...action.state };
+    case 'reset_turn_guesses':
+      return { ...state, currentTurnGuesses: 0 };
+    case 'increment_guesses':
+      return { ...state, currentTurnGuesses: state.currentTurnGuesses + 1 };
+    case 'increment_turn':
+      return { ...state, localTurnCount: state.localTurnCount + 1 };
+    case 'toggle_modal':
+      return { ...state, showModal: !state.showModal };
+    case 'toggle_swap_mode':
+      return {
+        ...state,
+        editWordsMode: !state.editWordsMode,
+        guessingState: !state.guessingState
+      };
+    case 'swap_word':
+      return swapWords(state, action);
+    case 'toggle_cheatsheet':
+      return { ...state, showCheatsheet: !state.showCheatsheet };
+    case 'set_team':
+      return { ...state, userTeam: action.team };
+    case 'reset':
+      return initialState;
+    default:
+      throw new Error();
   }
-  if (turn % 2 === 0) {
-    if (team === 'blue') {
-      text = '🔷 Give a clue!';
-    } else {
-      text = "🔴 It's your turn to guess!";
+}
+
+const loadBoard = async (boardId, dispatch) => {
+  const [response, responseBody] = await Network.get(
+    `get-existing-board/${boardId}`
+  );
+  const {
+    words,
+    red,
+    blue,
+    redGuesses,
+    blueGuesses,
+    turnCount,
+    id
+  } = responseBody;
+  const allIncorrectGuesses = findIncorrectGuesses(
+    red,
+    blueGuesses || []
+  ).concat(findIncorrectGuesses(blue, redGuesses || []));
+  dispatch({
+    type: 'update',
+    state: {
+      words,
+      id,
+      localTurnCount: turnCount,
+      incorrectGuesses: allIncorrectGuesses,
+      redKey: red,
+      blueKey: blue,
+      redGuesses: redGuesses || [],
+      blueGuesses: blueGuesses || [],
+      correctRedGuesses: findCorrectGuesses(blue, redGuesses || []),
+      correctBlueGuesses: findCorrectGuesses(red, blueGuesses || [])
     }
-  }
-  // red gives clue
-  else if (team === 'red') {
-    text = '🔴 Give a clue!';
-  } else {
-    text = "🔷 It's your turn to guess!";
-  }
-  return text;
+  });
+};
+
+const updateBoard = async (boardId, dispatch) => {
+  const [response, responseBody] = await Network.get(
+    `get-existing-board/${boardId}`
+  );
+  const { red, blue, redGuesses, blueGuesses, turnCount } = responseBody;
+  const allIncorrectGuesses = findIncorrectGuesses(
+    red,
+    blueGuesses || []
+  ).concat(findIncorrectGuesses(blue, redGuesses || []));
+  dispatch({
+    type: 'update',
+    state: {
+      localTurnCount: turnCount,
+      incorrectGuesses: allIncorrectGuesses,
+      redGuesses: redGuesses || [],
+      blueGuesses: blueGuesses || [],
+      correctRedGuesses: findCorrectGuesses(blue, redGuesses || []),
+      correctBlueGuesses: findCorrectGuesses(red, blueGuesses || [])
+    }
+  });
 };
 
 const PlayerBoard = ({ match }) => {
   // STATE -----
   // Board state
-  const [board, setBoard] = useState([]);
-  const [id, setId] = useState('');
-  const [localTurnCount, setLocalTurnCount] = useState(1);
-  const [showModal, setShowModal] = useState(false);
-  const [currentTurnGuesses, setCurrentTurnGuesses] = useState(0);
-
-  // Card state
-  const [selectedCards, setSelectedCards] = useState([]);
-  const [showRemove, setShowRemove] = useState(false);
-  const [refreshCard, triggerRefreshCard] = useState(0);
-  const [incorrectGuesses, setIncorrectGuesses] = useState([]);
-  const [guessingState, setGuessingState] = useState(true); // false = word swap mdoe
-
-  // Team state
-  const [userTeam, setUserTeam] = useState(null);
-  const [redTeam, setRedTeam] = useState([]);
-  const [blueTeam, setBlueTeam] = useState([]);
-  const [redGuesses, setRedGuesses] = useState([]);
-  const [blueGuesses, setBlueGuesses] = useState([]);
-  const [correctRedGuesses, setCorrectRedGuesses] = useState([]);
-  const [correctBlueGuesses, setCorrectBlueGuesses] = useState([]);
-  const [showCheatsheet, setCheatsheet] = useState({ blue: false, red: false });
+  const [state, dispatch] = useReducer(boardReducer, initialState);
 
   // END STATE -----
 
+  const {
+    localTurnCount,
+    showModal,
+    currentTurnGuesses,
+    id,
+    editWordsMode,
+    refreshCard,
+    userTeam,
+    redKey,
+    blueKey,
+    redGuesses,
+    blueGuesses,
+    showCheatsheet
+  } = state;
+
   // Loads board
   useEffect(() => {
-    const asyncFn = async () => {
-      const genBoard = await (await getBoard(match.params.id)).json();
-      const {
-        words,
-        red,
-        blue,
-        redGuesses,
-        blueGuesses,
-        turnCount,
-        id
-      } = genBoard;
-      setBoard(words);
-      setRedTeam(red);
-      setBlueTeam(blue);
-      setRedGuesses(redGuesses || []);
-      setBlueGuesses(blueGuesses || []);
-      const allIncorrectGuesses = findIncorrectGuesses(
-        red,
-        blueGuesses || []
-      ).concat(findIncorrectGuesses(blue, redGuesses || []));
-      setIncorrectGuesses(allIncorrectGuesses);
-      setCorrectRedGuesses(findCorrectGuesses(blue, redGuesses || []));
-      setCorrectBlueGuesses(findCorrectGuesses(red, blueGuesses || []));
-      setId(id);
-      setLocalTurnCount(turnCount);
-    };
-    asyncFn();
+    loadBoard(match.params.id, dispatch);
   }, [match.params.id]);
 
   useEffect(() => {
-    const intervalId = setInterval(async () => {
-      const genBoard = await (await getBoard(match.params.id)).json();
-      const { words, red, blue, redGuesses, blueGuesses, turnCount } = genBoard;
-      setBoard(words);
-      setRedGuesses(redGuesses || []);
-      setBlueGuesses(blueGuesses || []);
-      const allIncorrectGuesses = findIncorrectGuesses(
-        red,
-        blueGuesses || []
-      ).concat(findIncorrectGuesses(blue, redGuesses || []));
-      setIncorrectGuesses(allIncorrectGuesses);
-      setCorrectRedGuesses(findCorrectGuesses(blue, redGuesses || []));
-      setCorrectBlueGuesses(findCorrectGuesses(red, blueGuesses || []));
-      setLocalTurnCount(turnCount);
+    const intervalId = setInterval(() => {
+      updateBoard(match.params.id, dispatch);
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, [match.params.id]);
+  }, []);
 
   useEffect(() => {
     if (localTurnCount === 1) return;
-    triggerModal(setShowModal);
+    dispatch({ type: 'toggle_modal' });
   }, [localTurnCount, userTeam]);
 
   useEffect(() => {
-    setCorrectBlueGuesses(findCorrectGuesses(redTeam, blueGuesses || []));
-    setCorrectRedGuesses(findCorrectGuesses(blueTeam, redGuesses || []));
-  }, [blueTeam, redTeam, redGuesses, blueGuesses]);
+    dispatch({
+      type: 'update',
+      state: {
+        correctBlueGuesses: findCorrectGuesses(redKey, blueGuesses || []),
+        correctRedGuesses: findCorrectGuesses(blueKey, redGuesses || [])
+      }
+    });
+  }, [blueKey, redKey, redGuesses, blueGuesses]);
+
+  useEffect(() => {
+    if (showModal) {
+      setTimeout(() => {
+        dispatch({ type: 'toggle_modal' });
+      }, 3000);
+    }
+  }, [showModal]);
+
+  const turnText = (() => {
+    // blue gives clue
+    let text = '';
+
+    if (!userTeam) {
+      return 'Choose your team...';
+    }
+
+    if (localTurnCount % 2 === 0) {
+      if (userTeam === 'blue') {
+        text = '🔷 Give a clue!';
+      } else {
+        text = "🔴 It's your turn to guess!";
+      }
+    }
+    // red gives clue
+    else if (userTeam === 'red') {
+      text = '🔴 Give a clue!';
+    } else {
+      text = "🔷 It's your turn to guess!";
+    }
+    return text;
+  })();
+
+  // handle edit words
+  const handleEditWords = () => {
+    dispatch({ type: 'toggle_swap_mode' });
+  };
+
+  // handle reset board
+  const handleResetAnswers = () => {
+    dispatch({ type: 'reset_turn_guesses' });
+
+    // sets turn count to 1 and current turn guesses to none
+    hitAPIEndpoint('post', 'update-turn', {
+      id,
+      turnCount: 1
+    });
+
+    // resets player guesses
+    hitAPIEndpoint('post', 'update-guesses', {
+      id,
+      team: 'red',
+      guesses: []
+    });
+    hitAPIEndpoint('post', 'update-guesses', {
+      id,
+      team: 'blue',
+      guesses: []
+    });
+  };
+
+  const handleAttemptGuess = index => {
+    if (state.localTurnCount % 2 === 0) {
+      // RED TEAM
+      const newArr = state.redGuesses.concat([index]);
+      dispatch({ type: 'update', state: { redGuesses: newArr } });
+      Network.post('update-guesses', {
+        id: state.id,
+        team: 'red',
+        guesses: newArr
+      });
+    } else {
+      // BLUE TEAM
+      const newArr = state.blueGuesses.concat([index]);
+      dispatch({ type: 'update', state: { blueGuesses: newArr } });
+      Network.post('update-guesses', {
+        id: state.id,
+        team: 'blue',
+        guesses: newArr
+      });
+    }
+
+    dispatch({ type: 'increment_guesses' });
+  };
+
+  const handleReplaceWord = async index => {
+    const [response, responseBody] = await Network.get(
+      `swap-word/${match.params.id}/${index}`
+    );
+    dispatch({
+      type: 'swap_word',
+      word: responseBody.word,
+      index
+    });
+  };
 
   return (
     <div>
@@ -204,19 +352,19 @@ const PlayerBoard = ({ match }) => {
           <div css={modal}>
             <h1 style={{ textAlign: 'center' }}>Join a team</h1>
             <button
-              css={buttonStyle(showRemove)}
+              css={buttonStyle()}
               onClick={() => {
                 // sets turn count to 1 and current turn guesses to none
-                setUserTeam('red');
+                dispatch({ type: 'set_team', team: 'red' });
               }}
             >
               🔴 Red team
             </button>
             <button
-              css={buttonStyle(showRemove)}
+              css={buttonStyle()}
               onClick={() => {
                 // sets turn count to 1 and current turn guesses to none
-                setUserTeam('blue');
+                dispatch({ type: 'set_team', team: 'blue' });
               }}
             >
               🔷 Blue team
@@ -224,11 +372,12 @@ const PlayerBoard = ({ match }) => {
           </div>
         </div>
       )}
+
       {showModal && (
         <div css={pageFade}>
           <div css={modal}>
             <p>Turn #{localTurnCount}</p>
-            <h1>{turnText(localTurnCount, userTeam)}</h1>
+            <h1>{turnText}</h1>
           </div>
         </div>
       )}
@@ -236,7 +385,7 @@ const PlayerBoard = ({ match }) => {
       <div css={primaryContainer}>
         <div css={topContainer}>
           <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>
-            {turnText(localTurnCount, userTeam)}
+            {turnText}
           </h2>
           <strong>
             <p
@@ -257,68 +406,37 @@ const PlayerBoard = ({ match }) => {
                 id,
                 turnCount: localTurnCount + 1
               });
-              setLocalTurnCount(localTurnCount + 1);
-              setCurrentTurnGuesses(0);
+              dispatch({ type: 'increment_turn' });
+              dispatch({ type: 'reset_turn_guesses' });
             }}
           >
             End turn
           </button>
         </div>
-        {/* <div css={genericFlex}>{board.map((item, index) => RenderCard(item, index))}</div> */}
+
         <Cards
           refreshCard={refreshCard}
-          state={{
-            board,
-            localTurnCount,
-            showModal,
-            currentTurnGuesses,
-            id,
-            selectedCards,
-            showRemove,
-            refreshCard,
-            correctBlueGuesses,
-            correctRedGuesses,
-            redTeam,
-            blueTeam,
-            blueGuesses,
-            redGuesses,
-            showCheatsheet,
-            incorrectGuesses,
-            guessingState
-          }}
-          modifiers={{
-            setCorrectBlueGuesses,
-            setCorrectRedGuesses,
-            setBlueGuesses,
-            setRedGuesses,
-            setCurrentTurnGuesses,
-            setBoard,
-            triggerRefreshCard
-          }}
+          state={state}
+          dispatch={dispatch}
+          handleAttemptGuess={handleAttemptGuess}
+          handleReplaceWord={handleReplaceWord}
         />
-        {userTeam === 'red' && (
+
+        {/* BOTTOM ACTIONS */}
+        {userTeam === 'red' ? (
           <button
-            css={buttonStyle(showCheatsheet.red)}
-            onClick={() => {
-              showCheatsheet.red === false
-                ? setCheatsheet({ blue: false, red: true })
-                : setCheatsheet({ blue: false, red: false });
-            }}
+            css={buttonStyle(userTeam === 'red' && showCheatsheet)}
+            onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
           >
             <span role="img" aria-label="Red circle">
               🔴
             </span>{' '}
             Red cheatsheet
           </button>
-        )}
-        {userTeam === 'blue' && (
+        ) : (
           <button
-            css={buttonStyle(showCheatsheet.blue)}
-            onClick={() => {
-              showCheatsheet.blue === false
-                ? setCheatsheet({ blue: true, red: false })
-                : setCheatsheet({ blue: false, red: false });
-            }}
+            css={buttonStyle(userTeam === 'blue' && showCheatsheet)}
+            onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
           >
             <span role="img" aria-label="Blue diamond">
               🔷
@@ -326,48 +444,21 @@ const PlayerBoard = ({ match }) => {
             Blue cheatsheet
           </button>
         )}
+
         <button
-          css={buttonStyle(showRemove)}
-          onClick={() => {
-            if (showRemove === false) {
-              setShowRemove(true);
-              setGuessingState(false);
-            } else {
-              setShowRemove(false);
-              setGuessingState(true);
-            }
-          }}
+          css={buttonStyle(editWordsMode)}
+          onClick={() => handleEditWords()}
         >
           Edit words
         </button>
-        <button
-          css={buttonStyle(showRemove)}
-          onClick={() => {
-            // sets turn count to 1 and current turn guesses to none
-            hitAPIEndpoint('post', `update-turn`, {
-              id,
-              turnCount: 1
-            });
-            setCurrentTurnGuesses(0);
 
-            // resets player guesses
-            hitAPIEndpoint('post', `update-guesses`, {
-              id,
-              team: 'red',
-              guesses: []
-            });
-            hitAPIEndpoint('post', `update-guesses`, {
-              id,
-              team: 'blue',
-              guesses: []
-            });
-          }}
-        >
+        <button css={buttonStyle()} onClick={() => handleResetAnswers()}>
           Reset answers
         </button>
-        <a href="/new">
-          <button css={buttonStyle(showRemove)}>New board</button>
-        </a>
+
+        <Link to="/new">
+          <button css={buttonStyle()}>New board</button>
+        </Link>
       </div>
     </div>
   );

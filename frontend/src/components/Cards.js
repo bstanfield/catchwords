@@ -2,27 +2,33 @@
 
 import { jsx } from '@emotion/core';
 import { genericFlex } from '../style/flex';
-import { attemptGuess, replaceWord, colors } from '../helpers/util';
-import Card from './Card';
+import { colors } from '../helpers/util';
+import CardUI from './Card';
 
-const RenderCard = (cardName, index, state, modifiers) => {
+const Card = ({
+  cardName,
+  index,
+  state,
+  handleReplaceWord,
+  handleAttemptGuess
+}) => {
   let color = 'white';
   // edit this for edit words capability
-  if (state.showCheatsheet.red || state.showCheatsheet.blue) {
-    if (state.showCheatsheet.red) {
-      if (state.redTeam[index] === 1) {
+  if (state.showCheatsheet) {
+    if (state.userTeam === 'red') {
+      if (state.redKey[index] === 1) {
         color = colors.correctCard;
-      } else if (state.redTeam[index] === 2) {
+      } else if (state.redKey[index] === 2) {
         color = colors.assassinCard;
-      } else if (state.redTeam[index] === 0) {
+      } else if (state.redKey[index] === 0) {
         color = colors.neutralCard;
       }
-    } else if (state.showCheatsheet.blue) {
-      if (state.blueTeam[index] === 1) {
+    } else if (state.userTeam === 'blue') {
+      if (state.blueKey[index] === 1) {
         color = colors.correctCard;
-      } else if (state.blueTeam[index] === 2) {
+      } else if (state.blueKey[index] === 2) {
         color = colors.assassinCard;
-      } else if (state.blueTeam[index] === 0) {
+      } else if (state.blueKey[index] === 0) {
         color = colors.neutralCard;
       }
     }
@@ -41,35 +47,34 @@ const RenderCard = (cardName, index, state, modifiers) => {
   }
 
   return (
-    <Card
+    <CardUI
       key={index}
-      refreshCard={state.refreshCard}
       name={cardName}
       color={color}
       index={index}
+      refreshCard={state.refreshCard}
       guessing={state.guessingState}
       attemptGuess={() => {
-        attemptGuess(index, state, modifiers);
-        modifiers.setCurrentTurnGuesses(state.currentTurnGuesses + 1);
+        handleAttemptGuess(index);
       }}
-      replaceWord={() => {
-        replaceWord(index, state.id, state.board, {
-          setBoard: modifiers.setBoard,
-          refreshCard: state.refreshCard,
-          triggerRefreshCard: modifiers.triggerRefreshCard
-        });
-      }}
+      replaceWord={() => handleReplaceWord(index)}
     />
   );
 };
 
 const Cards = props => {
-  const { state, modifiers } = props;
+  const { state, handleAttemptGuess, handleReplaceWord } = props;
   return (
     <div css={genericFlex}>
-      {state.board.map((item, index) =>
-        RenderCard(item, index, state, modifiers)
-      )}
+      {state.words.map((word, index) => (
+        <Card
+          cardName={word}
+          index={index}
+          state={state}
+          handleReplaceWord={handleReplaceWord}
+          handleAttemptGuess={handleAttemptGuess}
+        />
+      ))}
     </div>
   );
 };

@@ -33,31 +33,9 @@ export const hitAPIEndpoint = (method, endpoint, body) => {
   return response;
 };
 
-export const getBoard = async url => {
-  const board = await hitAPIEndpoint('get', `get-existing-board/${url}`);
-  return board;
-};
-
 export const getAllBoards = async () => {
   const boards = await hitAPIEndpoint('get', `get-boards`);
   return boards;
-};
-
-// PlayerBoard helper fns
-export const triggerModal = setShowModal => {
-  setShowModal(true);
-  setTimeout(() => {
-    setShowModal(false);
-  }, 3000);
-};
-
-export const replaceWord = async (index, url, board, state) => {
-  const response = await hitAPIEndpoint('get', `swap-word/${url}/${index}`);
-  const updatedBoard = await response.json();
-  const newWord = updatedBoard.word;
-  board.splice(index, 1, newWord);
-  state.setBoard(board);
-  state.triggerRefreshCard(state.refreshCard + 1);
 };
 
 export const findCorrectGuesses = (teamBoard, teamGuesses) => {
@@ -67,26 +45,4 @@ export const findCorrectGuesses = (teamBoard, teamGuesses) => {
 export const findIncorrectGuesses = (teamBoard, teamGuesses) => {
   const incorrect = teamGuesses.filter(guess => teamBoard[guess] === 2);
   return incorrect;
-};
-
-export const attemptGuess = (index, state, modifiers) => {
-  if (state.localTurnCount % 2 === 0) {
-    // RED TEAM
-    const newArr = R.concat(state.redGuesses, [index]);
-    modifiers.setRedGuesses(newArr);
-    hitAPIEndpoint('post', `update-guesses`, {
-      id: state.id,
-      team: 'red',
-      guesses: newArr
-    });
-  } else {
-    // BLUE TEAM
-    const newArr = R.concat(state.blueGuesses, [index]);
-    modifiers.setBlueGuesses(newArr);
-    hitAPIEndpoint('post', `update-guesses`, {
-      id: state.id,
-      team: 'blue',
-      guesses: newArr
-    });
-  }
 };
