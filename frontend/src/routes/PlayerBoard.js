@@ -16,13 +16,14 @@ import Cards from '../components/Cards';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
+  color: '#333333',
   margin: 'auto',
   'h1, h2, h3, h4, p, a': {
-    fontFamily: 'system-ui !important',
+    fontFamily: 'Fira Sans, system-ui !important',
     margin: 0
   },
   h4: {
-    fontWeight: 500
+    fontWeight: 600
   }
 });
 
@@ -47,7 +48,6 @@ const pageFade = scale({
 
 const modal = scale({
   borderRadius: '6px',
-  fontFamily: 'system-ui',
   backgroundColor: 'white',
   padding: '20px 40px'
 });

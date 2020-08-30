@@ -38,6 +38,11 @@ export const getBoard = async url => {
   return board;
 };
 
+export const getAllBoards = async () => {
+  const boards = await hitAPIEndpoint('get', `get-boards`);
+  return boards;
+};
+
 // PlayerBoard helper fns
 export const triggerModal = setShowModal => {
   setShowModal(true);

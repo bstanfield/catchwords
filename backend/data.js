@@ -9,7 +9,6 @@ const gameBoards = {};
 
 const getRandomWords = (total) => {
   const randomWords = shuffle(words).slice(0, total);
-  console.log('game boards: ', gameBoards)
   return randomWords;
 };
 

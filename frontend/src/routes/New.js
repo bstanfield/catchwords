@@ -1,6 +1,16 @@
+/** @jsx jsx */
+
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
 import { hitAPIEndpoint } from '../helpers/util';
+import { jsx } from '@emotion/core';
+import { scale } from '../style/scale';
+
+const header = scale({
+  fontFamily: 'Fira Sans, system-ui, sans-serif',
+  textAlign: 'center',
+  fontSize: 36
+});
 
 const NewBoard = () => {
   const [url, setUrl] = useState(false);
@@ -20,7 +30,7 @@ const NewBoard = () => {
 
   return (
     <div>
-      <h1>Creating board...</h1>
+      <h1 css={header}>Creating board...</h1>
       {url ? <Redirect to={`/board/${url}`} /> : null}
     </div>
   );
