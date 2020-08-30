@@ -236,7 +236,7 @@ const PlayerBoard = ({ match }) => {
       <div css={primaryContainer}>
         <div css={topContainer}>
           <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>
-            {turnText(localTurnCount, userTeam)}
+          {turnText(localTurnCount, userTeam)}
           </h2>
           <strong>
             <p

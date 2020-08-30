@@ -9,7 +9,6 @@ const centeredContainer = scale({
   position: 'absolute',
   left: 0,
   right: 0,
-  bottom: 280,
   top: 0,
   margin: 'auto',
   width: 600,
@@ -39,7 +38,20 @@ const button = scale({
 
 const activeGames = scale({
   fontFamily: 'Fira Sans, system-ui, sans-serif',
-  fontSize: 22
+  fontSize: 20
+});
+
+const boardsList = scale({
+  padding: 20,
+  p: {
+    opacity: 0.3,
+    margin: 0,
+    paddingTop: 12,
+    paddingLeft: 8
+  },
+  div: {
+    marginBottom: 24
+  }
 });
 
 function isEmpty(obj) {
@@ -48,6 +60,32 @@ function isEmpty(obj) {
     if (obj.hasOwnProperty(key)) return false;
   }
   return true;
+}
+
+function timeSince(timeStamp) {
+  const now = new Date(),
+    secondsPast = (now.getTime() - timeStamp) / 1000;
+  if (secondsPast < 60) {
+    return `${parseInt(secondsPast)}s`;
+  }
+  if (secondsPast < 3600) {
+    return `${parseInt(secondsPast / 60)}m`;
+  }
+  if (secondsPast <= 86400) {
+    return `${parseInt(secondsPast / 3600)}h`;
+  }
+  if (secondsPast > 86400) {
+    const day = timeStamp.getDate();
+    const month = timeStamp
+      .toDateString()
+      .match(/ [a-zA-Z]*/)[0]
+      .replace(' ', '');
+    const year =
+      timeStamp.getFullYear() === now.getFullYear()
+        ? ''
+        : ` ${timeStamp.getFullYear()}`;
+    return `${day} ${month}${year}`;
+  }
 }
 
 const Home = () => {
@@ -77,10 +115,19 @@ const Home = () => {
       <br />
       <div css={activeGames}>
         <p>Active games:</p>
-        <ul>
+        <hr />
+        <div css={boardsList}>
           {!isEmpty(boards) &&
-            Object.keys(boards).map(board => <li>{board}</li>)}
-        </ul>
+            Object.keys(boards).map(id => (
+              <div>
+                <a href={`/board/${id}`}>{id}</a>
+                <p>
+                  created {timeSince(new Date(boards[id].timestamp))} ago •
+                  turn: {boards[id].turnCount}
+                </p>
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
