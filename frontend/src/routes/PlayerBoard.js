@@ -232,6 +232,7 @@ const PlayerBoard = ({ match }) => {
           </div>
         </div>
       )}
+
       <div css={primaryContainer}>
         <div css={topContainer}>
           <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>

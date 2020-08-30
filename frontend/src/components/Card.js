@@ -75,6 +75,7 @@ const Card = props => {
       size = 24;
     }
   }
+
   return (
     <button
       css={[chooseCardToShow(color), buttonStyle(selected)]}
