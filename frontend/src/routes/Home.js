@@ -28,6 +28,7 @@ const button = scale({
   maxWidth: 200,
   backgroundColor: colors.greenButton,
   padding: 18,
+  fontSize: 22,
   textAlign: 'center',
   color: 'white',
   textDecoration: 'none',
@@ -117,7 +118,7 @@ const Home = () => {
         <p>Active games:</p>
         <hr />
         <div css={boardsList}>
-          {!isEmpty(boards) &&
+          {!isEmpty(boards) ? (
             Object.keys(boards).map(id => (
               <div>
                 <a href={`/board/${id}`}>{id}</a>
@@ -126,7 +127,10 @@ const Home = () => {
                   turn: {boards[id].turnCount}
                 </p>
               </div>
-            ))}
+            ))
+          ) : (
+            <p style={{ opacity: 1 }}>🙈 No active games right now!</p>
+          )}
         </div>
       </div>
     </div>
