@@ -2,9 +2,9 @@
 
 import React, { useEffect, useState } from 'react';
 import { Redirect } from 'react-router-dom';
-import { hitAPIEndpoint } from '../helpers/util';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
+import Network from '../helpers/network';
 
 const header = scale({
   fontFamily: 'Fira Sans, system-ui, sans-serif',
@@ -16,16 +16,12 @@ const NewBoard = () => {
   const [url, setUrl] = useState(false);
 
   const generateBoard = async () => {
-    const board = await hitAPIEndpoint('get', 'get-new-board');
-    return board;
+    const [response, responseBody] = await Network.get('get-new-board');
+    setUrl(responseBody.id);
   };
 
   useEffect(() => {
-    const asyncFn = async () => {
-      const response = await (await generateBoard()).json();
-      setUrl(response.id);
-    };
-    asyncFn();
+    generateBoard();
   }, []);
 
   return (

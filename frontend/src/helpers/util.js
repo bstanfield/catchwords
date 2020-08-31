@@ -21,23 +21,6 @@ export const colors = {
   assassinCard: '#E14938'
 };
 
-// General helper fns
-export const hitAPIEndpoint = (method, endpoint, body) => {
-  const response = fetch(` http://7af007fe8d24.ngrok.io/api/${endpoint}`, {
-    method: method || 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(body)
-  });
-  return response;
-};
-
-export const getAllBoards = async () => {
-  const boards = await hitAPIEndpoint('get', `get-boards`);
-  return boards;
-};
-
 export const findCorrectGuesses = (teamBoard, teamGuesses) => {
   return teamGuesses.filter(guess => teamBoard[guess] === 1);
 };

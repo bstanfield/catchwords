@@ -4,11 +4,7 @@ import { useEffect, useReducer } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import {
-  hitAPIEndpoint,
-  findCorrectGuesses,
-  findIncorrectGuesses
-} from '../helpers/util';
+import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
@@ -292,18 +288,18 @@ const PlayerBoard = ({ match }) => {
     dispatch({ type: 'reset_turn_guesses' });
 
     // sets turn count to 1 and current turn guesses to none
-    hitAPIEndpoint('post', 'update-turn', {
+    Network.post('update-turn', {
       id,
       turnCount: 1
     });
 
     // resets player guesses
-    hitAPIEndpoint('post', 'update-guesses', {
+    Network.post('update-guesses', {
       id,
       team: 'red',
       guesses: []
     });
-    hitAPIEndpoint('post', 'update-guesses', {
+    Network.post('update-guesses', {
       id,
       team: 'blue',
       guesses: []
@@ -402,7 +398,7 @@ const PlayerBoard = ({ match }) => {
           <button
             css={absolutePassTurn(currentTurnGuesses)}
             onClick={() => {
-              hitAPIEndpoint('post', `update-turn`, {
+              Network.post(`update-turn`, {
                 id,
                 turnCount: localTurnCount + 1
               });

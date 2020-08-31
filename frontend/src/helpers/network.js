@@ -1,4 +1,4 @@
-const API_URL = ' http://7af007fe8d24.ngrok.io/api';
+const API_URL = 'http://localhost:3333/api/';
 
 function generateHeaders() {
   const headers = new Headers({
