@@ -65,7 +65,6 @@ const Card = ({
     (state.redGuesses.includes(index) && state.userTeam === 'blue') ||
     (state.blueGuesses.includes(index) && state.userTeam === 'red')
   ) {
-    color = colors.neutralCard;
     addX = true;
   }
 
@@ -78,6 +77,7 @@ const Card = ({
       index={index}
       refreshCard={state.refreshCard}
       guessing={state.guessingState}
+      addX={addX}
       attemptGuess={() => {
         handleAttemptGuess(index);
       }}
