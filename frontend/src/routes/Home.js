@@ -35,7 +35,12 @@ const button = scale({
   textDecoration: 'none',
   borderRadius: 4,
   display: 'block',
-  margin: 'auto'
+  margin: 'auto',
+  boxShadow: '0 4px 5px 0 #cacaca',
+  transition: 'box-shadow 0.3s ease',
+  '&:hover': {
+    boxShadow: '0 4px 8px 0 #bfbfbf'
+  }
 });
 
 const activeGames = scale({
