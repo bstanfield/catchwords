@@ -4,10 +4,15 @@ import { useEffect, useReducer } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
+import {
+  findCorrectGuesses,
+  findIncorrectGuesses,
+  colors
+} from '../helpers/util';
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
+import { array } from 'prop-types';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -27,7 +32,11 @@ const topContainer = scale({
   paddingTop: '12px',
   paddingBottom: '12px',
   marginBottom: '16px',
-  borderBottom: '2px solid #e0e0e0'
+  borderBottom: '2px solid #e0e0e0',
+  display: 'flex',
+  flexWrap: 'nowrap',
+  justifyContent: 'space-between',
+  alignItems: 'center'
 });
 
 const pageFade = scale({
@@ -55,11 +64,8 @@ const absolutePassTurn = guesses =>
     padding: '10px 20px',
     cursor: 'pointer',
     borderRadius: '3px',
-    margin: '20px 20px 20px 0',
+    marginLeft: '16px',
     fontSize: '22px',
-    position: 'absolute',
-    top: '-12px',
-    right: '-12px',
     opacity: guesses > 0 ? 1 : 0.5,
     '&:hover': {
       opacity: 1
@@ -139,6 +145,14 @@ function boardReducer(state, action) {
       throw new Error();
   }
 }
+
+const dot = isSelected => ({
+  margin: 3,
+  backgroundColor: isSelected ? 'green' : '#ccc',
+  width: 10,
+  height: 10,
+  borderRadius: 5
+});
 
 const loadBoard = async (boardId, dispatch) => {
   const [response, responseBody] = await Network.get(
@@ -250,7 +264,7 @@ const PlayerBoard = ({ match }) => {
     if (showModal) {
       setTimeout(() => {
         dispatch({ type: 'toggle_modal' });
-      }, 3000);
+      }, 1500);
     }
   }, [showModal]);
 
@@ -341,6 +355,18 @@ const PlayerBoard = ({ match }) => {
     });
   };
 
+  const Dots = ({ total, turnCount, className }) => {
+    const totalDots = new Array(total).fill(false);
+    const allDots = totalDots.map((dot, index) => index < turnCount);
+    return (
+      <div css={{ display: 'flex', flexWrap: 'nowrap' }} className={className}>
+        {allDots.map(isSelected => (
+          <div css={dot(isSelected)} />
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div>
       {!userTeam && (
@@ -372,7 +398,7 @@ const PlayerBoard = ({ match }) => {
       {showModal && (
         <div css={pageFade}>
           <div css={modal}>
-            <p>Turn #{localTurnCount}</p>
+            <p>Turn {localTurnCount}/7</p>
             <h1>{turnText}</h1>
           </div>
         </div>
@@ -383,31 +409,36 @@ const PlayerBoard = ({ match }) => {
           <h2 style={{ fontSize: 30, display: 'inline', marginRight: '20px' }}>
             {turnText}
           </h2>
-          <strong>
-            <p
-              style={{
-                position: 'absolute',
-                top: 20,
-                right: 160,
-                opacity: 0.7
-              }}
-            >
-              Turn #{localTurnCount}
-            </p>
-          </strong>
-          <button
-            css={absolutePassTurn(currentTurnGuesses)}
-            onClick={() => {
-              Network.post(`update-turn`, {
-                id,
-                turnCount: localTurnCount + 1
-              });
-              dispatch({ type: 'increment_turn' });
-              dispatch({ type: 'reset_turn_guesses' });
+          <div
+            css={{
+              display: 'flex',
+              flexWrap: 'nowrap',
+              justifyContent: 'flex-end',
+              alignItems: 'center'
             }}
           >
-            End turn
-          </button>
+            <Dots
+              turnCount={localTurnCount}
+              total={7}
+              css={{ marginRight: 8 }}
+            />
+            <strong>
+              <p>{localTurnCount}/7</p>
+            </strong>
+            <button
+              css={absolutePassTurn(currentTurnGuesses)}
+              onClick={() => {
+                Network.post(`update-turn`, {
+                  id,
+                  turnCount: localTurnCount + 1
+                });
+                dispatch({ type: 'increment_turn' });
+                dispatch({ type: 'reset_turn_guesses' });
+              }}
+            >
+              End turn
+            </button>
+          </div>
         </div>
 
         <Cards

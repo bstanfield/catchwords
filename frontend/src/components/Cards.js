@@ -50,16 +50,16 @@ const Card = ({
     state.correctRedGuesses.includes(index)
   ) {
     color = colors.correctCard;
-    opacity = 0.3;
+    opacity = 0.1;
   } else if (state.incorrectGuesses.includes(index)) {
     color = colors.assassinCard;
-    opacity = 0.3;
+    opacity = 0.1;
   } else if (
-    state.redGuesses.includes(index) ||
-    state.blueGuesses.includes(index)
+    (state.redGuesses.includes(index) && state.userTeam === 'red') ||
+    (state.blueGuesses.includes(index) && state.userTeam === 'blue')
   ) {
     color = colors.neutralCard;
-    opacity = 0.3;
+    opacity = 0.1;
   }
 
   return (
