@@ -13,10 +13,17 @@ const Card = ({
   handleAttemptGuess
 }) => {
   let color = 'white';
+  let opacity = 1;
   // edit this for edit words capability
   if (state.showCheatsheet) {
     if (state.userTeam === 'red') {
       if (state.redKey[index] === 1) {
+        if (
+          state.correctBlueGuesses.includes(index) ||
+          state.correctRedGuesses.includes(index)
+        ) {
+          opacity = 0.1;
+        }
         color = colors.correctCard;
       } else if (state.redKey[index] === 2) {
         color = colors.assassinCard;
@@ -26,6 +33,12 @@ const Card = ({
     } else if (state.userTeam === 'blue') {
       if (state.blueKey[index] === 1) {
         color = colors.correctCard;
+        if (
+          state.correctBlueGuesses.includes(index) ||
+          state.correctRedGuesses.includes(index)
+        ) {
+          opacity = 0.1;
+        }
       } else if (state.blueKey[index] === 2) {
         color = colors.assassinCard;
       } else if (state.blueKey[index] === 0) {
@@ -37,13 +50,16 @@ const Card = ({
     state.correctRedGuesses.includes(index)
   ) {
     color = colors.correctCard;
+    opacity = 0.3;
   } else if (state.incorrectGuesses.includes(index)) {
     color = colors.assassinCard;
+    opacity = 0.3;
   } else if (
     state.redGuesses.includes(index) ||
     state.blueGuesses.includes(index)
   ) {
     color = colors.neutralCard;
+    opacity = 0.3;
   }
 
   return (
@@ -51,6 +67,7 @@ const Card = ({
       key={index}
       name={cardName}
       color={color}
+      opacity={opacity}
       index={index}
       refreshCard={state.refreshCard}
       guessing={state.guessingState}
