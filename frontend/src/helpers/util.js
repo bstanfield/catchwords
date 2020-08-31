@@ -23,7 +23,7 @@ export const colors = {
 
 // General helper fns
 export const hitAPIEndpoint = (method, endpoint, body) => {
-  const response = fetch(` http://7af007fe8d24.ngrok.io/api/${endpoint}`, {
+  const response = fetch(`http://localhost:3333/api/${endpoint}`, {
     method: method || 'POST',
     headers: {
       'Content-Type': 'application/json'

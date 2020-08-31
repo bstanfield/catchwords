@@ -3,6 +3,7 @@ import { hitAPIEndpoint } from '../helpers/util';
 
 const AddWord = () => {
   const [word, setWord] = useState('');
+
   const addWordToDb = async () => {
     const response = await hitAPIEndpoint('post', 'add-word', {
       name: word
@@ -20,13 +21,13 @@ const AddWord = () => {
   };
 
   return (
-    <div>
+    <div style={{ textAlign: 'center', marginTop: 58 }}>
       <h1>Add a new word to the game</h1>
       <label>
-        Name:
+        Word:
         <input type="text" value={word} onChange={handleChange} name="name" />
       </label>
-      <button onClick={() => addWordToDb()}>Submit</button>
+      <button onClick={async () => addWordToDb()}>Submit</button>
     </div>
   );
 };

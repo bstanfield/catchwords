@@ -68,11 +68,11 @@ const Card = props => {
   let size = 28;
   if (name) {
     if (name.length > 0 && name.length <= 8) {
-      size = 38;
+      size = 34;
     } else if (name.length > 8 && name.length <= 12) {
-      size = 32;
+      size = 28;
     } else if (name.length > 12) {
-      size = 24;
+      size = 22;
     }
   }
 
