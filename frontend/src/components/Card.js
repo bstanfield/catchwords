@@ -58,6 +58,7 @@ const Card = props => {
     selected,
     color,
     opacity,
+    addX,
     guessing
   } = props;
 
@@ -84,6 +85,7 @@ const Card = props => {
       {!guessing && (
         <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>Swap</p>
       )}
+      {addX && <p css={{ position: 'absolute', top: 4, right: 4 }}>x</p>}
       {/* {correctGuessesByBlueTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔷</span></p>}
       {correctGuessesByRedTeam.includes(index) && <p style={{ fontSize: 10, position: 'absolute', top: 3, right: 6 }}><span>🔴</span></p>} */}
     </button>

@@ -14,6 +14,7 @@ const Card = ({
 }) => {
   let color = 'white';
   let opacity = 1;
+  let addX = false;
   // edit this for edit words capability
   if (state.showCheatsheet) {
     if (state.userTeam === 'red') {
@@ -60,6 +61,12 @@ const Card = ({
   ) {
     color = colors.neutralCard;
     opacity = 0.1;
+  } else if (
+    (state.redGuesses.includes(index) && state.userTeam === 'blue') ||
+    (state.blueGuesses.includes(index) && state.userTeam === 'red')
+  ) {
+    color = colors.neutralCard;
+    addX = true;
   }
 
   return (
