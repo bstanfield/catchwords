@@ -1,9 +1,10 @@
 /** @jsx jsx */
 
 import React, { useEffect, useState } from 'react';
-import { hitAPIEndpoint, colors } from '../helpers/util';
+import { colors } from '../helpers/util';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
+import Network from '../helpers/network';
 
 const centeredContainer = scale({
   position: 'absolute',
@@ -98,16 +99,12 @@ const Home = () => {
   const [boards, setBoards] = useState({});
 
   const getBoards = async () => {
-    const boards = await hitAPIEndpoint('get', 'get-boards');
-    return boards;
+    const [response, responseBody] = await Network.get('get-boards');
+    setBoards(responseBody);
   };
 
   useEffect(() => {
-    const asyncFn = async () => {
-      const response = await (await getBoards()).json();
-      setBoards(response);
-    };
-    asyncFn();
+    getBoards();
   }, []);
 
   return (

@@ -4,7 +4,7 @@ import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import { capitalizeFirst, colors } from '../helpers/util';
 
-const cardContainer = colorToDisplay =>
+const cardContainer = (colorToDisplay, opacity) =>
   scale({
     width: '185px',
     height: '85px',
@@ -12,7 +12,8 @@ const cardContainer = colorToDisplay =>
     borderRadius: '3px',
     backgroundColor: colorToDisplay || 'white',
     margin: '5px 5px',
-    boxShadow: '0 2px 5px 0 #cacaca'
+    boxShadow: '0 2px 5px 0 #cacaca',
+    color: `rgba(0,0,0,${opacity})`
   });
 
 const setCardColor = condition => {
@@ -26,10 +27,6 @@ const setCardColor = condition => {
     default:
       return colors.neutralCard;
   }
-};
-
-const chooseCardToShow = color => {
-  return cardContainer(color || 'white');
 };
 
 const cardText = size =>
@@ -46,8 +43,6 @@ const buttonStyle = selected =>
     outline: 'none',
     transition: '300ms opacity',
     backgroundColor: selected && colors.neutralCard,
-    opacity: 1,
-    color: '#333333',
     border: selected && '1px solid green',
     '&:hover': {
       opacity: 0.8
@@ -62,6 +57,7 @@ const Card = props => {
     attemptGuess,
     selected,
     color,
+    opacity,
     guessing
   } = props;
 
@@ -78,7 +74,7 @@ const Card = props => {
 
   return (
     <button
-      css={[chooseCardToShow(color), buttonStyle(selected)]}
+      css={[cardContainer(color, opacity), buttonStyle(selected)]}
       key={index}
       onClick={() => {
         guessing ? attemptGuess() : replaceWord();

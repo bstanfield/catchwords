@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { hitAPIEndpoint } from '../helpers/util';
+import Network from '../helpers/network';
 
 const AddWord = () => {
   const [word, setWord] = useState('');
 
   const addWordToDb = async () => {
-    const response = await hitAPIEndpoint('post', 'add-word', {
+    const [response, responseBody] = await Network.post('add-word', {
       name: word
     });
-    if (response.status === 422) {
+    if (!response.ok) {
       alert(`${word} already exists in the game 😲`);
     } else {
       alert(`${word} added to the game!`);
