@@ -1,6 +1,7 @@
 const R = require('ramda');
-const { getRandomWords, gameBoards } = require('../data');
+const { getRandomWords } = require('../data');
 const randomWords = require('random-words');
+const fs = require('fs');
 
 // 0 = neutral (13)
 // 1 = correct (9)
@@ -103,8 +104,11 @@ exports.getNewBoard = async (req, res) => {
   const wordsArr = getRandomWords(25);
   const id = R.join('-', randomWords(5));
 
+  const rawdata = fs.readFileSync('boards.json');
+  const boards = JSON.parse(rawdata);
+
   // adds new board to memory
-  gameBoards[id] = {
+  boards[id] = {
     id,
     words: wordsArr,
     red,
@@ -115,5 +119,7 @@ exports.getNewBoard = async (req, res) => {
     turnCount: 1
   }
 
-  res.status(200).send(gameBoards[id]);
+  fs.writeFileSync('boards.json', JSON.stringify(boards));
+
+  res.status(200).send(boards[id]);
 };

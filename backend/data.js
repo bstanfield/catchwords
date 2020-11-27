@@ -7,9 +7,6 @@ function shuffle(array) {
 const rawdata = fs.readFileSync('words.json');
 const words = JSON.parse(rawdata);
 
-// ephemeral game storage
-const gameBoards = {};
-
 const getRandomWords = (total) => {
   const randomWords = shuffle(words).slice(0, total);
   return randomWords;
@@ -17,6 +14,5 @@ const getRandomWords = (total) => {
 
 module.exports = {
   words,
-  gameBoards,
   getRandomWords,
 }

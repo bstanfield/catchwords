@@ -1,7 +1,7 @@
 const express = require('express');
 var cors = require('cors')
 const app = express();
-const port = 3333;
+const port = process.env.PORT || 3333;
 
 app.use(cors());
 
@@ -27,6 +27,7 @@ app.listen(port, () => console.log(`Listening on port localhost:${port}`));
 
 // Standard messages
 app.get('/', (req, res) => {
+  console.log('Hello world!')
   res.json({ info: 'Hello world!' })
 });
 
