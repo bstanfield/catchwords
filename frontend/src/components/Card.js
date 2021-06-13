@@ -75,7 +75,6 @@ const Card = props => {
     }
   }
 
-  console.log(name, cardType === 'neutral');
   return (
     <button
       css={[

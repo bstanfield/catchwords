@@ -28,7 +28,6 @@ const topContainer = scale({
   paddingTop: '12px',
   paddingBottom: '12px',
   marginBottom: '16px',
-  borderBottom: '2px solid #e0e0e0',
   display: 'flex',
   flexWrap: 'nowrap',
   justifyContent: 'space-between',
@@ -172,13 +171,25 @@ function boardReducer(state, action) {
   }
 }
 
-const dot = isSelected => ({
-  margin: 3,
-  backgroundColor: isSelected ? 'green' : '#ccc',
-  width: 10,
-  height: 10,
-  borderRadius: 5
+const inningRow = { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' };
+
+const inning = isCurrentInning => ({
+  backgroundColor: isCurrentInning ? 'rgba(86, 150, 246, 0.12)' : 'transparent',
+  color: isCurrentInning ? 'black' : '#999',
+  padding: '6px 12px',
+  borderLeft: '1px solid #ccc',
+  width: '40px',
+  boxSizing: 'border-box',
+  textAlign: 'center'
 });
+
+const inningText = {
+  opacity: 0.4,
+  fontWeight: 500,
+  textTransform: 'uppercase',
+  fontSize: '14px',
+  width: 100
+};
 
 const loadBoard = async (boardId, dispatch) => {
   const [response, responseBody] = await Network.get(
@@ -354,12 +365,30 @@ const PlayerBoard = ({ match }) => {
 
   const Dots = ({ total, turnCount, className }) => {
     const totalDots = new Array(total).fill(false);
-    const allDots = totalDots.map((dot, index) => index < turnCount);
+    const redTurns = totalDots
+      .slice(0, 4)
+      .map((dot, index) => index + 1 < turnCount);
+    const blueTurns = totalDots
+      .slice(4, Infinity)
+      .map((dot, index) => index + 5 < turnCount);
     return (
-      <div css={{ display: 'flex', flexWrap: 'nowrap' }} className={className}>
-        {allDots.map(isSelected => (
-          <div css={dot(isSelected)} />
-        ))}
+      <div className={className}>
+        <div css={inningRow}>
+          <p css={inningText}>Red turns</p>
+          <div css={[inningRow, { borderBottom: '1px solid #ccc' }]}>
+            {redTurns.map((complete, i) => (
+              <div css={inning(turnCount === i + 1)}>
+                {complete ? '✓' : '-'}
+              </div>
+            ))}
+          </div>
+        </div>
+        <div css={inningRow}>
+          <p css={inningText}>Blue</p>
+          {blueTurns.map((complete, i) => (
+            <div css={inning(turnCount === i + 5)}>{complete ? '✓' : '-'}</div>
+          ))}
+        </div>
       </div>
     );
   };
@@ -425,12 +454,9 @@ const PlayerBoard = ({ match }) => {
               total={7}
               css={{ marginRight: 8 }}
             />
-            <strong>
-              <p>{localTurnCount}/7</p>
-            </strong>
-            {isUserGivingClue ? (
+            {!showCheatsheet && isUserGivingClue ? (
               <button css={[turnButton, waitingStyle]}>Waiting...</button>
-            ) : (
+            ) : !showCheatsheet ? (
               <button
                 css={[turnButton, endTurnStyle(currentTurnGuesses)]}
                 onClick={() => {
@@ -444,7 +470,7 @@ const PlayerBoard = ({ match }) => {
               >
                 {isUserGivingClue ? 'Waiting...' : 'End turn'}
               </button>
-            )}
+            ) : null}
           </div>
         </div>
 
