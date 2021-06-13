@@ -4,26 +4,22 @@ import { useEffect, useReducer } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import {
-  findCorrectGuesses,
-  findIncorrectGuesses,
-  colors
-} from '../helpers/util';
+import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
-import { array } from 'prop-types';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
   color: '#333333',
   margin: 'auto',
   'h1, h2, h3, h4, p, a': {
-    fontFamily: 'Fira Sans, system-ui !important',
-    margin: 0
+    fontFamily: 'Work Sans, system-ui !important',
+    margin: 0,
+    fontWeight: 600
   },
   h4: {
-    fontWeight: 600
+    fontWeight: 500
   }
 });
 
@@ -44,7 +40,7 @@ const pageFade = scale({
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
-  backgroundColor: 'rgba(0, 0, 0, 0.2)',
+  backgroundColor: '#EEEEEE',
   width: '100vw',
   height: '100%',
   zIndex: 9999
@@ -56,7 +52,7 @@ const modal = scale({
   padding: '20px 40px'
 });
 
-const absolutePassTurn = guesses =>
+const endTurnStyle = guesses =>
   scale({
     backgroundColor: 'green',
     color: 'white',
@@ -74,6 +70,7 @@ const absolutePassTurn = guesses =>
 
 const buttonStyle = isSelected =>
   scale({
+    fontWeight: 600,
     padding: '8px 18px',
     borderRadius: '3px',
     border: 'none',
@@ -86,6 +83,11 @@ const buttonStyle = isSelected =>
       opacity: isSelected ? 0.7 : 1
     }
   });
+
+const bottomBar = scale({
+  display: 'flex',
+  justifyContent: 'space-between'
+});
 
 const initialState = {
   words: [],
@@ -268,56 +270,23 @@ const PlayerBoard = ({ match }) => {
     }
   }, [showModal]);
 
-  const turnText = (() => {
-    // blue gives clue
     let text = '';
 
     if (!userTeam) {
       return 'Choose your team...';
     }
-
-    if (localTurnCount % 2 === 0) {
-      if (userTeam === 'blue') {
-        text = '🔷 Give a clue!';
-      } else {
-        text = "🔴 It's your turn to guess!";
-      }
+    if (showCheatsheet) {
+      return `${teamColor} Viewing cheatsheet`;
     }
-    // red gives clue
-    else if (userTeam === 'red') {
-      text = '🔴 Give a clue!';
-    } else {
-      text = "🔷 It's your turn to guess!";
+    if (isUserGivingClue) {
+      return `${teamColor} Give a clue`;
     }
-    return text;
+    return `${teamColor} It's your turn to guess`;
   })();
 
   // handle edit words
   const handleEditWords = () => {
     dispatch({ type: 'toggle_swap_mode' });
-  };
-
-  // handle reset board
-  const handleResetAnswers = () => {
-    dispatch({ type: 'reset_turn_guesses' });
-
-    // sets turn count to 1 and current turn guesses to none
-    Network.post('update-turn', {
-      id,
-      turnCount: 1
-    });
-
-    // resets player guesses
-    Network.post('update-guesses', {
-      id,
-      team: 'red',
-      guesses: []
-    });
-    Network.post('update-guesses', {
-      id,
-      team: 'blue',
-      guesses: []
-    });
   };
 
   const handleAttemptGuess = index => {
@@ -426,7 +395,7 @@ const PlayerBoard = ({ match }) => {
               <p>{localTurnCount}/7</p>
             </strong>
             <button
-              css={absolutePassTurn(currentTurnGuesses)}
+              css={endTurnStyle(currentTurnGuesses)}
               onClick={() => {
                 Network.post(`update-turn`, {
                   id,
@@ -436,7 +405,7 @@ const PlayerBoard = ({ match }) => {
                 dispatch({ type: 'reset_turn_guesses' });
               }}
             >
-              End turn
+              {isUserGivingClue ? 'Waiting...' : 'End turn'}
             </button>
           </div>
         </div>
@@ -450,42 +419,41 @@ const PlayerBoard = ({ match }) => {
         />
 
         {/* BOTTOM ACTIONS */}
-        {userTeam === 'red' ? (
-          <button
-            css={buttonStyle(userTeam === 'red' && showCheatsheet)}
-            onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
-          >
-            <span role="img" aria-label="Red circle">
-              🔴
-            </span>{' '}
-            Red cheatsheet
-          </button>
-        ) : (
-          <button
-            css={buttonStyle(userTeam === 'blue' && showCheatsheet)}
-            onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
-          >
-            <span role="img" aria-label="Blue diamond">
-              🔷
-            </span>{' '}
-            Blue cheatsheet
-          </button>
-        )}
+        <div css={bottomBar}>
+          <div>
+            {userTeam === 'red' ? (
+              <button
+                css={buttonStyle(userTeam === 'red' && showCheatsheet)}
+                onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
+              >
+                <span role="img" aria-label="Red circle">
+                  🔴
+                </span>{' '}
+                Red cheatsheet
+              </button>
+            ) : (
+              <button
+                css={buttonStyle(userTeam === 'blue' && showCheatsheet)}
+                onClick={() => dispatch({ type: 'toggle_cheatsheet' })}
+              >
+                <span role="img" aria-label="Blue diamond">
+                  🔷
+                </span>{' '}
+                Blue cheatsheet
+              </button>
+            )}
 
-        <button
-          css={buttonStyle(editWordsMode)}
-          onClick={() => handleEditWords()}
-        >
-          Edit words
-        </button>
-
-        <button css={buttonStyle()} onClick={() => handleResetAnswers()}>
-          Reset answers
-        </button>
-
-        <Link to="/new">
-          <button css={buttonStyle()}>New board</button>
-        </Link>
+            <button
+              css={buttonStyle(editWordsMode)}
+              onClick={() => handleEditWords()}
+            >
+              Edit words
+            </button>
+          </div>
+          <Link to="/new">
+            <button css={[buttonStyle(), { marginRight: 0 }]}>New board</button>
+          </Link>
+        </div>
       </div>
     </div>
   );
