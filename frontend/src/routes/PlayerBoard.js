@@ -365,29 +365,32 @@ const PlayerBoard = ({ match }) => {
 
   const Dots = ({ total, turnCount, className }) => {
     const totalDots = new Array(total).fill(false);
-    const redTurns = totalDots
-      .slice(0, 4)
-      .map((dot, index) => index + 1 < turnCount);
-    const blueTurns = totalDots
-      .slice(4, Infinity)
-      .map((dot, index) => index + 5 < turnCount);
+    const dotsWithId = totalDots.map((item, i) => i + 1);
+    const redTurns = dotsWithId.filter((element, index) => {
+      return index % 2 === 1;
+    });
+    const blueTurns = dotsWithId.filter((element, index) => {
+      return index % 2 === 0;
+    });
     return (
       <div className={className}>
+        <div css={[inningRow, { borderBottom: '1px solid #ccc' }]}>
+          <p css={inningText}>Blue</p>
+          {blueTurns.map(id => (
+            <div css={inning(turnCount === id)}>
+              {id < turnCount ? '✓' : '-'}
+            </div>
+          ))}
+        </div>
         <div css={inningRow}>
           <p css={inningText}>Red turns</p>
-          <div css={[inningRow, { borderBottom: '1px solid #ccc' }]}>
-            {redTurns.map((complete, i) => (
-              <div css={inning(turnCount === i + 1)}>
-                {complete ? '✓' : '-'}
+          <div css={inningRow}>
+            {redTurns.map(id => (
+              <div css={inning(turnCount === id)}>
+                {id < turnCount ? '✓' : '-'}
               </div>
             ))}
           </div>
-        </div>
-        <div css={inningRow}>
-          <p css={inningText}>Blue</p>
-          {blueTurns.map((complete, i) => (
-            <div css={inning(turnCount === i + 5)}>{complete ? '✓' : '-'}</div>
-          ))}
         </div>
       </div>
     );
