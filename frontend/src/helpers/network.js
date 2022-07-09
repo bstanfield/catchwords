@@ -1,5 +1,5 @@
 const port = process.env.PORT || 3333;
-const API_URL = `http://localhost:${port}/api`;
+const API_URL = `https://catchwords.app/api`;
 
 function generateHeaders() {
   const headers = new Headers({
