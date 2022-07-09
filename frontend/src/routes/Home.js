@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { colors } from '../helpers/util';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
@@ -102,6 +102,18 @@ export default function Home() {
     const [response, responseBody] = await Network.get('get-boards');
     setBoards(responseBody);
   };
+
+  useEffect(() => {
+    getBoards();
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getBoards();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
   return (
     <div css={centeredContainer}>
