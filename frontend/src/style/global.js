@@ -62,8 +62,8 @@ html[data-theme="purple"] {
   --button-green: #4dc156;
   --card-neutral: transparent;
   --card-default: white;
-  --card-correct: #69e0ad;
-  --card-assassin: orchid;
+  --card-correct: #75e6b5;
+  --card-assassin: #ed7ee9;
 }
 
 
@@ -73,19 +73,19 @@ html[data-theme="neon"] {
 
   --background: yellow;
   --background-emphasis: gold;
-  --text-primary: dodgerblue;
-  --text-secondary: #5e3f96;
+  --text-primary: #0049c7;
+  --text-secondary: dodgerblue;
   --border: aqua;
-  --box-shadow: lavender;
+  --box-shadow: aqua;
 
-  --button-simple: #dedede;
-  --button-simple-hover: #dddddd;
-  --button-simple-select: #b08df0;
+  --button-simple: gold;
+  --button-simple-hover: #e0c007;
+  --button-simple-select: #ffe342;
   --button-green: #4dc156;
   --card-neutral: transparent;
   --card-default: white;
-  --card-correct: #B7F4A9;
-  --card-assassin: magenta;
+  --card-correct: #c3ff00;
+  --card-assassin: #fc4dff;
 }
 
 html[data-theme="dark"] {
