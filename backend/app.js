@@ -3,6 +3,10 @@ var cors = require('cors')
 const app = express();
 const port = process.env.PORT || 3333;
 
+//This will create a middleware.
+//When you navigate to the root page, it would use the built react-app
+app.use(express.static(path.resolve(__dirname, "./frontend/build")));
+
 app.use(cors());
 
 const bodyParser = require('body-parser');
