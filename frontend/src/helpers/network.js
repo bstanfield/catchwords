@@ -1,4 +1,4 @@
-const API_URL = process.env.LOCAL_DEV ? 'http://localhost:3333/api' : 'https://catchwords-server.herokuapp.com/api';
+const API_URL = process.env.REACT_APP_LOCAL_DEV ? 'http://localhost:3333/api' : 'https://catchwords-server.herokuapp.com/api';
 
 function generateHeaders() {
   const headers = new Headers({
