@@ -4,17 +4,25 @@ import { useEffect, useReducer, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
-import socketIOClient from "socket.io-client";
+import {
+  colors,
+  findCorrectGuesses,
+  findIncorrectGuesses
+} from '../helpers/util';
+import socketIOClient from 'socket.io-client';
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
+import ThemeSelector from '../components/ThemeSelector';
+import Tutorial from '../components/Tutorial';
+import Button from '../components/Button';
+import ToggleButton from '../components/ToggleButton';
 
 const API_URL = 'https://catchwords-server.herokuapp.com/api';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
-  color: '#333333',
+  color: colors.textPrimary,
   margin: 'auto',
   'h1, h2, h3, h4, p, a': {
     fontFamily: 'Work Sans, system-ui !important',
@@ -55,7 +63,7 @@ const modal = scale({
 });
 
 const turnButton = {
-  color: 'black',
+  color: colors.textPrimary,
   fontWeight: 500,
   padding: '10px 20px',
   cursor: 'pointer',
@@ -79,19 +87,14 @@ const endTurnStyle = guesses =>
   });
 
 const waitingStyle = scale({
-  backgroundColor: '#EAEBF2',
-  borderColor: '#CDCFDC',
+  backgroundColor: colors.buttonSimple,
+  borderColor: colors.border,
   cursor: 'not-allowed'
 });
 
 const cheatsheetButton = isSelected =>
   scale({
-    borderRadius: '32px',
-    color: isSelected ? 'white' : '#333',
-    backgroundColor: isSelected ? '#5696F6' : 'transparent',
-    '&:hover': {
-      backgroundColor: isSelected ? '#5696F6' : '#ddd'
-    }
+    borderRadius: '32px'
   });
 
 const buttonStyle = isSelected =>
@@ -103,10 +106,16 @@ const buttonStyle = isSelected =>
     cursor: 'pointer',
     margin: '20px 20px 20px 0',
     fontSize: '20px',
-    backgroundColor: isSelected ? '#2ef72e' : '#eeeeee',
+    color: isSelected ? colors.textPrimary : colors.textSecondary,
+    backgroundColor: isSelected
+      ? colors.buttonSimpleSelect
+      : colors.buttonSimple,
+    transition: 'all ease-in-out 100ms',
     '&:hover': {
-      backgroundColor: isSelected ? '#2ef72e' : '#d0d0d0',
-      opacity: isSelected ? 0.7 : 1
+      backgroundColor: isSelected
+        ? colors.buttonSimpleSelect
+        : colors.buttonSimpleHover,
+      opacity: isSelected ? 0.9 : 1
     }
   });
 
@@ -178,9 +187,10 @@ const inningRow = { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' };
 
 const inning = isCurrentInning => ({
   backgroundColor: isCurrentInning ? 'rgba(86, 150, 246, 0.12)' : 'transparent',
-  color: isCurrentInning ? 'black' : '#999',
+  color: isCurrentInning ? colors.textPrimary : colors.textSecondary,
   padding: '6px 12px',
-  borderLeft: '1px solid #ccc',
+  borderLeft: '1px solid',
+  borderColor: colors.border,
   width: '40px',
   boxSizing: 'border-box',
   textAlign: 'center'
@@ -277,29 +287,31 @@ const PlayerBoard = ({ match }) => {
   useEffect(() => {
     console.log('creating connection!');
     // For local dev, back to: 'http://127.0.0.1:3333' below.
-    const connection = socketIOClient('https://catchwords-server.herokuapp.com');
+    const connection = socketIOClient(
+      'https://catchwords-server.herokuapp.com'
+    );
     setSocketConnection(connection);
     console.log('connection: ', connection);
 
-    connection.emit("name", 'Ben');
+    connection.emit('name', 'Ben');
 
-    connection.on("reject", () => {
+    connection.on('reject', () => {
       window.location.href = `/`;
-      console.log('here!')
+      console.log('here!');
     });
 
-    connection.on("connect", () => {
-      connection.emit("join", 'DELETE');
+    connection.on('connect', () => {
+      connection.emit('join', 'DELETE');
     });
 
-    connection.on("reload", () => {
+    connection.on('reload', () => {
       updateBoard(match.params.id, dispatch);
-    })
+    });
 
-    connection.on("id", (id) => {
+    connection.on('id', id => {
       console.log(id);
 
-      console.log('here!')
+      console.log('here!');
     });
   }, []);
 
@@ -363,7 +375,7 @@ const PlayerBoard = ({ match }) => {
   };
 
   const handleAttemptGuess = index => {
-    socketConnection.emit("guess", index);
+    socketConnection.emit('guess', index);
     // Add socket event
     if (state.localTurnCount % 2 === 0) {
       // RED TEAM
@@ -397,10 +409,10 @@ const PlayerBoard = ({ match }) => {
       word: responseBody.word,
       index
     });
-    socketConnection.emit("swapWord", index);
+    socketConnection.emit('swapWord', index);
   };
 
-  const Dots = ({ total, turnCount, className }) => {
+  const Turns = ({ total, turnCount, className }) => {
     const totalDots = new Array(total).fill(false);
     const dotsWithId = totalDots.map((item, i) => i + 1);
     const redTurns = dotsWithId.filter((element, index) => {
@@ -411,7 +423,12 @@ const PlayerBoard = ({ match }) => {
     });
     return (
       <div className={className}>
-        <div css={[inningRow, { borderBottom: '1px solid #ccc' }]}>
+        <div
+          css={[
+            inningRow,
+            { borderBottom: '1px solid', borderColor: colors.borderColor }
+          ]}
+        >
           <p css={inningText}>Blue</p>
           {blueTurns.map(id => (
             <div css={inning(turnCount === id)}>
@@ -436,7 +453,9 @@ const PlayerBoard = ({ match }) => {
   return (
     <div
       css={{
-        backgroundColor: showCheatsheet ? 'white' : '#eee',
+        backgroundColor: showCheatsheet
+          ? colors.backgroundEmphasis
+          : colors.background,
         minHeight: '100vh',
         boxSizing: 'border-box'
       }}
@@ -489,30 +508,41 @@ const PlayerBoard = ({ match }) => {
               alignItems: 'center'
             }}
           >
-            <Dots
-              turnCount={localTurnCount}
-              total={7}
-              css={{ marginRight: 8 }}
-            />
-            {!showCheatsheet && isUserGivingClue ? (
-              <button css={[turnButton, waitingStyle]}>Waiting...</button>
-            ) : !showCheatsheet ? (
-              <button
-                css={[turnButton, endTurnStyle(currentTurnGuesses)]}
+            <div
+              id="turns"
+              css={{
+                backgroundColor: colors.background,
+                padding: '4px 8px',
+                borderRadius: 4
+              }}
+            >
+              <Turns
+                turnCount={localTurnCount}
+                total={8}
+                css={{ marginRight: 8 }}
+              />
+            </div>
+            <div id="end-turn-btn">
+              {!showCheatsheet && isUserGivingClue ? (
+                <button css={[turnButton, waitingStyle]}>Waiting...</button>
+              ) : !showCheatsheet ? (
+                <button
+                  css={[turnButton, endTurnStyle(currentTurnGuesses)]}
                   onClick={() => {
-                  Network.post(`update-turn`, {
-                    id,
-                    turnCount: localTurnCount + 1
-                  });
-                  // Maybe this isn't needed anymore?
-                  // dispatch({ type: 'increment_turn' });
-                  dispatch({ type: 'reset_turn_guesses' });
-                  socketConnection.emit("endTurn", currentTurnGuesses);
-                }}
-              >
-                {isUserGivingClue ? 'Waiting...' : 'End turn'}
-              </button>
-            ) : null}
+                    Network.post(`update-turn`, {
+                      id,
+                      turnCount: localTurnCount + 1
+                    });
+                    // Maybe this isn't needed anymore?
+                    // dispatch({ type: 'increment_turn' });
+                    dispatch({ type: 'reset_turn_guesses' });
+                    socketConnection.emit('endTurn', currentTurnGuesses);
+                  }}
+                >
+                  {isUserGivingClue ? 'Waiting...' : 'End turn'}
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
 
@@ -527,7 +557,7 @@ const PlayerBoard = ({ match }) => {
 
         {/* BOTTOM ACTIONS */}
         <div css={bottomBar}>
-          <div>
+          <div css={{ display: 'flex' }}>
             {userTeam === 'red' ? (
               <button
                 css={[
@@ -550,19 +580,26 @@ const PlayerBoard = ({ match }) => {
               </button>
             )}
 
-            <button
-              css={buttonStyle(editWordsMode)}
-              onClick={() => handleEditWords()}
-            >
-              Edit words
-            </button>
+            <div id="edit-words-btn">
+              <ToggleButton
+                isSelected={editWordsMode}
+                onClick={() => handleEditWords()}
+              >
+                Edit words
+              </ToggleButton>
+            </div>
           </div>
-          <Link to="/new">
-            <button css={[buttonStyle(), { marginRight: 0 }]}>
-              New board →
-            </button>
-          </Link>
+          <div css={{ display: 'flex' }}>
+            <Tutorial
+              state={state}
+              toggleCheatsheet={() => dispatch({ type: 'toggle_cheatsheet' })}
+            />
+            <Link to="/new">
+              <Button color="gray">New board →</Button>
+            </Link>
+          </div>
         </div>
+        <ThemeSelector />
       </div>
     </div>
   );

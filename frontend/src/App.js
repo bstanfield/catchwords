@@ -5,6 +5,8 @@ import New from './routes/New';
 import PlayerBoard from './routes/PlayerBoard';
 import AddWord from './routes/AddWord';
 import { jsx } from '@emotion/core';
+import { Global } from '@emotion/react';
+import GlobalStyles from './style/global';
 import Home from './routes/Home';
 import { scale } from './style/scale';
 
@@ -36,6 +38,8 @@ export default function App() {
           </Route>
         </Switch>
       </Router>
+
+      <Global styles={GlobalStyles} />
     </div>
   );
 }
