@@ -1,14 +1,7 @@
 const express = require('express');
 var cors = require('cors')
-const path = require("path");
 const app = express();
 const port = process.env.PORT || 3333;
-
-const publicPath = path.resolve(__dirname, "../frontend/build")
-
-//This will create a middleware.
-//When you navigate to the root page, it would use the built react-app
-app.use('/', express.static(publicPath));
 
 app.use(cors());
 
@@ -33,10 +26,6 @@ app.use(
 app.listen(port, () => console.log(`Listening on port localhost:${port}`));
 
 // Standard messages
-app.get('*', (req, res) => {
-  res.sendFile(path.join(publicPath, 'index.html'))
-})
-
 app.get('/', (req, res) => {
   res.json({ info: 'Hello world!' })
 });
