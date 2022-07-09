@@ -1,6 +1,7 @@
 {
     "scripts": {
-        "start": "concurrently \"cd frontend && npm i && npm start\" \"cd backend && npm i && nodemon app.js\""
+        "web": "cd frontend && npm i && npm start",
+        "server": "cd backend && npm i && nodemon app.js"
     },
     "dependencies": {
         "concurrently": "^7.2.2",
