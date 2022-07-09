@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:3333/api';
+const port = process.env.PORT || 3333;
+const API_URL = `http://localhost:${port}/api`;
 
 function generateHeaders() {
   const headers = new Headers({
