@@ -42,7 +42,7 @@ const getRandomUniqueWords = (wordsByWeight, total) => {
   return selectedWords;
 }
 
-// ephemeral game storage
+// ephemeral game storage. Replace with DB support
 const gameBoards = {};
 
 const getRandomWords = async (total) => {
