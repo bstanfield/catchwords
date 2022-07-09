@@ -17,7 +17,7 @@
     "csv-parser": "^2.3.3",
     "db-migrate": "^0.11.11",
     "db-migrate-pg": "^1.2.2",
-    "express": "^4.17.1",
+    "express": "^4.18.1",
     "knex": "^0.20.7",
     "nodemon": "^2.0.19",
     "pg": "^7.17.1",
