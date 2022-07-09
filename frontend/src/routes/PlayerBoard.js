@@ -274,18 +274,46 @@ const PlayerBoard = ({ match }) => {
     showCheatsheet
   } = state;
 
+  useEffect(() => {
+    console.log('creating connection!');
+    const connection = socketIOClient('http://127.0.0.1:3333');
+    setSocketConnection(connection);
+    console.log('connection: ', connection);
+
+    connection.emit("name", 'Ben');
+
+    connection.on("reject", () => {
+      window.location.href = `/`;
+      console.log('here!')
+    });
+
+    connection.on("connect", () => {
+      connection.emit("join", 'DELETE');
+    });
+
+    connection.on("reload", () => {
+      updateBoard(match.params.id, dispatch);
+    })
+
+    connection.on("id", (id) => {
+      console.log(id);
+
+      console.log('here!')
+    });
+  }, []);
+
   // Loads board
   useEffect(() => {
     loadBoard(match.params.id, dispatch);
   }, [match.params.id]);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      updateBoard(match.params.id, dispatch);
-    }, 1000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     updateBoard(match.params.id, dispatch);
+  //   }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   useEffect(() => {
     if (localTurnCount === 1) return;
@@ -334,6 +362,8 @@ const PlayerBoard = ({ match }) => {
   };
 
   const handleAttemptGuess = index => {
+    socketConnection.emit("guess", index);
+    // Add socket event
     if (state.localTurnCount % 2 === 0) {
       // RED TEAM
       const newArr = state.redGuesses.concat([index]);
@@ -366,6 +396,7 @@ const PlayerBoard = ({ match }) => {
       word: responseBody.word,
       index
     });
+    socketConnection.emit("swapWord", index);
   };
 
   const Dots = ({ total, turnCount, className }) => {
@@ -467,13 +498,14 @@ const PlayerBoard = ({ match }) => {
             ) : !showCheatsheet ? (
               <button
                 css={[turnButton, endTurnStyle(currentTurnGuesses)]}
-                onClick={() => {
+                  onClick={() => {
                   Network.post(`update-turn`, {
                     id,
                     turnCount: localTurnCount + 1
                   });
                   dispatch({ type: 'increment_turn' });
                   dispatch({ type: 'reset_turn_guesses' });
+                  socketConnection.emit("endTurn", currentTurnGuesses);
                 }}
               >
                 {isUserGivingClue ? 'Waiting...' : 'End turn'}

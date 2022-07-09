@@ -37,23 +37,26 @@ const io = socketIo(server, {
 console.log('Socket server starting!');
 io.on("connection", (socket) => {
   console.log("New client connected", socket.id);
-  if (interval) {
-    clearInterval(interval);
-  }
-  interval = setInterval(() => getApiAndEmit(socket), 1000);
+
   socket.on("disconnect", () => {
     console.log("Client disconnected");
-    clearInterval(interval);
   });
+
+  // Tell everyone to reload
+  socket.on("guess", (socket) => {
+    io.emit("reload", "reload!");
+  })
+
+  socket.on("endTurn", (socket) => {
+    io.emit("reload", "reload!");
+  })
+
+  socket.on("swapWord", (socket) => {
+    io.emit("reload", "reload!");
+  })
 });
 
-const getApiAndEmit = socket => {
-  const response = new Date();
-  // Emitting a new message. Will be consumed by the client
-  socket.emit("FromAPI", response);
-};
-
-app.listen(port, () => console.log(`Listening on port localhost:${port}`));
+server.listen(port, () => console.log(`Listening on port localhost:${port}`));
 
 // Standard messages
 app.get('/api/get-existing-board/:board', async (req, res) => {
