@@ -1,16 +1,18 @@
-const fs = require('fs');
+const { getValidWords, addWord } = require("../db");
 
 exports.addWord = async (req, res) => {
-  const { name } = req.body;
+  const { word, weight } = req.body;
 
-  const rawdata = fs.readFileSync('words.json');
-  const words = JSON.parse(rawdata);
+  // looks like: [{ word: 'Ben', weight: 1, id: 99 }, { ... }]
+  const wordObjs = await getValidWords();
+  
 
-  if (words.includes('name')) {
+  const justWords = wordObjs.map(obj => obj.word);
+
+  if (justWords.includes(word)) {
     return res.status(422).send('Error: word already exists in database');
   }
 
-  words.push(name);
-  fs.writeFileSync('words.json', JSON.stringify(words));
-  res.status(200).send({ success: `word ${name} added` });
+  addWord(word, weight);
+  res.status(200).send({ success: `word ${word} added` });
 };

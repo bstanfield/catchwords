@@ -1,7 +1,7 @@
 const fs = require('fs');
+const { getValidWords } = require("../db");
 
 exports.getWords = async (req, res) => {
-  const rawdata = fs.readFileSync('words.json');
-  const words = JSON.parse(rawdata);
+  const words = await getValidWords();
   res.status(200).send({ words });
 };

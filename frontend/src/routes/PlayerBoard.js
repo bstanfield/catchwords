@@ -229,7 +229,7 @@ const updateBoard = async (boardId, dispatch) => {
   const [response, responseBody] = await Network.get(
     `get-existing-board/${boardId}`
   );
-  const { red, blue, redGuesses, blueGuesses, turnCount } = responseBody;
+  const { red, blue, redGuesses, blueGuesses, turnCount, words } = responseBody;
   const allIncorrectGuesses = findIncorrectGuesses(
     red,
     blueGuesses || []
@@ -237,6 +237,7 @@ const updateBoard = async (boardId, dispatch) => {
   dispatch({
     type: 'update',
     state: {
+      words,
       localTurnCount: turnCount,
       incorrectGuesses: allIncorrectGuesses,
       redGuesses: redGuesses || [],
