@@ -100,7 +100,7 @@ const blue = R.pipe(
 )(arrWithOverlap);
 
 exports.getNewBoard = async (req, res) => {
-  const wordsArr = getRandomWords(25);
+  const wordsArr = await getRandomWords(25);
   const id = R.join('-', randomWords(5));
 
   // adds new board to memory

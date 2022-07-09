@@ -38,7 +38,7 @@ app.post('/api/add-word', async (req, res) => {
   await addWord(req, res);
 });
 
-app.post('/api/get-words', async (req, res) => {
+app.get('/api/get-words', async (req, res) => {
   await getWords(req, res);
 });
 
