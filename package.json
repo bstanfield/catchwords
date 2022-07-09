@@ -1,6 +1,6 @@
 {
     "scripts": {
-        "start": "cd backend && nodemon app.js",
+        "start": "cd backend && npm install --force && nodemon app.js",
         "heroku-postbuild": "cd frontend && npm install --force && npm run build --force"
     },
     "dependencies": {
