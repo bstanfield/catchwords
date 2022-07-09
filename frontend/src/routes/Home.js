@@ -1,6 +1,6 @@
 /** @jsx jsx */
 
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { colors } from '../helpers/util';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
@@ -95,17 +95,13 @@ function timeSince(timeStamp) {
   }
 }
 
-const Home = () => {
+export default function Home() {
   const [boards, setBoards] = useState({});
 
   const getBoards = async () => {
     const [response, responseBody] = await Network.get('get-boards');
     setBoards(responseBody);
   };
-
-  useEffect(() => {
-    getBoards();
-  }, []);
 
   return (
     <div css={centeredContainer}>
@@ -138,5 +134,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

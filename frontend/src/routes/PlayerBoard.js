@@ -1,13 +1,16 @@
 /** @jsx jsx */
 
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
+import socketIOClient from "socket.io-client";
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
+
+const API_URL = 'https://catchwords-server.herokuapp.com/api';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -252,6 +255,7 @@ const PlayerBoard = ({ match }) => {
   // STATE -----
   // Board state
   const [state, dispatch] = useReducer(boardReducer, initialState);
+  const [socketConnection, setSocketConnection] = useState(false);
 
   // END STATE -----
 
@@ -270,18 +274,47 @@ const PlayerBoard = ({ match }) => {
     showCheatsheet
   } = state;
 
+  useEffect(() => {
+    console.log('creating connection!');
+    // For local dev, back to: 'http://127.0.0.1:3333' below.
+    const connection = socketIOClient('https://catchwords-server.herokuapp.com');
+    setSocketConnection(connection);
+    console.log('connection: ', connection);
+
+    connection.emit("name", 'Ben');
+
+    connection.on("reject", () => {
+      window.location.href = `/`;
+      console.log('here!')
+    });
+
+    connection.on("connect", () => {
+      connection.emit("join", 'DELETE');
+    });
+
+    connection.on("reload", () => {
+      updateBoard(match.params.id, dispatch);
+    })
+
+    connection.on("id", (id) => {
+      console.log(id);
+
+      console.log('here!')
+    });
+  }, []);
+
   // Loads board
   useEffect(() => {
     loadBoard(match.params.id, dispatch);
   }, [match.params.id]);
 
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      updateBoard(match.params.id, dispatch);
-    }, 1000);
+  // useEffect(() => {
+  //   const intervalId = setInterval(() => {
+  //     updateBoard(match.params.id, dispatch);
+  //   }, 1000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+  //   return () => clearInterval(intervalId);
+  // }, []);
 
   useEffect(() => {
     if (localTurnCount === 1) return;
@@ -330,6 +363,8 @@ const PlayerBoard = ({ match }) => {
   };
 
   const handleAttemptGuess = index => {
+    socketConnection.emit("guess", index);
+    // Add socket event
     if (state.localTurnCount % 2 === 0) {
       // RED TEAM
       const newArr = state.redGuesses.concat([index]);
@@ -362,6 +397,7 @@ const PlayerBoard = ({ match }) => {
       word: responseBody.word,
       index
     });
+    socketConnection.emit("swapWord", index);
   };
 
   const Dots = ({ total, turnCount, className }) => {
@@ -463,7 +499,7 @@ const PlayerBoard = ({ match }) => {
             ) : !showCheatsheet ? (
               <button
                 css={[turnButton, endTurnStyle(currentTurnGuesses)]}
-                onClick={() => {
+                  onClick={() => {
                   Network.post(`update-turn`, {
                     id,
                     turnCount: localTurnCount + 1
@@ -471,6 +507,7 @@ const PlayerBoard = ({ match }) => {
                   // Maybe this isn't needed anymore?
                   // dispatch({ type: 'increment_turn' });
                   dispatch({ type: 'reset_turn_guesses' });
+                  socketConnection.emit("endTurn", currentTurnGuesses);
                 }}
               >
                 {isUserGivingClue ? 'Waiting...' : 'End turn'}

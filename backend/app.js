@@ -2,6 +2,9 @@ const express = require('express');
 var cors = require('cors')
 const app = express();
 const port = process.env.PORT || 3333;
+const http = require("http");
+const socketIo = require("socket.io")
+const index = require("./routes/index");
 
 app.use(cors());
 
@@ -15,21 +18,47 @@ const { updateTurn } = require('./endpoints/update-turn');
 const { getBoards } = require('./endpoints/get-boards');
 const { getWords } = require('./endpoints/get-words');
 
-// bodyParser middleware to help parse JSON
-app.use(bodyParser.json())
+app.use(bodyParser.json());
+app.use(index);
 app.use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
 
-app.listen(port, () => console.log(`Listening on port localhost:${port}`));
-
-// Standard messages
-app.get('/', (req, res) => {
-  res.json({ info: 'Hello world!' })
+// Socket
+const server = http.createServer(app);
+const io = socketIo(server, {
+  cors: {
+    origin: "*",
+  },
 });
 
+console.log('Socket server starting!');
+io.on("connection", (socket) => {
+  console.log("New client connected", socket.id);
+
+  socket.on("disconnect", () => {
+    console.log("Client disconnected");
+  });
+
+  // Tell everyone to reload
+  socket.on("guess", (socket) => {
+    io.emit("reload", "reload!");
+  })
+
+  socket.on("endTurn", (socket) => {
+    io.emit("reload", "reload!");
+  })
+
+  socket.on("swapWord", (socket) => {
+    io.emit("reload", "reload!");
+  })
+});
+
+server.listen(port, () => console.log(`Listening on port localhost:${port}`));
+
+// Standard messages
 app.get('/api/get-existing-board/:board', async (req, res) => {
   await getExistingBoard(req, res);
 });
