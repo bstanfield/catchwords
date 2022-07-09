@@ -1,7 +1,7 @@
 {
     "scripts": {
         "start": "cd backend && nodemon app.js",
-        "heroku-postbuild": "cd frontend && npm install && npm run build"
+        "heroku-postbuild": "cd frontend && npm install --force && npm run build --force"
     },
     "dependencies": {
         "concurrently": "^7.2.2",
