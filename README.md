@@ -1,6 +1,7 @@
 # catchwords
 
-This app requires a connection to a local database to run. Here's how to
+### DB setup
+This app requires a connection to a local database to run locally. Here's how to
 set up your own local psql database:
 
 1. navigate to the backend folder and run `npm install`
@@ -21,3 +22,12 @@ set up your own local psql database:
    ```sql
    insert into passwords(password) values('somepig');
    ```
+
+### Deployment
+#### Backend
+Catchwords' server is hosted for $7/mo. on Heroku, along with the Postgres DB. New deployments are triggered via pushes to the `master` branch of the `catchwords` github repo.
+
+#### Frontend
+Catchwords' frontend is hosted for free on Vercel under the project name `catchwords-frontend`. New deployments are triggered by entering the /frontend folder and typing `vercel`.
+
+
