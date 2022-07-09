@@ -468,7 +468,8 @@ const PlayerBoard = ({ match }) => {
                     id,
                     turnCount: localTurnCount + 1
                   });
-                  dispatch({ type: 'increment_turn' });
+                  // Maybe this isn't needed anymore?
+                  // dispatch({ type: 'increment_turn' });
                   dispatch({ type: 'reset_turn_guesses' });
                 }}
               >
