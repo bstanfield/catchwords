@@ -464,7 +464,7 @@ const PlayerBoard = ({ match }) => {
             >
               <Turns
                 turnCount={localTurnCount}
-                total={7}
+                total={8}
                 css={{ marginRight: 8 }}
               />
             </div>
@@ -498,7 +498,7 @@ const PlayerBoard = ({ match }) => {
           handleAttemptGuess={handleAttemptGuess}
           handleReplaceWord={handleReplaceWord}
         />
-        
+
         {/* BOTTOM ACTIONS */}
         <div css={bottomBar}>
           <div css={{display: 'flex'}}>

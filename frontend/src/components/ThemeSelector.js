@@ -42,11 +42,9 @@ export default function ThemeSelector(props) {
 
   function handleOnSelect(e) {
     const targetTheme = e.target.value
-    console.log('targetTheme', targetTheme);
     document.documentElement.setAttribute('data-theme', targetTheme);
   }
 
-  // toggleSwitch.addEventListener('change', handleOnSelect, false);
   return (
     <div
       onChange={(event) => handleOnSelect(event)}

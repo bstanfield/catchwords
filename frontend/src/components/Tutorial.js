@@ -47,7 +47,7 @@ function IntroStep(props) {
           Welcome to Catchwords, a cooperative word game for two or more players.
         </h4>
         <p css={description}>
-          Both teams win if you can find all 15 green words in nine turns or less.
+          Both teams win if you can find all 15 green words in 8 turns or less.
         </p>
       </div>
       <Button onClick={props.onContinue} css={continueButton}>
@@ -87,7 +87,7 @@ function TurnsStep(props) {
     <div css={contentWrapper}>
       <div>
         <h4 css={heading}>
-          There are nine turns in a game. Each turn has a clue and at least one guess. 
+          There are 8 turns in a game. Each turn has a clue and at least one guess. 
         </h4>
         <p css={description}>
           When your row is highlighted, it's your turn to guess, and the other team's turn to give a clue.
@@ -141,7 +141,7 @@ function EndingTheGame(props) {
     <div css={contentWrapper}>
       <div>
         <h4 css={heading}>
-          The game ends when you run into an assassin or once 9 turns have passed.
+          The game ends when you run into an assassin or once 8 turns have passed.
         </h4>
         <p css={description}>
           If both teams find all the words before you run out of turns, you both win :)
