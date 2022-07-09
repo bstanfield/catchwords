@@ -5,6 +5,9 @@ import { colors } from '../helpers/util';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import Network from '../helpers/network';
+import socketIOClient from "socket.io-client";
+
+const API_URL = process.env.REACT_APP_LOCAL_DEV ? 'http://localhost:3333/api' : 'https://catchwords-server.herokuapp.com/api';
 
 const centeredContainer = scale({
   position: 'absolute',
@@ -95,8 +98,9 @@ function timeSince(timeStamp) {
   }
 }
 
-const Home = () => {
+export default function Home() {
   const [boards, setBoards] = useState({});
+  const [socketConnection, setSocketConnection] = useState(false);
 
   const getBoards = async () => {
     const [response, responseBody] = await Network.get('get-boards');
@@ -104,6 +108,30 @@ const Home = () => {
   };
 
   useEffect(() => {
+    console.log('creating connection!');
+    const connection = socketIOClient('http://127.0.0.1:3333');
+    setSocketConnection(connection);
+    console.log('connection: ', connection);
+
+    connection.emit("name", 'Ben');
+
+    connection.on("reject", () => {
+      window.location.href = `/`;
+      console.log('here!')
+    });
+
+    connection.on("connect", () => {
+      connection.emit("join", 'DELETE');
+
+      console.log('here!', socket.id)
+    });
+
+    connection.on("id", (id) => {
+      console.log(id);
+
+      console.log('here!')
+    });
+
     getBoards();
   }, []);
 
@@ -138,5 +166,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;

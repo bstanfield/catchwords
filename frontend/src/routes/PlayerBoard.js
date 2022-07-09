@@ -1,13 +1,16 @@
 /** @jsx jsx */
 
-import { useEffect, useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
 import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
+import socketIOClient from "socket.io-client";
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
+
+const API_URL = process.env.REACT_APP_LOCAL_DEV ? 'http://localhost:3333/api' : 'https://catchwords-server.herokuapp.com/api';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -252,6 +255,7 @@ const PlayerBoard = ({ match }) => {
   // STATE -----
   // Board state
   const [state, dispatch] = useReducer(boardReducer, initialState);
+  const [socketConnection, setSocketConnection] = useState(false);
 
   // END STATE -----
 
