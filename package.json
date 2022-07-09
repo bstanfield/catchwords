@@ -1,0 +1,10 @@
+{
+    "scripts": {
+        "start": "cd backend && npm i && nodemon app.js",
+        "dev": "concurrently 'echo Starting backend...' 'cd backend && nodemon app.js' 'echo Starting frontend...' 'cd frontend && npm start'"
+    },
+    "dependencies": {
+        "concurrently": "^7.2.2",
+        "nodemon": "^2.0.19"
+    }
+}

@@ -95,7 +95,7 @@ function timeSince(timeStamp) {
   }
 }
 
-const Home = () => {
+export default function Home() {
   const [boards, setBoards] = useState({});
 
   const getBoards = async () => {
@@ -105,6 +105,14 @@ const Home = () => {
 
   useEffect(() => {
     getBoards();
+  }, []);
+
+  useEffect(() => {
+    const intervalId = setInterval(() => {
+      getBoards();
+    }, 5000);
+
+    return () => clearInterval(intervalId);
   }, []);
 
   return (
@@ -138,5 +146,3 @@ const Home = () => {
     </div>
   );
 };
-
-export default Home;
