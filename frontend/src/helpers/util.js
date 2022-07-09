@@ -5,20 +5,24 @@ import * as R from 'ramda';
 export const capitalizeFirst = x => R.concat(R.toUpper(R.head(x)), R.tail(x));
 
 export const colors = {
-  primaryText: '#4A4A4A',
-  lightGrayText: 'rgba(200, 200, 200, 0.9)',
-  backgroundWhite: '#FcFcFc',
-  backgroundShadow: '#EEECE5',
-  primaryRed: '#ff4622',
-  primaryGreen: '#1A3C34',
-  greenButton: '#4dc156',
-  progressBar: '#ffd506',
-  errorRed: '#e93710',
-  lightBorder: '#BCBCBC',
-  veryLightGray: 'rgba(0,0,0,0.1)',
-  neutralCard: 'transparent',
-  correctCard: '#B7F4A9',
-  assassinCard: '#FF9F9F'
+  textLight: 'var(--text-light)',
+  textDark: 'var(--text-dark)',
+
+  background: 'var(--background)',
+  backgroundEmphasis: 'var(--background-emphasis)',
+  textPrimary: 'var(--text-primary)',
+  textSecondary: 'var(--text-secondary)',
+  border: 'var(--border)',
+  boxShadow: 'var(--box-shadow)',
+
+  buttonSimple: 'var(--button-simple)',
+  buttonSimpleHover: 'var(--button-simple-hover)',
+  buttonSimpleSelect: 'var(--button-simple-select)',
+  buttonGreen: 'var(--button-green)',
+  defaultCard: 'var(--card-default)',
+  neutralCard: 'var(--card-neutral)',
+  correctCard: 'var(--card-correct)',
+  assassinCard: 'var(--card-assassin)',
 };
 
 export const findCorrectGuesses = (teamBoard, teamGuesses) => {

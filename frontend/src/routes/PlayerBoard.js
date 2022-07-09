@@ -4,14 +4,15 @@ import { useEffect, useReducer } from 'react';
 import { withRouter, Link } from 'react-router-dom';
 import { jsx } from '@emotion/core';
 import { scale } from '../style/scale';
-import { findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
+import { colors, findCorrectGuesses, findIncorrectGuesses } from '../helpers/util';
 
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
+import ThemeSelector from '../components/ThemeSelector';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
-  color: '#333333',
+  color: colors.textPrimary,
   margin: 'auto',
   'h1, h2, h3, h4, p, a': {
     fontFamily: 'Work Sans, system-ui !important',
@@ -52,7 +53,7 @@ const modal = scale({
 });
 
 const turnButton = {
-  color: 'black',
+  color: colors.textPrimary,
   fontWeight: 500,
   padding: '10px 20px',
   cursor: 'pointer',
@@ -76,19 +77,14 @@ const endTurnStyle = guesses =>
   });
 
 const waitingStyle = scale({
-  backgroundColor: '#EAEBF2',
-  borderColor: '#CDCFDC',
+  backgroundColor: colors.buttonSimple,
+  borderColor: colors.border,
   cursor: 'not-allowed'
 });
 
 const cheatsheetButton = isSelected =>
   scale({
     borderRadius: '32px',
-    color: isSelected ? 'white' : '#333',
-    backgroundColor: isSelected ? '#5696F6' : 'transparent',
-    '&:hover': {
-      backgroundColor: isSelected ? '#5696F6' : '#ddd'
-    }
   });
 
 const buttonStyle = isSelected =>
@@ -100,10 +96,12 @@ const buttonStyle = isSelected =>
     cursor: 'pointer',
     margin: '20px 20px 20px 0',
     fontSize: '20px',
-    backgroundColor: isSelected ? '#2ef72e' : '#eeeeee',
+    color: isSelected ? colors.textPrimary : colors.textSecondary,
+    backgroundColor: isSelected ? colors.buttonSimpleSelect : colors.buttonSimple,
+    transition: 'all ease-in-out 100ms',
     '&:hover': {
-      backgroundColor: isSelected ? '#2ef72e' : '#d0d0d0',
-      opacity: isSelected ? 0.7 : 1
+      backgroundColor: isSelected ? colors.buttonSimpleSelect : colors.buttonSimpleHover,
+      opacity: isSelected ? 0.9 : 1
     }
   });
 
@@ -175,9 +173,10 @@ const inningRow = { display: 'flex', flexWrap: 'nowrap', alignItems: 'center' };
 
 const inning = isCurrentInning => ({
   backgroundColor: isCurrentInning ? 'rgba(86, 150, 246, 0.12)' : 'transparent',
-  color: isCurrentInning ? 'black' : '#999',
+  color: isCurrentInning ? colors.textPrimary : colors.textSecondary,
   padding: '6px 12px',
-  borderLeft: '1px solid #ccc',
+  borderLeft: '1px solid',
+  borderColor: colors.border,
   width: '40px',
   boxSizing: 'border-box',
   textAlign: 'center'
@@ -374,7 +373,7 @@ const PlayerBoard = ({ match }) => {
     });
     return (
       <div className={className}>
-        <div css={[inningRow, { borderBottom: '1px solid #ccc' }]}>
+        <div css={[inningRow, { borderBottom: '1px solid', borderColor: colors.borderColor }]}>
           <p css={inningText}>Blue</p>
           {blueTurns.map(id => (
             <div css={inning(turnCount === id)}>
@@ -399,7 +398,7 @@ const PlayerBoard = ({ match }) => {
   return (
     <div
       css={{
-        backgroundColor: showCheatsheet ? 'white' : '#eee',
+        backgroundColor: showCheatsheet ? colors.backgroundEmphasis : colors.background,
         minHeight: '100vh',
         boxSizing: 'border-box'
       }}
@@ -517,6 +516,7 @@ const PlayerBoard = ({ match }) => {
             >
               Edit words
             </button>
+            <ThemeSelector />
           </div>
           <Link to="/new">
             <button css={[buttonStyle(), { marginRight: 0 }]}>

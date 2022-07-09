@@ -27,7 +27,7 @@ const header = scale({
 const button = scale({
   fontFamily: 'Work Sans, system-ui, sans-serif',
   maxWidth: 200,
-  backgroundColor: colors.greenButton,
+  backgroundColor: colors.buttonGreen,
   padding: 18,
   fontSize: 22,
   textAlign: 'center',

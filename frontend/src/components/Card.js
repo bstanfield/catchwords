@@ -9,11 +9,12 @@ const cardContainer = (colorToDisplay, opacity) =>
   scale({
     width: '185px',
     height: '85px',
-    border: '1px solid #BABABA',
+    border: '1px solid',
+    borderColor: colors.border,
     borderRadius: '4px',
     backgroundColor: colorToDisplay || 'white',
     margin: '5px 5px',
-    boxShadow: '0 1px 6px 0 #ddd',
+    boxShadow: `0 1px 6px 0 ${colors.boxShadow}`,
     color: `rgba(0,0,0,${opacity})`
   });
 
@@ -22,7 +23,7 @@ const cardText = (size, cheatsheetMode) =>
     textAlign: 'center',
     fontSize: size || 22,
     lineHeight: '30px',
-    color: '#333333',
+    color: colors.textPrimary,
     opacity: cheatsheetMode ? 0.5 : 1
   });
 
@@ -62,7 +63,7 @@ const Card = props => {
       ? colors.correctCard
       : cardType === 'assassin'
       ? colors.assassinCard
-      : 'white';
+      : colors.defaultCard;
 
   let size = 26;
   if (name) {
@@ -108,7 +109,14 @@ const Card = props => {
             {capitalizeFirst(name)}
           </h4>
           {!guessing && (
-            <p style={{ position: 'absolute', bottom: 5, opacity: 0.5 }}>
+            <p 
+              style={{
+                color: colors.textSecondary,
+                position: 'absolute',
+                bottom: 5,
+                opacity: 0.5
+              }}
+            >
               Swap
             </p>
           )}
