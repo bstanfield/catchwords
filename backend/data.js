@@ -1,4 +1,3 @@
-const fs = require('fs');
 const { getValidWords, sqrtWordWeight } = require("./db");
 
 Array.prototype.remove = function(value) {

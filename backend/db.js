@@ -20,6 +20,8 @@ const getValidWords = async () => db.query('SELECT * FROM words');
 const getWord = async (word) => db.query(`SELECT * FROM words WHERE word = ${word}`)
 
 const sqrtWordWeight = (word) => db.query(`UPDATE words SET weight = SQRT(weight) WHERE word = '${word}'`);
+
+const addWord = (word, weight = 1) => db.query(`INSERT INTO words(word, weight) VALUES('${word}', ${weight})`);
  
 // Queries
 // const updateGame = (room, guesses, scores) => {
@@ -65,5 +67,6 @@ module.exports = {
   db,
   getValidWords,
   getWord,
-  sqrtWordWeight
+  sqrtWordWeight,
+  addWord,
 }

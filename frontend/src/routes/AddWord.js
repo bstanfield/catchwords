@@ -6,7 +6,8 @@ const AddWord = () => {
 
   const addWordToDb = async () => {
     const [response, responseBody] = await Network.post('add-word', {
-      name: word
+      word,
+      weight: 100,
     });
     if (!response.ok) {
       alert(`${word} already exists in the game 😲`);
