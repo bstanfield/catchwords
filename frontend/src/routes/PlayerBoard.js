@@ -9,6 +9,9 @@ import { colors, findCorrectGuesses, findIncorrectGuesses } from '../helpers/uti
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
 import ThemeSelector from '../components/ThemeSelector';
+import Tutorial from '../components/Tutorial';
+import Button from '../components/Button';
+import ToggleButton from '../components/ToggleButton';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -362,7 +365,7 @@ const PlayerBoard = ({ match }) => {
     });
   };
 
-  const Dots = ({ total, turnCount, className }) => {
+  const Turns = ({ total, turnCount, className }) => {
     const totalDots = new Array(total).fill(false);
     const dotsWithId = totalDots.map((item, i) => i + 1);
     const redTurns = dotsWithId.filter((element, index) => {
@@ -451,11 +454,21 @@ const PlayerBoard = ({ match }) => {
               alignItems: 'center'
             }}
           >
-            <Dots
-              turnCount={localTurnCount}
-              total={7}
-              css={{ marginRight: 8 }}
-            />
+            <div 
+              id="turns"
+              css={{
+                backgroundColor: colors.background,
+                padding: '4px 8px',
+                borderRadius: 4,
+              }}
+            >
+              <Turns
+                turnCount={localTurnCount}
+                total={7}
+                css={{ marginRight: 8 }}
+              />
+            </div>
+            <div id="end-turn-btn">
             {!showCheatsheet && isUserGivingClue ? (
               <button css={[turnButton, waitingStyle]}>Waiting...</button>
             ) : !showCheatsheet ? (
@@ -473,6 +486,7 @@ const PlayerBoard = ({ match }) => {
                 {isUserGivingClue ? 'Waiting...' : 'End turn'}
               </button>
             ) : null}
+            </div>
           </div>
         </div>
 
@@ -484,10 +498,10 @@ const PlayerBoard = ({ match }) => {
           handleAttemptGuess={handleAttemptGuess}
           handleReplaceWord={handleReplaceWord}
         />
-
+        
         {/* BOTTOM ACTIONS */}
         <div css={bottomBar}>
-          <div>
+          <div css={{display: 'flex'}}>
             {userTeam === 'red' ? (
               <button
                 css={[
@@ -510,20 +524,28 @@ const PlayerBoard = ({ match }) => {
               </button>
             )}
 
-            <button
-              css={buttonStyle(editWordsMode)}
-              onClick={() => handleEditWords()}
-            >
-              Edit words
-            </button>
-            <ThemeSelector />
+            <div id="edit-words-btn">
+              <ToggleButton
+                isSelected={editWordsMode}
+                onClick={() => handleEditWords()}
+              >
+                Edit words
+              </ToggleButton>
+            </div>
           </div>
-          <Link to="/new">
-            <button css={[buttonStyle(), { marginRight: 0 }]}>
-              New board →
-            </button>
+          <div css={{display: 'flex'}}>
+            <Tutorial
+              state={state}
+              toggleCheatsheet={() => dispatch({ type: 'toggle_cheatsheet' })}
+            />
+            <Link to="/new">
+              <Button color='gray'>
+                New board →
+              </Button>
           </Link>
+          </div>
         </div>
+        <ThemeSelector />
       </div>
     </div>
   );

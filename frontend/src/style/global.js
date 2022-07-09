@@ -24,6 +24,10 @@ a {
   box-sizing: border-box;
 }
 
+.highlighted {
+  z-index: 10000 !important;
+}
+
 :root {
   --text-dark: #333333;
   --text-light: white;
@@ -56,8 +60,8 @@ html[data-theme="purple"] {
   --border: #696178;
   --box-shadow: lavender;
 
-  --button-simple: #dedede;
-  --button-simple-hover: #dddddd;
+  --button-simple: #d1d1ff;
+  --button-simple-hover: #d1d1ff;
   --button-simple-select: #b08df0;
   --button-green: #4dc156;
   --card-neutral: transparent;

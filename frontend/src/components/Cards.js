@@ -108,7 +108,7 @@ const Cards = props => {
     isUserGivingClue
   } = props;
   return (
-    <div css={genericFlex}>
+    <div css={genericFlex} id="board">
       {state.words.map((word, index) => (
         <Card
           cardName={word}

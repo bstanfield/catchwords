@@ -33,3 +33,7 @@ export const findIncorrectGuesses = (teamBoard, teamGuesses) => {
   const incorrect = teamGuesses.filter(guess => teamBoard[guess] === 2);
   return incorrect;
 };
+
+export const scrollToPosition = (position) => {
+  return window.scrollTo({ top: position - 70, behavior: 'smooth' });
+};

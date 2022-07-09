@@ -15,7 +15,8 @@ const cardContainer = (colorToDisplay, opacity) =>
     backgroundColor: colorToDisplay || 'white',
     margin: '5px 5px',
     boxShadow: `0 1px 6px 0 ${colors.boxShadow}`,
-    color: `rgba(0,0,0,${opacity})`
+    color: `rgba(0,0,0,${opacity})`,
+    zIndex: 'inherit'
   });
 
 const cardText = (size, cheatsheetMode) =>
@@ -78,6 +79,7 @@ const Card = props => {
 
   return (
     <button
+      id={index === 0 && 'first-card'}
       css={[
         cardContainer(backgroundColor, opacity),
         buttonStyle(selected),
