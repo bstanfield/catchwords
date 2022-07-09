@@ -4,7 +4,7 @@ const path = require("path");
 const app = express();
 const port = process.env.PORT || 3333;
 
-const publicPath = path.resolve(__dirname, "./frontend/build")
+const publicPath = path.resolve(__dirname, "../frontend/build")
 
 //This will create a middleware.
 //When you navigate to the root page, it would use the built react-app
