@@ -10,7 +10,7 @@ import socketIOClient from "socket.io-client";
 import Cards from '../components/Cards';
 import Network from '../helpers/network';
 
-const API_URL = process.env.REACT_APP_LOCAL_DEV ? 'http://localhost:3333/api' : 'https://catchwords-server.herokuapp.com/api';
+const API_URL = 'https://catchwords-server.herokuapp.com/api';
 
 const primaryContainer = scale({
   maxWidth: '1000px',
@@ -276,7 +276,8 @@ const PlayerBoard = ({ match }) => {
 
   useEffect(() => {
     console.log('creating connection!');
-    const connection = socketIOClient('http://127.0.0.1:3333');
+    // For local dev, back to: 'http://127.0.0.1:3333' below.
+    const connection = socketIOClient('https://catchwords-server.herokuapp.com');
     setSocketConnection(connection);
     console.log('connection: ', connection);
 
