@@ -1,8 +1,8 @@
-const R = require('ramda');
-const { gameBoards } = require('../data');
+const { getBoard } = require('../db');
+
 exports.getExistingBoard = async (req, res) => {
   const id = req.params.board;
-  const board = gameBoards[id];
+  const board = await getBoard(id);
 
-  res.status(200).send(board);
+  res.status(200).send(JSON.parse(board[0]));
 }

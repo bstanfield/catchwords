@@ -42,9 +42,6 @@ const getRandomUniqueWords = (wordsByWeight, total) => {
   return selectedWords;
 }
 
-// ephemeral game storage. Replace with DB support
-const gameBoards = {};
-
 const getRandomWords = async (total) => {
   const words = await getValidWords();
   const arrayOfWordsByWeight = getArrayOfWordsByWeight(words);
@@ -53,6 +50,5 @@ const getRandomWords = async (total) => {
 };
 
 module.exports = {
-  gameBoards,
   getRandomWords,
 }

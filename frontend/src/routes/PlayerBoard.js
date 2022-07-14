@@ -208,6 +208,8 @@ const loadBoard = async (boardId, dispatch) => {
   const [response, responseBody] = await Network.get(
     `get-existing-board/${boardId}`
   );
+
+  console.log('response body: ', responseBody);
   const {
     words,
     red,
@@ -285,10 +287,9 @@ const PlayerBoard = ({ match }) => {
   } = state;
 
   useEffect(() => {
-    console.log('creating connection!');
-    // For local dev, back to: 'http://127.0.0.1:3333' below.
+    console.log('NODE_ENV: ', process.env.NODE_ENV);
     const connection = socketIOClient(
-      'https://catchwords-server.herokuapp.com'
+      API_URL
     );
     setSocketConnection(connection);
     console.log('connection: ', connection);
@@ -534,7 +535,7 @@ const PlayerBoard = ({ match }) => {
                       turnCount: localTurnCount + 1
                     });
                     // Maybe this isn't needed anymore?
-                    // dispatch({ type: 'increment_turn' });
+                    dispatch({ type: 'increment_turn' });
                     dispatch({ type: 'reset_turn_guesses' });
                     socketConnection.emit('endTurn', currentTurnGuesses);
                   }}

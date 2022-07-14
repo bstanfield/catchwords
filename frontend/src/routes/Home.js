@@ -128,13 +128,13 @@ export default function Home() {
         <p>Active games:</p>
         <hr />
         <div css={boardsList}>
-          {!isEmpty(boards) ? (
-            Object.keys(boards).map(id => (
+          {boards.length > 0 ? (
+            boards.map(board => (
               <div>
-                <a href={`/board/${id}`}>{id}</a>
+                <a href={`/board/${board.board_id}`}>{board.board_id}</a>
                 <p>
-                  created {timeSince(new Date(boards[id].timestamp))} ago •
-                  turn: {boards[id].turnCount}
+                  created {timeSince(new Date(board.created_at))} ago •
+                  turn: {board.turn_count}
                 </p>
               </div>
             ))

@@ -41,10 +41,11 @@ export default function ThemeSelector(props) {
   const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
 
   function handleOnSelect(e) {
-    const targetTheme = e.target.value
+    const targetTheme = e.target.value;
     document.documentElement.setAttribute('data-theme', targetTheme);
   }
 
+  console.log('currentTheme', { currentTheme });
   return (
     <div
       onChange={(event) => handleOnSelect(event)}

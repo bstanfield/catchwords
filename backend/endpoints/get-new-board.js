@@ -1,6 +1,7 @@
 const R = require('ramda');
 const { getRandomWords, gameBoards } = require('../data');
 const randomWords = require('random-words');
+const { addBoard } = require('../db');
 
 // 0 = neutral (13)
 // 1 = correct (9)
@@ -101,19 +102,20 @@ const blue = R.pipe(
 
 exports.getNewBoard = async (req, res) => {
   const wordsArr = await getRandomWords(25);
-  const id = R.join('-', randomWords(5));
+  const id = R.join('-', randomWords(2));
 
-  // adds new board to memory
-  gameBoards[id] = {
+  const board = {
     id,
     words: wordsArr,
     red,
     blue,
-    timestamp: new Date(),
     redGuesses: [],
     blueGuesses: [],
     turnCount: 1
   }
 
-  res.status(200).send(gameBoards[id]);
+  console.log('shoving this mfer in: ', board);
+  addBoard(id, board);
+
+  res.status(200).send(board);
 };
